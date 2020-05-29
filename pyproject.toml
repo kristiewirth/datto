@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "datto"
+version = "0.1.0"
+description = "Data Science Tools"
+authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+ipython = "^7.8"
+pytest = "^5.2"
+black = "^19.10b0"
+pylint = "^2.5.0"
+pandas = "^1.0.4"
+notebook = "^6.0.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
