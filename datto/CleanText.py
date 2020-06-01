@@ -41,71 +41,71 @@ class CleanText:
             cleaned_text = cleaned_text.replace(link, "<LINK>")
         return cleaned_text
 
-    def lematize(self, text):
-        """
-        Run `python -m spacy download en` in the terminal first.
+    # def lematize(self, text):
+    #     """
+    #     Run `python -m spacy download en` in the terminal first.
 
-        Then, indclue `nlp = spacy.load("en")` in your code.
+    #     Then, include `nlp = spacy.load("en")` in your code.
 
-        Parameters
-        --------
-        text: str
+    #     Parameters
+    #     --------
+    #     text: str
 
-        Returns
-        --------
-        list of spacy tokens
+    #     Returns
+    #     --------
+    #     list of spacy tokens
 
-        """
-        spacy_text = nlp(text)
-        return [token.lemma_ for token in spacy_text if not token.is_space]
+    #     """
+    #     spacy_text = nlp(text)
+    #     return [token.lemma_ for token in spacy_text if not token.is_space]
 
-    def remove_email_greetings_signatures(self, text):
-        """
-        In order to obtain the main text of an email only, this method removes greetings, signoffs, 
-        and signatures by identifying sentences with less than 5% verbs to drop. Does not replace links.
+    # def remove_email_greetings_signatures(self, text):
+    #     """
+    #     In order to obtain the main text of an email only, this method removes greetings, signoffs,
+    #     and signatures by identifying sentences with less than 5% verbs to drop. Does not replace links.
 
-        Inspiration from: https://github.com/mynameisvinn/EmailParser
+    #     Inspiration from: https://github.com/mynameisvinn/EmailParser
 
-        Parameters
-        --------
-        text: str
+    #     Parameters
+    #     --------
+    #     text: str
 
-        Returns
-        --------
-        text: str
+    #     Returns
+    #     --------
+    #     text: str
 
-        """
-        sentences = text.strip().split("\n")
-        non_sentences = []
+    #     """
+    #     sentences = text.strip().split("\n")
+    #     non_sentences = []
 
-        for sentence in sentences:
-            spacy_text = nlp(sentence.strip())
-            verb_count = np.sum(
-                [
-                    (
-                        token.pos_ == "VERB"
-                        or token.pos_ == "AUX"
-                        or token.pos_ == "ROOT"
-                        or token.pos_ == "pcomp"
-                    )
-                    for token in spacy_text
-                ]
-            )
-            try:
-                prob = float(verb_count) / len(spacy_text)
-            except Exception:
-                prob = 1.0
+    #     for sentence in sentences:
+    #         spacy_text = nlp(sentence.strip())
+    #         verb_count = np.sum(
+    #             [
+    #                 (
+    #                     token.pos_ == "VERB"
+    #                     or token.pos_ == "AUX"
+    #                     or token.pos_ == "ROOT"
+    #                     or token.pos_ == "pcomp"
+    #                 )
+    #                 for token in spacy_text
+    #             ]
+    #         )
+    #         try:
+    #             prob = float(verb_count) / len(spacy_text)
+    #         except Exception:
+    #             prob = 1.0
 
-            # If 5% or less of a sentence is verbs, it's probably not a real sentence
-            if prob <= 0.05:
-                non_sentences.append(sentence)
+    #         # If 5% or less of a sentence is verbs, it's probably not a real sentence
+    #         if prob <= 0.05:
+    #             non_sentences.append(sentence)
 
-        for non_sentence in non_sentences:
-            # Don't replace links
-            if "http" not in non_sentence and non_sentence not in string.punctuation:
-                text = text.replace(non_sentence, "")
+    #     for non_sentence in non_sentences:
+    #         # Don't replace links
+    #         if "http" not in non_sentence and non_sentence not in string.punctuation:
+    #             text = text.replace(non_sentence, "")
 
-        return text
+    #     return text
 
     def clean_column_names(self, df):
         """

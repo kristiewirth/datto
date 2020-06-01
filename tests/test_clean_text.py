@@ -16,25 +16,25 @@ def test_remove_links():
     assert "www.google.com" not in cleaned_text
 
 
-def test_lematize():
-    text = "I went running today."
-    spacy_tokens = ct.lematize(text)
-    assert "running" not in spacy_tokens
+# def test_lematize():
+#     text = "I went running today."
+#     spacy_tokens = ct.lematize(text)
+#     assert "running" not in spacy_tokens
 
 
-def test_remove_email_greetings_signatures():
-    text = """
-    Hello Jane,
+# def test_remove_email_greetings_signatures():
+#     text = """
+#     Hello Jane,
 
-    My name is Kristie. I have a question for you.
+#     My name is Kristie. I have a question for you.
 
-    Thanks for your help,
-    
-    Kristie
-    Head of PR at FakeCompany
-    """
-    cleaned_body = ct.remove_email_greetings_signatures(text)
-    assert "Head of PR" not in cleaned_body
+#     Thanks for your help,
+
+#     Kristie
+#     Head of PR at FakeCompany
+#     """
+#     cleaned_body = ct.remove_email_greetings_signatures(text)
+#     assert "Head of PR" not in cleaned_body
 
 
 def test_clean_column_names():
