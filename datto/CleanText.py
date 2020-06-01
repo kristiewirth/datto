@@ -124,10 +124,38 @@ class CleanText:
         return df
 
     def remove_duplicate_columns(self, df):
+        """
+        Remove columns with the same name
+
+        Parameters
+        --------
+        DataFrame
+
+        Returns
+        --------
+        DataFrame
+
+        """
         df = df.loc[:, ~df.columns.duplicated()]
         return df
 
     def fix_col_data_type(self, df, col, desired_dt):
+        """
+        Change column datatype using the best method for each type.
+
+        Parameters
+        --------
+        DataFrame
+        col: str
+            Column to change the dtype for
+        desired_dt: str
+            {'float', 'int', 'datetime', 'str'}
+
+        Returns
+        --------
+        DataFrame
+
+        """
         if desired_dt in ("float", "int"):
             df[col] = pd.to_numeric(df[col], errors="coerce")
         elif desired_dt == "datetime":
