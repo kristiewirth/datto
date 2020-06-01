@@ -11,18 +11,16 @@ nlp = spacy.load("en")
 
 
 class CleanText:
-    def __init__(self):
-        pass
+    # def __init__(self):
+    #     self.all_names = pd.read_pickle("data/all_names")
 
-    # TODO: Fix data import here
-    # self.all_names = pd.read_pickle("data/all_names")
-    # def remove_names(self, text):
-    #     cleaned_text = text
-    #     for i, row in self.all_names.iterrows():
-    #         cleaned_text = re.sub(
-    #             row["name"] + "[^\w\s]*[\s]+", "<NAME> ", cleaned_text
-    #         )
-    #     return cleaned_text
+    def remove_names(self, text):
+        cleaned_text = text
+        for i, row in self.all_names.iterrows():
+            cleaned_text = re.sub(
+                row["name"] + "[^\w\s]*[\s]+", "<NAME> ", cleaned_text
+            )
+        return cleaned_text
 
     def remove_links(self, text):
         """
@@ -47,10 +45,6 @@ class CleanText:
     # TODO: Fix spacy load 'en' issue
     def lematize(self, text):
         """
-        Run `python -m spacy download en` in the terminal first.
-
-        Then, include `nlp = spacy.load("en")` in your code.
-
         Parameters
         --------
         text: str
