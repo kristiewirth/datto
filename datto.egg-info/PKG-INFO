@@ -1,0 +1,11 @@
+Metadata-Version: 1.2
+Name: datto
+Version: 0.1.6
+Summary: Data Tools (Dat To)
+Home-page: UNKNOWN
+Author: kristiewirth
+Author-email: kristie.ann.wirth@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.7,<4.0

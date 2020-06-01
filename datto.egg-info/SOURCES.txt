@@ -1,0 +1,11 @@
+README.md
+setup.py
+datto/CleanText.py
+datto/Experiments.py
+datto/__init__.py
+datto.egg-info/PKG-INFO
+datto.egg-info/SOURCES.txt
+datto.egg-info/dependency_links.txt
+datto.egg-info/requires.txt
+datto.egg-info/top_level.txt
+datto/data/all_names
