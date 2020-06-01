@@ -6,7 +6,7 @@ class CleanText:
     def __init__(self):
         self.all_names = pd.read_pickle("data/all_names")
 
-    def removeNames(self, text):
+    def remove_names(self, text):
         cleaned_text = text
         for i, row in self.all_names.iterrows():
             cleaned_text = re.sub(
@@ -14,7 +14,7 @@ class CleanText:
             )
         return cleaned_text
 
-    def removeLinks(self, text):
+    def remove_links(self, text):
         cleaned_text = text
         links_found = re.findall(
             "(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})",

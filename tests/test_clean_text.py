@@ -1,15 +1,15 @@
 from datto.CleanText import CleanText
 
-testCleanText = CleanText()
+ct = CleanText()
 
 
-def test_removeNames():
+def test_remove_names():
     text = "Hello John, how are you doing?"
-    cleaned_text = testCleanText.removePiiNames(text)
+    cleaned_text = ct.removePiiNames(text)
     assert "John" not in cleaned_text
 
 
-def test_removeLinks():
+def test_remove_links():
     text = "Here's a link: www.google.com Thanks!"
-    cleaned_text = testCleanText.removeLinks(text)
+    cleaned_text = ct.removeLinks(text)
     assert "www.google.com" not in cleaned_text
