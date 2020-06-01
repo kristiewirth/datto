@@ -4,7 +4,7 @@ import spacy
 import numpy as np
 import string
 
-nlp = spacy.load("en")
+# nlp = spacy.load("en")
 
 
 class CleanText:
