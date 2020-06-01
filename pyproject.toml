@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datto"
-version = "0.1.4"
+version = "0.1.6"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
@@ -17,6 +17,3 @@ spacy = "^2.2.4"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-
-[tool.poetry.scripts]
-install-spacy-en = "datto.command_line:main"
