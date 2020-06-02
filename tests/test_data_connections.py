@@ -1,4 +1,6 @@
 from datto.DataConnections import DataConnections
+from datto.DataConnections import KafkaInterface
+import os
 
 dc = DataConnections()
 
@@ -14,4 +16,12 @@ def test_load_from_s3():
     assert lst == [1, 2, 3]
 
 
-# TODO: Write tests for sql functions that don't include any credentials in this repo
+def test_run_sql_redshift():
+    conn = dc.setup_redshift_connection()
+    df = dc.run_sql_redshift(conn, """SELECT conv_id FROM hs_convs LIMIT 1""")
+    assert ~df.empty
+
+
+def test_kafka_interface():
+    ki = KafkaInterface("kristie-testing-1",)
+    ki.send([{"testa": "a", "testb": "b"}])
