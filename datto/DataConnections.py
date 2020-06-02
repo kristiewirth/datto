@@ -59,9 +59,12 @@ class DataConnections:
 
         return saved_object
 
-    def setup_redshift_connection(self, dbname, host, port, user, password):
+    def setup_redshift_connection(
+        self, dbname=None, host=None, port=None, user=None, password=None
+    ):
         """
         Pandas doesn't integrate with Redshift directly. Instead use psycopg2 to connect.
+        Pulls credentials from environment automatically if set.
 
         Parameters
         --------
@@ -76,8 +79,18 @@ class DataConnections:
         conn: cursor from database connection
 
         """
+        self.SQLDBNAME = dbname if dbname else os.environ.get("SQLDBNAME")
+        self.SQLHOST = host if host else os.environ.get("SQLHOST")
+        self.SQLPORT = port if port else os.environ.get("SQLPORT")
+        self.SQLUSER = user if user else os.environ.get("SQLUSER")
+        self.SQLPASSWORD = password if password else os.environ.get("SQLPASSWORD")
+
         conn = psycopg2.connect(
-            dbname=dbname, host=host, port=port, user=user, password=password,
+            dbname=self.SQLDBNAME,
+            host=self.SQLHOST,
+            port=self.SQLPORT,
+            user=self.SQLUSER,
+            password=self.SQLPASSWORD,
         )
         return conn
 
