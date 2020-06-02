@@ -17,9 +17,7 @@ class CleanText:
     def remove_names(self, text):
         cleaned_text = text
         for i, row in self.all_names.iterrows():
-            cleaned_text = re.sub(
-                row["name"] + "[^\w\s]*[\s]+", "<NAME> ", cleaned_text
-            )
+            cleaned_text = re.sub(row["name"] + "[^\w\s]*[\s]+", " ", cleaned_text)
         return cleaned_text
 
     def remove_links(self, text):
@@ -39,10 +37,9 @@ class CleanText:
             cleaned_text,
         )
         for link in links_found:
-            cleaned_text = cleaned_text.replace(link, "<LINK>")
+            cleaned_text = cleaned_text.replace(link, "")
         return cleaned_text
 
-    # TODO: Fix spacy load 'en' issue
     def lematize(self, text):
         """
         Parameters
@@ -111,11 +108,11 @@ class CleanText:
 
         Parameters
         --------
-        DataFrame
+        df: DataFrame
 
         Returns
         --------
-        DataFrame
+        df: DataFrame
 
         """
         df.rename(columns=lambda x: x.strip().replace(" ", "_").lower(), inplace=True)
@@ -127,11 +124,11 @@ class CleanText:
 
         Parameters
         --------
-        DataFrame
+        df: DataFrame
 
         Returns
         --------
-        DataFrame
+        df: DataFrame
 
         """
         df = df.loc[:, ~df.columns.duplicated()]
@@ -143,7 +140,7 @@ class CleanText:
 
         Parameters
         --------
-        DataFrame
+        df: DataFrame
         col: str
             Column to change the dtype for
         desired_dt: str
@@ -151,7 +148,7 @@ class CleanText:
 
         Returns
         --------
-        DataFrame
+        df: DataFrame
 
         """
         if desired_dt in ("float", "int"):
