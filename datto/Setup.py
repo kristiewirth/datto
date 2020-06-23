@@ -1,5 +1,7 @@
 import logging
 import sys
+import pandas as pd
+import numpy as np
 
 from pythonjsonlogger import jsonlogger
 
@@ -22,3 +24,12 @@ class Setup:
         logHandler.setFormatter(formatter)
         logger.addHandler(logHandler)
         return logger
+
+    def display_more_data(self, num_to_display):
+        np.set_printoptions(suppress=True, formatter={"float_kind": "{:0.6f}".format})
+        pd.set_option("display.float_format", lambda x: "%.6f" % x)
+
+        np.set_printoptions(threshold=num_to_display)
+        pd.set_option("display.max_columns", num_to_display)
+        pd.set_option("display.max_rows", num_to_display)
+
