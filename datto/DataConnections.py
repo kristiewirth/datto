@@ -1,21 +1,21 @@
-import s3fs
-import pickle
-import psycopg2
-import pandas as pd
-from kafka import KafkaProducer
-from kafka.errors import NoBrokersAvailable
-from time import sleep
 import json
-import requests
-from datto.Setup import Setup
 import os
+import pickle
 from datetime import datetime
-from time import time
+from time import sleep, time
 from typing import Any, Dict, List
 from uuid import uuid4
+
+import pandas as pd
+import psycopg2
 import requests
-from tqdm import tqdm
+import s3fs
 from dotenv import load_dotenv
+from kafka import KafkaProducer
+from kafka.errors import NoBrokersAvailable
+from tqdm import tqdm
+
+from datto.Setup import Setup
 
 load_dotenv()
 
