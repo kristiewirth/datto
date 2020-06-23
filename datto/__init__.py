@@ -5,3 +5,5 @@ from datto.DataConnections import KafkaInterface
 from datto.Setup import Setup
 from datto.TrainModel import TrainModel
 from datto.ModelResults import ModelResults
+from datto.FrontEnd import FrontEnd
+from datto.Eda import Eda
