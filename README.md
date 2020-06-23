@@ -20,6 +20,17 @@ Some examples of what you can do:
 - Make a simple Python logger with default options
 - Take some data and test a bunch of machine learning models on it
 
+# Example usage
+
+```python
+from datto.CleanText import CleanText
+
+text = "I am some text with a link: www.google.com."
+
+ct = CleanText()
+cleaned_text = ct.remove_links(text)
+```
+
 # Contents
 
 _(Updated 6/23/20)_
