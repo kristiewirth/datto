@@ -1,11 +1,9 @@
-import numpy as np
 import hashlib
+
+import numpy as np
 
 
 class Experiments:
-    def __init__(self):
-        pass
-
     def assign_condition_by_id(
         self, id, conditions, proportions_by_conditions, random_state
     ):
