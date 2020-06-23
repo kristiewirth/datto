@@ -14,11 +14,11 @@ class CleanText:
     # def __init__(self):
     #     self.all_names = pd.read_pickle("data/all_names")
 
-    def remove_names(self, text):
-        cleaned_text = text
-        for i, row in self.all_names.iterrows():
-            cleaned_text = re.sub(row["name"] + "[^\w\s]*[\s]+", " ", cleaned_text)
-        return cleaned_text
+    # def remove_names(self, text):
+    #     cleaned_text = text
+    #     for i, row in self.all_names.iterrows():
+    #         cleaned_text = re.sub(row["name"] + "[^\w\s]*[\s]+", " ", cleaned_text)
+    #     return cleaned_text
 
     def remove_links(self, text):
         """
