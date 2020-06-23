@@ -10,6 +10,16 @@ datto is a package with various data tools to help in data analysis and data sci
 
 _(Updated 6/23/20)_
 
+### CleanText
+
+- clean_column_names()
+- remove_links()
+- fix_col_data_type()
+- remove_duplicate_columns()
+- remove_names()
+- lematize()
+- remove_email_greetings_signatures()
+
 ### DataConnections
 
 - load_from_s3()
