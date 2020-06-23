@@ -18,6 +18,8 @@ psycopg2-binary = "^2.8.5"
 kafka-python = "^2.0.1"
 python-json-logger = "^0.1.11"
 python-dotenv = "^0.13.0"
+sklearn = "^0.0"
+xgboost = "^1.1.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
