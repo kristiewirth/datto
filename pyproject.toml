@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "datto"
-version = "0.1.9"
+version = "0.2.1"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6.7"
 ipython = "^7.8"
 pytest = "^5.2"
 black = "^19.10b0"
