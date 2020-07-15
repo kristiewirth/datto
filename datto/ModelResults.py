@@ -100,7 +100,7 @@ class ModelResults:
         print("Topics created with top words & example texts:")
         print(topic_words_df)
 
-        return topic_words_df, combined_df[["text", "top_topic_num"]]
+        return topic_words_df, combined_df[[text_column_name, "top_topic_num"]]
 
     def coefficents_summary(
         self, X, y, num_repetitions, num_coefficients, model_type, params={}
