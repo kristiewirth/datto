@@ -49,8 +49,8 @@ class DataConnections:
             # If error, try creating folder
             s3.mkdir(f"{directory_path}/")
 
-        with s3.open(filepath, "wb") as f:
-            pickle.dump(object_to_save, f)
+            with s3.open(filepath, "wb") as f:
+                pickle.dump(object_to_save, f)
 
     def load_from_s3(self, directory_path, object_name):
         """
