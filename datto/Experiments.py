@@ -15,9 +15,9 @@ class Experiments:
         --------
         id: int
         conditions: numpy array
-            E.g. ['exclude', 'treatment', 'control']
+            E.g. ['treatment', 'control']
         proportions_by_conditions: numpy array
-            Should add up to 1, e.g. [0.8, 0.1, 0.1]
+            Should add up to 1, e.g. [0.8, 0.2]
         random_state: int
             Divisor used for consistent assignment
 
