@@ -187,6 +187,26 @@ class ModelResults:
     def most_common_words_by_group(
         self, X, text_col_name, group_col_name, num_examples, num_times_min
     ):
+        """
+        Get the most commons phrases for defined groups.
+
+        Parameters
+        --------
+        X: DataFrame
+        text_col_name: str
+        group_col_name: str
+        num_examples: int
+            Number of text examples to include per group
+        num_times_min: int
+            Minimum number of times word/phrase must appear in texts
+
+        Returns
+        --------
+        overall_counts_df: DataFrame
+            Has groups, top words, and counts
+
+        """
+
         cv = CountVectorizer(
             stop_words=ENGLISH_STOP_WORDS, ngram_range=(1, 3), min_df=num_times_min
         )
@@ -241,7 +261,7 @@ class ModelResults:
             ].values
             top_counts = sums_values_descending[i][:10]
             [dict.update({x: y}) for x, y in zip(top_columns, top_counts)]
-            temp_df["top_words"] = [dict]
+            temp_df["top_words_and_counts"] = [dict]
             overall_counts_df = overall_counts_df.append([temp_df])
             print(f"Group Name: {row}\n")
             for k, v in dict.items():
@@ -254,6 +274,26 @@ class ModelResults:
     def score_final_model(
         self, model_type, X_train, y_train, X_test, y_test, full_pipeline
     ):
+        """
+        Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.
+        Run it after you have chosen your model & parameters to avoid problems with overfitting.
+
+        Parameters
+        --------
+        model_type: str
+        X_train: DataFrame
+        y_train: DataFrame
+        X_test: DataFrame
+        y_test: DataFrame
+        full_pipeline: sklearn Pipeline
+
+        Returns
+        --------
+        full_pipeline: model
+            Fit model
+        y_predicted: array
+        """
+
         # Fitting the final model
         full_pipeline.fit(X_train, y_train)
 

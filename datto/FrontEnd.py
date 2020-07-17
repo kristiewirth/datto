@@ -3,6 +3,8 @@ class FrontEnd:
         """
         Create text to use for rendering an HTML dropdown from a DataFrame.
 
+        Render by using {{ df|safe }} in your HTML file.
+
         Parameters
         --------
         name: str

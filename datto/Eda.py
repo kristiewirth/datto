@@ -107,6 +107,18 @@ class Eda:
             print("\n------------------------------------\n")
 
     def find_correlated_features(self, df):
+        """
+        Find & sort correlated features
+
+        Parameters
+        --------
+        df: DataFrame
+
+        Returns
+        --------
+        s: Series
+
+        """
         c = df.corr().abs()
         s = c.unstack()
         s = s[s <= 0.99999]

@@ -71,7 +71,7 @@ def test_coefficents_summary():
 def test_most_common_words_by_group():
     results_df = mr.most_common_words_by_group(X_text, "text", "group_id", 3, 1)
 
-    assert results_df is not None
+    assert X_text["group_id"].nunique() == results_df.shape[0]
 
 
 def test_score_final_model_classification():

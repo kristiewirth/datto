@@ -26,6 +26,15 @@ class Setup:
         return logger
 
     def display_more_data(self, num_to_display):
+        """
+        Overrides Pandas and Numpy settings to display a larger amount of data instead of only a subset.
+
+        Parameters
+        --------
+        num_to_display: int
+            How many rows/columns to display
+        """
+
         np.set_printoptions(suppress=True, formatter={"float_kind": "{:0.6f}".format})
         pd.set_option("display.float_format", lambda x: "%.6f" % x)
 
