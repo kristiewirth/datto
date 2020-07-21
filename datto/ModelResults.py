@@ -259,7 +259,7 @@ class ModelResults:
             top_columns = sums_by_col.columns[
                 sums_indices_descending[i][:num_examples]
             ].values
-            top_counts = sums_values_descending[i][:10]
+            top_counts = sums_values_descending[i][:num_examples]
             [dict.update({x: y}) for x, y in zip(top_columns, top_counts)]
             temp_df["top_words_and_counts"] = [dict]
             overall_counts_df = overall_counts_df.append([temp_df])
