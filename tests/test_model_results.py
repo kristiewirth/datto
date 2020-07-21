@@ -42,8 +42,8 @@ X_text = pd.DataFrame(
         ["i like bananas", 2],
         ["i like apples", 2],
         ["running is fun", 3],
-        ["jumping is fun", 3],
-        ["do you read mysteries?", 4],
+        ["jumping is fun running is fun", 3],
+        ["do you read mysteries? running is fun", 4],
         ["do you read nonfiction?", 4],
     ],
     columns=["text", "group_id"],
@@ -69,7 +69,7 @@ def test_coefficents_summary():
 
 
 def test_most_common_words_by_group():
-    results_df = mr.most_common_words_by_group(X_text, "text", "group_id", 3, 1, "both")
+    results_df = mr.most_common_words_by_group(X_text, "text", "group_id", 3, 1, 3)
 
     assert X_text["group_id"].nunique() == results_df.shape[0]
 
