@@ -69,7 +69,7 @@ def test_coefficents_summary():
 
 
 def test_most_common_words_by_group():
-    results_df = mr.most_common_words_by_group(X_text, "text", "group_id", 3, 1)
+    results_df = mr.most_common_words_by_group(X_text, "text", "group_id", 3, 1, "both")
 
     assert X_text["group_id"].nunique() == results_df.shape[0]
 

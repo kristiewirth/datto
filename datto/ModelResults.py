@@ -185,7 +185,13 @@ class ModelResults:
         return simplified_df
 
     def most_common_words_by_group(
-        self, X, text_col_name, group_col_name, num_examples, num_times_min
+        self,
+        X,
+        text_col_name,
+        group_col_name,
+        num_examples,
+        num_times_min,
+        words_or_phrases,
     ):
         """
         Get the most commons phrases for defined groups.
@@ -199,6 +205,8 @@ class ModelResults:
             Number of text examples to include per group
         num_times_min: int
             Minimum number of times word/phrase must appear in texts
+        words_or_phrases: str
+            both, phrases_only
 
         Returns
         --------
@@ -206,9 +214,17 @@ class ModelResults:
             Has groups, top words, and counts
 
         """
+        if words_or_phrases == "both":
+            min_ngram = 1
+        elif words_or_phrases == "phrases_only":
+            min_ngram = 2
+        else:
+            return "Error: unrecognized input for words_or_phrases, use 'both' or 'phrases_only'."
 
         cv = CountVectorizer(
-            stop_words=ENGLISH_STOP_WORDS, ngram_range=(1, 3), min_df=num_times_min
+            stop_words=ENGLISH_STOP_WORDS,
+            ngram_range=(min_ngram, 3),
+            min_df=num_times_min,
         )
         vectors = cv.fit_transform(X[text_col_name]).todense()
         words = cv.get_feature_names()
