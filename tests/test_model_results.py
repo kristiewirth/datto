@@ -19,7 +19,7 @@ X_train = pd.DataFrame(
     ],
     columns=["id", "webpage", "count"],
 )
-y_train = pd.DataFrame([[1], [0], [0], [0], [1], [0], [0], [1]], columns=["converted"],)
+y_train = pd.DataFrame([1, 0, 0, 0, 1, 0, 0, 1], columns=["converted"],)
 X_test = pd.DataFrame(
     [
         [1434, 56456, 1],
@@ -33,7 +33,7 @@ X_test = pd.DataFrame(
     ],
     columns=["id", "webpage", "count"],
 )
-y_test = pd.DataFrame([[1], [0], [0], [0], [1], [0], [0], [1]], columns=["converted"],)
+y_test = pd.DataFrame([1, 0, 0, 0, 1, 0, 0, 1], columns=["converted"],)
 
 X_text = pd.DataFrame(
     [
@@ -53,10 +53,11 @@ X_text = pd.DataFrame(
 def test_most_similar_texts():
     num_topics = 4
     num_examples = 5
+    num_words = 5
     text_column_name = "text"
 
     top_words_df, topics_assigned_df = mr.most_similar_texts(
-        X_text, num_topics, num_examples, text_column_name
+        X_text, num_topics, num_examples, num_words, text_column_name
     )
 
     assert top_words_df.shape[0] == num_topics
