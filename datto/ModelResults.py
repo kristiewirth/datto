@@ -299,7 +299,6 @@ class ModelResults:
             Fit model
         y_predicted: array
         """
-
         # Fitting the final model
         full_pipeline.fit(X_train, y_train)
 
@@ -316,16 +315,13 @@ class ModelResults:
             print(f"Final Model ROC AUC: {roc_auc}")
 
             crosstab = pd.crosstab(
-                y_test.values, y_predicted, rownames=["Actual"], colnames=["Predicted"],
+                y_test, y_predicted, rownames=["Actual"], colnames=["Predicted"],
             )
             print(crosstab)
             sum_crosstab = crosstab.to_numpy().sum()
             print(
                 pd.crosstab(
-                    y_test.values,
-                    y_predicted,
-                    rownames=["Actual"],
-                    colnames=["Predicted"],
+                    y_test, y_predicted, rownames=["Actual"], colnames=["Predicted"],
                 ).apply(lambda r: round(r / sum_crosstab, 3))
             )
         else:

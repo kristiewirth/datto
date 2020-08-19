@@ -19,7 +19,7 @@ X_train = pd.DataFrame(
     ],
     columns=["id", "webpage", "count"],
 )
-y_train = pd.DataFrame([1, 0, 0, 0, 1, 0, 0, 1], columns=["converted"],)
+y_train = np.array([1, 0, 0, 0, 1, 0, 0, 1])
 X_test = pd.DataFrame(
     [
         [1434, 56456, 1],
@@ -33,7 +33,7 @@ X_test = pd.DataFrame(
     ],
     columns=["id", "webpage", "count"],
 )
-y_test = pd.DataFrame([1, 0, 0, 0, 1, 0, 0, 1], columns=["converted"],)
+y_test = np.array([1, 0, 0, 0, 1, 0, 0, 1])
 
 X_text = pd.DataFrame(
     [
