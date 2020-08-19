@@ -19,7 +19,9 @@ from sklearn.metrics import (
 
 
 class ModelResults:
-    def most_similar_texts(self, X, num_topics, num_examples, text_column_name):
+    def most_similar_texts(
+        self, X, num_topics, num_examples, num_words, text_column_name
+    ):
         """
         Uses NMF clustering to create n topics based on adjusted word frequencies
 
@@ -27,6 +29,8 @@ class ModelResults:
         --------
         X: DataFrame
         num_topics: int
+        num_examples: int
+        num_words: int
         text_column_name: str
 
         Returns
@@ -79,7 +83,7 @@ class ModelResults:
         topic_words = {}
         sample_texts_lst = []
         for topic, comp in enumerate(model.components_):
-            word_idx = np.argsort(comp)[::-1][:num_examples]
+            word_idx = np.argsort(comp)[::-1][:num_words]
             topic_words[topic] = [vocab[i] for i in word_idx]
             sample_texts_lst.append(
                 list(
