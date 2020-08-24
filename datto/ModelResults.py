@@ -97,8 +97,8 @@ class ModelResults:
             columns=["topic_num", "top_words", "sample_texts"]
         )
 
-        topic_words_df["topic_num"] = topic_words.keys()
-        topic_words_df["top_words"] = topic_words.values()
+        topic_words_df["topic_num"] = [x for x in topic_words.keys()]
+        topic_words_df["top_words"] = [x for x in topic_words.values()]
         topic_words_df["sample_texts"] = sample_texts_lst
 
         print("Topics created with top words & example texts:")
