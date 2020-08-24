@@ -32,7 +32,7 @@ class Experiments:
         ), "Need a proportion of assignment for each condition (and vice versa)."
 
         assert (
-            proportions_by_conditions.sum() == 1.0
+            np.array(proportions_by_conditions).sum() == 1.0
         ), "Need proportions to add up to 1."
 
         md5_result = hashlib.md5(str(id).encode())
@@ -51,13 +51,13 @@ class Experiments:
         # We force this integer between 0 and random_state-1 via the modulo.
         remainder = numeric_result % random_state
         thresholds_for_condition_assignment = np.floor(
-            proportions_by_conditions.cumsum() * random_state
+            np.array(proportions_by_conditions).cumsum() * random_state
         )
 
         # Get the first index where the remainder is less than the condition boundry
         condition_index = np.where(remainder < thresholds_for_condition_assignment)[0][
             0
         ]
-        chosen_condition = conditions[condition_index]
+        chosen_condition = np.array(conditions)[condition_index]
 
         return chosen_condition
