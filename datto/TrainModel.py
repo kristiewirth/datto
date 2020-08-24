@@ -126,7 +126,7 @@ class TrainModel:
         y_train = X_train[target_col]
         y_test = X_test[target_col]
 
-        return X_train, y_train, X_test, y_test
+        return X_train, X_test, y_train, y_test
 
     def model_testing(
         self, X_train, y_train, full_pipeline, model_type, tie_breaker_scoring_method,
