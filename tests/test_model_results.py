@@ -1,8 +1,9 @@
+import numpy as np
 import pandas as pd
-from datto.ModelResults import ModelResults
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import ElasticNet
+
+from datto.ModelResults import ModelResults
 
 mr = ModelResults()
 

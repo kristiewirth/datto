@@ -27,7 +27,7 @@ def test_train_test_split_by_ids():
         columns=["id", "webpage", "converted"],
     )
 
-    X_train, y_train, X_test, y_test = tm.train_test_split_by_ids(
+    X_train, X_test, y_train, y_test = tm.train_test_split_by_ids(
         df, "id", "converted", 0.7
     )
 
