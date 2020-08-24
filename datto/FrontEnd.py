@@ -22,7 +22,7 @@ class FrontEnd:
         html_choices = """<select id="{}" width: 400px;><option value="---">---</option>""".format(
             name
         )
-        for option in df[chosen_col].values:
+        for option in df[chosen_col].unique():
             html_choices += """<option value="{0}">{0}</option>""".format(option)
         html_choices += """</select>"""
 
