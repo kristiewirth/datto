@@ -63,8 +63,8 @@ def test_most_similar_texts():
     assert top_words_df.shape[0] == num_topics
 
 
-def test_coefficents_summary():
-    results_df = mr.coefficents_summary(X_train, y_train, 5, 3, "classification")
+def test_coefficients_summary():
+    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "classification")
 
     assert results_df.shape[0] == 3
 

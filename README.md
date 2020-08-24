@@ -70,7 +70,7 @@ _(Updated 6/23/20)_
 
 ### ModelResults
 
-- coefficents_summary()
+- coefficients_summary()
 - most_common_words_by_group()
 - score_final_model()
 - most_similar_texts()

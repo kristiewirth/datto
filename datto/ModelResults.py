@@ -106,7 +106,7 @@ class ModelResults:
 
         return topic_words_df, combined_df[[text_column_name, "top_topic_num"]]
 
-    def coefficents_summary(
+    def coefficients_summary(
         self, X, y, num_repetitions, num_coefficients, model_type, params={}
     ):
         """
