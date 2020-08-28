@@ -54,11 +54,10 @@ X_text = pd.DataFrame(
 def test_most_similar_texts():
     num_topics = 4
     num_examples = 5
-    num_words = 5
     text_column_name = "text"
 
     top_words_df, topics_assigned_df = mr.most_similar_texts(
-        X_text, num_topics, num_examples, num_words, text_column_name
+        X_text, num_examples, text_column_name, num_topics
     )
 
     assert top_words_df.shape[0] == num_topics

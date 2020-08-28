@@ -16,22 +16,23 @@ from sklearn.metrics import (
     median_absolute_error,
     r2_score,
 )
+from gensim.corpora import Dictionary
+from gensim.models import nmf, CoherenceModel
+from operator import itemgetter
 
 
 class ModelResults:
-    def most_similar_texts(
-        self, X, num_topics, num_examples, num_words, text_column_name
-    ):
+    def most_similar_texts(self, X, num_examples, text_column_name, num_topics=None):
         """
         Uses NMF clustering to create n topics based on adjusted word frequencies
 
         Parameters
         --------
         X: DataFrame
-        num_topics: int
         num_examples: int
-        num_words: int
         text_column_name: str
+        num_topics: int
+            Optional - if none algorithm will determine best number
 
         Returns
         --------
@@ -41,9 +42,6 @@ class ModelResults:
             Original text with topic number assigned to each
 
         """
-        if num_topics > X.shape[0]:
-            return "Error: number of topics greater than number of samples."
-
         ct = CleanText()
         vectorizer = TfidfVectorizer(
             tokenizer=ct.lematize, ngram_range=(1, 3), stop_words=ENGLISH_STOP_WORDS,
@@ -56,7 +54,55 @@ class ModelResults:
 
         proportions_list = []
 
-        model = NMF(n_components=num_topics, random_state=42)
+        texts = X[text_column_name].apply(lambda x: ct.lematize(x))
+
+        # In gensim a dictionary is a mapping between words and their integer id
+        dictionary = Dictionary(texts)
+
+        # Filter out extremes to limit the number of features
+        dictionary.filter_extremes(no_below=2, no_above=0.85, keep_n=5000)
+
+        # Create the bag-of-words format (list of (token_id, token_count))
+        corpus = [dictionary.doc2bow(text) for text in texts]
+
+        if X.shape[0] < 55:
+            topic_nums = list(np.arange(5, X.shape[0], 5))
+        else:
+            topic_nums = list(np.arange(5, 55, 5))
+
+        coherence_scores = []
+
+        if not num_topics:
+            for num in topic_nums:
+                model = nmf.Nmf(
+                    corpus=corpus,
+                    num_topics=num,
+                    id2word=dictionary,
+                    chunksize=2000,
+                    passes=5,
+                    kappa=0.1,
+                    minimum_probability=0.01,
+                    w_max_iter=300,
+                    w_stop_condition=0.0001,
+                    h_max_iter=100,
+                    h_stop_condition=0.001,
+                    eval_every=10,
+                    normalize=True,
+                    random_state=42,
+                )
+
+                cm = CoherenceModel(
+                    model=model, texts=texts, dictionary=dictionary, coherence="c_v"
+                )
+
+                coherence_scores.append(round(cm.get_coherence(), 5))
+
+            scores = list(zip(topic_nums, coherence_scores))
+            chosen_num_topics = sorted(scores, key=itemgetter(1), reverse=True)[0][0]
+        else:
+            chosen_num_topics = num_topics
+
+        model = NMF(n_components=chosen_num_topics, random_state=42)
         model.fit(vectors)
         component_loadings = model.transform(vectors)
 
@@ -83,7 +129,7 @@ class ModelResults:
         topic_words = {}
         sample_texts_lst = []
         for topic, comp in enumerate(model.components_):
-            word_idx = np.argsort(comp)[::-1][:num_words]
+            word_idx = np.argsort(comp)[::-1][:num_examples]
             topic_words[topic] = [vocab[i] for i in word_idx]
             sample_texts_lst.append(
                 list(
@@ -94,11 +140,11 @@ class ModelResults:
             )
 
         topic_words_df = pd.DataFrame(
-            columns=["topic_num", "top_words", "sample_texts"]
+            columns=["topic_num", "top_words_and_phrases", "sample_texts"]
         )
 
         topic_words_df["topic_num"] = [x for x in topic_words.keys()]
-        topic_words_df["top_words"] = [x for x in topic_words.values()]
+        topic_words_df["top_words_and_phrases"] = [x for x in topic_words.values()]
         topic_words_df["sample_texts"] = sample_texts_lst
 
         print("Topics created with top words & example texts:")
