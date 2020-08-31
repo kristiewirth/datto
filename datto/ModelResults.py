@@ -1,24 +1,29 @@
-import pandas as pd
-import numpy as np
+from math import ceil
+from operator import itemgetter
 
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+import numpy as np
+import pandas as pd
+from gensim.corpora import Dictionary
+from gensim.models import CoherenceModel, nmf
 from sklearn.decomposition import NMF
-from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-from datto.CleanText import CleanText
+from sklearn.feature_extraction.text import (
+    ENGLISH_STOP_WORDS,
+    CountVectorizer,
+    TfidfVectorizer,
+)
 from sklearn.linear_model import ElasticNet, LogisticRegression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score,
     mean_squared_error,
+    median_absolute_error,
     precision_score,
+    r2_score,
     recall_score,
     roc_auc_score,
-    median_absolute_error,
-    r2_score,
 )
-from gensim.corpora import Dictionary
-from gensim.models import nmf, CoherenceModel
-from operator import itemgetter
+from sklearn.model_selection import train_test_split
+
+from datto.CleanText import CleanText
 
 
 class ModelResults:
@@ -52,27 +57,33 @@ class ModelResults:
         vocab = vectorizer.get_feature_names()
         vector_df = pd.DataFrame(vectors, columns=vocab, index=X.index)
 
-        proportions_list = []
-
-        texts = X[text_column_name].apply(lambda x: ct.lematize(x))
-
-        # In gensim a dictionary is a mapping between words and their integer id
-        dictionary = Dictionary(texts)
-
-        # Filter out extremes to limit the number of features
-        dictionary.filter_extremes(no_below=2, no_above=0.85, keep_n=5000)
-
-        # Create the bag-of-words format (list of (token_id, token_count))
-        corpus = [dictionary.doc2bow(text) for text in texts]
-
-        if X.shape[0] < 55:
-            topic_nums = list(np.arange(5, X.shape[0], 5))
-        else:
-            topic_nums = list(np.arange(5, 55, 5))
-
-        coherence_scores = []
-
         if not num_topics:
+            if X.shape[0] < 20:
+                return "Too few examples to categorize."
+
+            # In case 1, add 1 to get at least 2
+            # The rest are based on eyeballing numbers
+            min_topics = ceil(X.shape[0] * 0.01) + 1
+            max_topics = ceil(X.shape[0] * 0.4)
+            step = ceil((max_topics - min_topics) / 5)
+
+            topic_nums = list(np.arange(min_topics, max_topics, step))
+
+            proportions_list = []
+
+            texts = X[text_column_name].apply(lambda x: ct.lematize(x))
+
+            # In gensim a dictionary is a mapping between words and their integer id
+            dictionary = Dictionary(texts)
+
+            # Filter out extremes to limit the number of features
+            dictionary.filter_extremes(no_below=2, no_above=0.85, keep_n=5000)
+
+            # Create the bag-of-words format (list of (token_id, token_count))
+            corpus = [dictionary.doc2bow(text) for text in texts]
+
+            coherence_scores = []
+
             for num in topic_nums:
                 model = nmf.Nmf(
                     corpus=corpus,
