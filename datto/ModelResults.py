@@ -151,17 +151,43 @@ class ModelResults:
             )
 
         topic_words_df = pd.DataFrame(
-            columns=["topic_num", "top_words_and_phrases", "sample_texts"]
+            columns=[
+                "topic_num",
+                "num_in_category",
+                "top_words_and_phrases",
+                "sample_texts",
+            ]
         )
 
         topic_words_df["topic_num"] = [x for x in topic_words.keys()]
+        topic_words_df["num_in_category"] = (
+            combined_df.groupby("top_topic_num").count().iloc[:, 0]
+        )
         topic_words_df["top_words_and_phrases"] = [x for x in topic_words.values()]
         topic_words_df["sample_texts"] = sample_texts_lst
 
-        print("Topics created with top words & example texts:")
-        print(topic_words_df)
+        topic_words_explode = pd.DataFrame(
+            topic_words_df["sample_texts"].tolist(), index=topic_words_df.index,
+        )
 
-        return topic_words_df, combined_df[[text_column_name, "top_topic_num"]]
+        topic_words_explode.columns = [
+            "example{}".format(num) for num in range(len(topic_words_explode.columns))
+        ]
+
+        concated_topics = pd.concat(
+            [
+                topic_words_df[
+                    ["topic_num", "num_in_category", "top_words_and_phrases"]
+                ],
+                topic_words_explode,
+            ],
+            axis=1,
+        )
+
+        print("Topics created with top words & example texts:")
+        print(concated_topics)
+
+        return concated_topics, combined_df[[text_column_name, "top_topic_num"]]
 
     def coefficients_summary(
         self, X, y, num_repetitions, num_coefficients, model_type, params={}
