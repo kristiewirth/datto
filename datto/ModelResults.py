@@ -1,3 +1,4 @@
+import string
 from math import ceil
 from operator import itemgetter
 
@@ -47,9 +48,18 @@ class ModelResults:
             Original text with topic number assigned to each
 
         """
+        X = X[~X[text_column_name].isna()]
+
+        all_stop_words = (
+            set(ENGLISH_STOP_WORDS)
+            | set(["-PRON-"])
+            | set(string.punctuation)
+            | set([" "])
+        )
+
         ct = CleanText()
         vectorizer = TfidfVectorizer(
-            tokenizer=ct.lematize, ngram_range=(1, 3), stop_words=ENGLISH_STOP_WORDS,
+            tokenizer=ct.lematize, ngram_range=(1, 3), stop_words=all_stop_words,
         )
         vectors = vectorizer.fit_transform(X[text_column_name]).todense()
 
