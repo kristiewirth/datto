@@ -49,6 +49,12 @@ class ModelResults:
 
         """
         X = X[~X[text_column_name].isna()]
+        X = X[X[text_column_name] != ""]
+        X = X[X[text_column_name] != " "]
+        X = X[X[text_column_name] != "NA"]
+        X = X[X[text_column_name] != "n/a"]
+        X = X[X[text_column_name] != "N/A"]
+        X = X[X[text_column_name] != "na"]
 
         all_stop_words = (
             set(ENGLISH_STOP_WORDS)
@@ -135,7 +141,7 @@ class ModelResults:
             np.max(component_loadings, axis=1), columns=["top_topic_loading"]
         )
 
-        X.reset_index(inplace=True, drop=True)
+        X.reset_index(inplace=True, drop=False)
         vector_df.reset_index(inplace=True, drop=True)
 
         # Fix for duplicate text_column_name
@@ -197,7 +203,10 @@ class ModelResults:
         print("Topics created with top words & example texts:")
         print(concated_topics)
 
-        return concated_topics, combined_df[[text_column_name, "top_topic_num"]]
+        return (
+            concated_topics,
+            combined_df[["index", text_column_name, "top_topic_num"]],
+        )
 
     def coefficients_summary(
         self, X, y, num_repetitions, num_coefficients, model_type, params={}
