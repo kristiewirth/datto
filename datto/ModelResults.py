@@ -304,10 +304,15 @@ class ModelResults:
             Has groups, top words, and counts
 
         """
+        all_stop_words = (
+            set(ENGLISH_STOP_WORDS)
+            | set(["-PRON-"])
+            | set(string.punctuation)
+            | set([" "])
+        )
+
         cv = CountVectorizer(
-            stop_words=ENGLISH_STOP_WORDS,
-            ngram_range=(min_ngram, 3),
-            min_df=num_times_min,
+            stop_words=all_stop_words, ngram_range=(min_ngram, 3), min_df=num_times_min,
         )
         vectors = cv.fit_transform(X[text_col_name]).todense()
         words = cv.get_feature_names()
