@@ -73,9 +73,10 @@ class ModelResults:
         vocab = vectorizer.get_feature_names()
         vector_df = pd.DataFrame(vectors, columns=vocab, index=X.index)
 
+        if X.shape[0] < 20:
+            return "Too few examples to categorize."
+
         if not num_topics:
-            if X.shape[0] < 20:
-                return "Too few examples to categorize."
 
             # In case 1, add 1 to get at least 2
             # The rest are based on eyeballing numbers
@@ -119,7 +120,7 @@ class ModelResults:
                 )
 
                 cm = CoherenceModel(
-                    model=model, texts=texts, dictionary=dictionary, coherence="c_v"
+                    model=model, texts=texts, dictionary=dictionary, coherence="u_mass"
                 )
 
                 coherence_scores.append(round(cm.get_coherence(), 5))
