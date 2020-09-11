@@ -306,7 +306,7 @@ class ModelResults:
             Number of text examples to include per group
         num_times_min: int
             Minimum number of times word/phrase must appear in texts
-        min_n_gram: int
+        min_ngram: int
 
         Returns
         --------
@@ -314,6 +314,12 @@ class ModelResults:
             Has groups, top words, and counts
 
         """
+        # Fix for when column name is the same as an ngram column name
+        X["group_column"] = X[group_col_name]
+
+        # Remove all other unneeded columns
+        X = X[[text_col_name, "group_column"]]
+
         all_stop_words = (
             set(ENGLISH_STOP_WORDS)
             | set(["-PRON-"])
@@ -331,15 +337,16 @@ class ModelResults:
         group_plus_vectors = pd.concat([vectors_df, X.reset_index(drop=False)], axis=1)
 
         count_words = pd.DataFrame(
-            group_plus_vectors.groupby(group_col_name).count()["index"]
+            group_plus_vectors.groupby("group_column").count()["index"]
         )
-        count_words.columns = ["count"]
+        # Fix for when "count" is an ngram column
+        count_words.columns = ["count_ngrams"]
 
         group_plus_vectors = group_plus_vectors.merge(
-            count_words, on=group_col_name, how="left"
+            count_words, on="group_column", how="left"
         )
 
-        group_plus_vectors["count"].fillna(0, inplace=True)
+        group_plus_vectors["count_ngrams"].fillna(0, inplace=True)
 
         sums_by_col = (
             group_plus_vectors[
@@ -347,13 +354,13 @@ class ModelResults:
                     ~group_plus_vectors.columns.isin([text_col_name, "index",])
                 ]
             ]
-            .groupby(group_col_name)
+            .groupby("group_column")
             .sum()
         )
 
-        sums_by_col.sort_values(by="count", ascending=False, inplace=True)
+        sums_by_col.sort_values(by="count_ngrams", ascending=False, inplace=True)
 
-        sums_by_col.drop("count", axis=1, inplace=True)
+        sums_by_col.drop("count_ngrams", axis=1, inplace=True)
 
         array_sums = np.array(sums_by_col)
         sums_values_descending = -np.sort(-array_sums, axis=1)
