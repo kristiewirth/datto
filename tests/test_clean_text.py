@@ -45,14 +45,14 @@ def test_remove_email_greetings_signatures(text):
     assert "Hello" not in cleaned_body
 
 
-@given(data_frames(columns=[column(dtype=str), column(dtype=int),]))
+@given(data_frames(columns=[column(dtype=str), column(dtype=int), column(dtype=bool),]))
 @example(pd.DataFrame([["Kristie", "Smith"]], columns=["First Name", "Last Name"]))
 def test_clean_column_names(df):
     cleaned_df = ct.clean_column_names(df)
     assert " " not in cleaned_df.columns
 
 
-@given(data_frames(columns=[column(dtype=str), column(dtype=str),]))
+@given(data_frames(columns=[column(dtype=str), column(dtype=int), column(dtype=bool),]))
 @example(
     pd.DataFrame(
         [["Kristie", "Smith", "Smith"]],
