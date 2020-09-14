@@ -32,3 +32,4 @@ __pycache__/
 .vscode/
 
 .hypothesis/
+catboost_info/
