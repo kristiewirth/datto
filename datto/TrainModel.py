@@ -1,8 +1,10 @@
 import datetime
 import random
 
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
+from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.ensemble import (
     AdaBoostClassifier,
     AdaBoostRegressor,
@@ -56,6 +58,18 @@ class TrainModel:
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
+            {
+                "model": [lgb.LGBMClassifier()],
+                "model__learning_rate": [0.001, 0.01, 0.1],
+                "model__n_estimators": [5, 10, 15],
+                "model__num_leaves": [5, 10, 15],
+            },
+            {
+                "model": [CatBoostClassifier()],
+                "model__learning_rate": [0.001, 0.01, 0.1],
+                "model__depth": [5, 10, 15],
+                "model__l2_leaf_reg": [5, 10, 15],
+            },
         ]
 
         self.regressor_param_list = [
@@ -93,6 +107,18 @@ class TrainModel:
                 "model": [XGBRegressor()],
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
+            },
+            {
+                "model": [lgb.LGBMRegressor()],
+                "model__learning_rate": [0.001, 0.01, 0.1],
+                "model__n_estimators": [5, 10, 15],
+                "model__num_leaves": [5, 10, 15],
+            },
+            {
+                "model": [CatBoostRegressor()],
+                "model__learning_rate": [0.001, 0.01, 0.1],
+                "model__depth": [5, 10, 15],
+                "model__l2_leaf_reg": [5, 10, 15],
             },
         ]
 
