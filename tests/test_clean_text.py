@@ -1,9 +1,9 @@
-from datto.CleanText import CleanText
-import spacy
 import pandas as pd
-from hypothesis import given, example
-from hypothesis import strategies
+import spacy
+from hypothesis import example, given, strategies
 from hypothesis.extra.pandas import column, data_frames
+
+from datto.CleanText import CleanText
 
 ct = CleanText()
 
