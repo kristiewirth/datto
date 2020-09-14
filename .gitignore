@@ -30,3 +30,5 @@ __pycache__/
 .history/
 *.code-workspace
 .vscode/
+
+.hypothesis/
