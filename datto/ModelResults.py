@@ -4,6 +4,7 @@ from operator import itemgetter
 
 import numpy as np
 import pandas as pd
+import shap
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel, nmf
 from sklearn.decomposition import NMF
@@ -208,6 +209,36 @@ class ModelResults:
             concated_topics,
             combined_df[["index", text_column_name, "top_topic_num"]],
         )
+
+    def coefficients_graph(self, X, model, type, tree_based=False):
+        """
+        Displays graph of feature importances.
+
+        * Number of horizontal axis indicates magnitude of effect on 
+            target variable (e.g. affected by 0.25)
+        * Red/blue indicates feature value (increasing or decreasing feature has _ effect)
+        * Blue & red mixed together indicate there isn't a clear effect on the target variable
+
+        Parameters
+        --------
+        X: pd.DataFrame
+        model: fit model object
+        type: str
+            "classification" or "regression"
+        tree_based: boolean
+            Flag for if your model is tree based
+        """
+        # Tree based explainer is faster, use if it works with your model
+        if type == "regression" and tree_based:
+            explainer = shap.TreeExplainer(model.predict, X)
+        elif type == "classification" and tree_based:
+            explainer = shap.TreeExplainer(model.predict_proba, X)
+        elif type == "regression":
+            explainer = shap.KernelExplainer(model.predict, X)
+        elif type == "classification":
+            explainer = shap.KernelExplainer(model.predict_proba, X)
+        shap_values = explainer.shap_values(X)
+        shap.summary_plot(shap_values, X)
 
     def coefficients_summary(
         self, X, y, num_repetitions, num_coefficients, model_type, params={}
