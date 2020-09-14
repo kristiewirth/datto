@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datto"
-version = "0.3.3"
+version = "0.3.4"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
@@ -20,7 +20,6 @@ python-json-logger = "^0.1.11"
 python-dotenv = "^0.13.0"
 sklearn = "^0.0"
 xgboost = "^1.1.1"
-gensim = "^3.8.3"
 
 [build-system]
 requires = ["poetry>=0.12"]
