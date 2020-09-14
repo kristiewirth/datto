@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 class Eda:
     def separate_cols_by_type(self, df):
         """
@@ -63,13 +66,13 @@ class Eda:
         lst = []
         for col in df.columns:
             if (
-                "address" in col
-                or "first_name" in col
-                or "last_name" in col
-                or "username" in col
-                or "_id" in col
-                or "date" in col
-                or "time" in col
+                "address" in str(col)
+                or "first_name" in str(col)
+                or "last_name" in str(col)
+                or "username" in str(col)
+                or "_id" in str(col)
+                or "date" in str(col)
+                or "time" in str(col)
             ):
                 lst.append(col)
             elif df[col].isnull().sum() / float(df.shape[0]) >= 0.5:
@@ -119,6 +122,9 @@ class Eda:
         s: Series
 
         """
+        if df.empty:
+            return pd.Series()
+
         c = df.corr().abs()
         s = c.unstack()
         s = s[s <= 0.99999]
