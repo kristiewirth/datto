@@ -22,6 +22,8 @@ sklearn = "^0.0"
 xgboost = "^1.1.1"
 gensim = "^3.8.3"
 hypothesis = "^5.35.2"
+lightgbm = "^3.0.0"
+catboost = "^0.24.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
