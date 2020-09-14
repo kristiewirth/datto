@@ -6,20 +6,6 @@ from datto.Eda import Eda
 
 eda = Eda()
 
-df = pd.DataFrame(
-    [
-        ["some text", 1, 0],
-        ["some other text", 1, 0],
-        ["i like bananas", 2, 1],
-        ["i like apples", 2, 0],
-        ["running is fun", 3, 0],
-        ["jumping is fun", 3, 1],
-        ["do you read mysteries?", 4, 0],
-        ["do you read nonfiction?", 4, 1],
-    ],
-    columns=["text", "group_id", "boolean"],
-)
-
 
 @given(
     data_frames(
