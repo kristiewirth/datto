@@ -1,19 +1,26 @@
-from datto.DataConnections import DataConnections
-from datto.DataConnections import KafkaInterface
 import os
+
+from hypothesis import example, given, strategies, settings
+from hypothesis.extra.pandas import column, data_frames
+
+from datto.DataConnections import DataConnections, KafkaInterface
 
 dc = DataConnections()
 
 
-def test_save_to_s3():
+@given(data_frames(columns=[column(dtype=str), column(dtype=int),]))
+@settings(deadline=None)
+def test_save_to_s3(object_to_save):
     dc.save_to_s3(
-        "zapier-data-science-storage/kristie/testing/", [1, 2, 3], "testing-001"
+        "zapier-data-science-storage/kristie/testing/", object_to_save, "testing-001"
     )
 
 
 def test_load_from_s3():
-    lst = dc.load_from_s3("zapier-data-science-storage/kristie/testing/", "testing-001")
-    assert lst == [1, 2, 3]
+    saved_object = dc.load_from_s3(
+        "zapier-data-science-storage/kristie/testing/", "testing-001"
+    )
+    assert saved_object is not None
 
 
 def test_run_sql_redshift():
@@ -22,6 +29,8 @@ def test_run_sql_redshift():
     assert ~df.empty
 
 
-def test_kafka_interface():
+@given(strategies.dictionaries(strategies.text(), strategies.text()))
+@settings(deadline=None)
+def test_kafka_interface(d):
     ki = KafkaInterface("kristie-testing-1",)
-    ki.send([{"testa": "a", "testb": "b"}])
+    ki.send([d])
