@@ -115,7 +115,9 @@ class CleanText:
         df: DataFrame
 
         """
-        df.rename(columns=lambda x: x.strip().replace(" ", "_").lower(), inplace=True)
+        df.rename(
+            columns=lambda x: str(x).strip().replace(" ", "_").lower(), inplace=True
+        )
         return df
 
     def remove_duplicate_columns(self, df):
@@ -154,7 +156,7 @@ class CleanText:
         if desired_dt in ("float", "int"):
             df[col] = pd.to_numeric(df[col], errors="coerce")
         elif desired_dt == "datetime":
-            df[col] = pd.to_datetime(df[col])
+            df[col] = pd.to_datetime(df[col], errors="coerce")
         elif desired_dt == "str":
             df[col] = df[col].astype(str)
 
