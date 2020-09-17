@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datto"
-version = "0.3.5"
+version = "0.3.6"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
