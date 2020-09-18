@@ -48,10 +48,7 @@ def test_check_for_mistyped_booleans(df):
 )
 def test_find_cols_to_exclude(df):
     cols = eda.find_cols_to_exclude(df)
-    assert "group_id" in cols
-
-
-# TODO: Add a test for sample_unique_vals func
+    "group_id" in [[k for k, v in x.items()][0] for x in cols]
 
 
 @given(

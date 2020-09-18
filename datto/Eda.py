@@ -74,19 +74,43 @@ class Eda:
                 or "date" in str(col)
                 or "time" in str(col)
             ):
-                lst.append(col)
+                lst.append({col: "Considering excluding because potential PII column."})
             elif df[col].isnull().sum() / float(df.shape[0]) >= 0.5:
-                lst.append(col)
+                lst.append(
+                    {
+                        col: "Considering excluding because {}% of column is null.".format(
+                            (df[col].isnull().sum() / float(df.shape[0]) * 100.0)
+                        )
+                    }
+                )
             elif len(df[col].unique()) <= 1:
-                lst.append(col)
+                lst.append(
+                    {
+                        col: "Considering excluding because column includes only one value."
+                    }
+                )
             elif df[col].dtype == "datetime64[ns]":
-                lst.append(col)
+                lst.append(
+                    {col: "Considering excluding because column is a timestamp."}
+                )
             elif df[col].dtype not in ["object", "bool"]:
                 if df[col].var() < 0.00001:
-                    lst.append(col)
+                    lst.append(
+                        {
+                            col: "Considering excluding because column variance is low ({})".format(
+                                df[col].var()
+                            )
+                        }
+                    )
             elif df[col].dtype in ["object", "bool"]:
                 if len(df[col].unique()) > 200:
-                    lst.append(col)
+                    lst.append(
+                        {
+                            col: "Considering excluding because object column has large number of unique values ({})".format(
+                                len(df[col].unique())
+                            )
+                        }
+                    )
 
         [print(x) for x in lst]
 
