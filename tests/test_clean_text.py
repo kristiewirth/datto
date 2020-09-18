@@ -86,3 +86,27 @@ def test_fix_col_data_type(df):
     assert df.to_number.dtype == "int64" or df.to_number.dtype == "float64"
     assert df.to_datetime.dtype == "<M8[ns]"
     assert df.to_str.dtype == "O"
+
+
+def test_compress_df():
+    df = pd.DataFrame(
+        [
+            ["some text", 1, 1.2],
+            ["some other text", 1, 1.4],
+            ["i like bananas", 2, 6.5],
+            ["i like apples", 2, 7.5],
+            ["some text", 1, 1.2],
+            ["some other text", 1, 1.4],
+            ["i like bananas", 2, 6.5],
+            ["i like apples", 2, 7.5],
+            ["some text", 1, 1.2],
+            ["some other text", 1, 1.4],
+            ["i like bananas", 2, 6.5],
+            ["i like apples", 2, 7.5],
+        ],
+        columns=["text", "int", "float"],
+    )
+    compressed_df = ct.compress_df(df)
+    assert compressed_df["int"].dtype == "uint8"
+    assert compressed_df["float"].dtype == "float32"
+    assert compressed_df["text"].dtype == "category"

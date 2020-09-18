@@ -161,3 +161,18 @@ class CleanText:
             df[col] = df[col].astype(str)
 
         return df
+
+    def compress_df(self, df):
+        for col in df.columns:
+            if df[col].dtype == "O":
+                unique_vals = df[col].nunique()
+                count_vals = df[col].shape[0]
+                if unique_vals < (count_vals * 0.5):
+                    df[col] = df[col].astype("category")
+            elif df[col].dtype == "int64":
+                df[col] = pd.to_numeric(df[col], downcast="unsigned")
+            elif df[col].dtype == "float64":
+                df[col] = pd.to_numeric(df[col], downcast="float")
+
+        return df
+
