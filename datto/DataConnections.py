@@ -20,7 +20,7 @@ from datto.Setup import Setup
 load_dotenv()
 
 
-class DataConnections:
+class S3Connections:
     def save_to_s3(
         self, directory_path, object_to_save, object_name,
     ):
@@ -75,9 +75,9 @@ class DataConnections:
 
         return saved_object
 
-    def setup_redshift_connection(
-        self, dbname=None, host=None, port=None, user=None, password=None
-    ):
+
+class SQLConnections:
+    def __init__(self, dbname=None, host=None, port=None, user=None, password=None):
         """
         Pandas doesn't integrate with Redshift directly. Instead use psycopg2 to connect.
         Pulls credentials from environment automatically if set.
@@ -101,16 +101,15 @@ class DataConnections:
         self.SQLUSER = user if user else os.environ.get("SQLUSER")
         self.SQLPASSWORD = password if password else os.environ.get("SQLPASSWORD")
 
-        conn = psycopg2.connect(
+        self.CONN = psycopg2.connect(
             dbname=self.SQLDBNAME,
             host=self.SQLHOST,
             port=self.SQLPORT,
             user=self.SQLUSER,
             password=self.SQLPASSWORD,
         )
-        return conn
 
-    def run_sql_redshift(self, conn, query):
+    def run_sql_redshift(self, query):
         """
         Pandas doesn't integrate with Redshift directly. 
         Instead use psycopg2 to connect and transform results into a DataFrame manually.
@@ -125,7 +124,7 @@ class DataConnections:
         df: DataFrame
 
         """
-        with conn.cursor() as cursor:
+        with self.CONN.cursor() as cursor:
             # Execute query
             cursor.execute(query)
 
@@ -184,7 +183,6 @@ class KafkaInterface:
 
         if not self.is_rest:
             # This will raise if it cannot get any brokers, probably better to fail here then at send time
-            dc = DataConnections()
             self.producer = self.get_kafka_producer()
 
         self.logger.info(
