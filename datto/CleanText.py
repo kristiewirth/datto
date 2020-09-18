@@ -163,6 +163,18 @@ class CleanText:
         return df
 
     def compress_df(self, df):
+        """
+        Compresses each dataframe column as much as possible depending on type and values.
+
+        Parameters
+        --------
+        df: DataFrame
+
+        Returns
+        --------
+        df: DataFrame
+
+        """
         for col in df.columns:
             if df[col].dtype == "O":
                 unique_vals = df[col].nunique()
