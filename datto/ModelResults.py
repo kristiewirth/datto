@@ -66,7 +66,11 @@ class ModelResults:
 
         ct = CleanText()
         vectorizer = TfidfVectorizer(
-            tokenizer=ct.lematize, ngram_range=(1, 3), stop_words=all_stop_words,
+            tokenizer=ct.lematize,
+            ngram_range=(1, 3),
+            stop_words=all_stop_words,
+            min_df=5,
+            max_df=0.4,
         )
         vectors = vectorizer.fit_transform(X[text_column_name]).todense()
 
@@ -359,7 +363,7 @@ class ModelResults:
         )
 
         cv = CountVectorizer(
-            stop_words=all_stop_words, ngram_range=(min_ngram, 3), min_df=num_times_min,
+            stop_words=all_stop_words, ngram_range=(min_ngram, 3), min_df=num_times_min
         )
         vectors = cv.fit_transform(X[text_col_name]).todense()
         words = cv.get_feature_names()
