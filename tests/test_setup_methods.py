@@ -1,13 +1,10 @@
 import logging
 
-from datto.Setup import Setup
+from datto.SetupMethods import SetupMethods
 
-s = Setup()
+s = SetupMethods()
 
 
 def test_setup_logger():
     logger = s.setup_logger()
     assert type(logger) == logging.RootLogger
-
-
-# TODO: Add some text for display all data?

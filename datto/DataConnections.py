@@ -15,7 +15,7 @@ from kafka import KafkaProducer
 from kafka.errors import NoBrokersAvailable
 from tqdm import tqdm
 
-from datto.Setup import Setup
+from datto.SetupMethods import SetupMethods
 
 load_dotenv()
 
