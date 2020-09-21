@@ -178,7 +178,7 @@ class KafkaInterface:
         self.is_rest = is_rest
         self.producer = None
 
-        log = Setup()
+        log = SetupMethods()
         self.logger = log.setup_logger()
 
         if not self.is_rest:
