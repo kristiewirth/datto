@@ -1,5 +1,6 @@
 import csv
 import string
+import datetime
 from math import ceil
 from operator import itemgetter
 
@@ -461,11 +462,6 @@ class ModelResults:
             rscore = recall_score(y_test, y_predicted)
             roc_auc = roc_auc_score(y_test, y_predicted)
 
-            temp_df = pd.DataFrame(
-                [[full_pipeline, pscore, rscore, roc_auc]],
-                columns=["model", "precision", "recall", "roc_auc"],
-            )
-
             print(f"Final Model Precision: {pscore}")
             print(f"Final Model Recall: {rscore}")
             print(f"Final Model ROC AUC: {roc_auc}")
@@ -485,35 +481,8 @@ class ModelResults:
             mae = median_absolute_error(y_test, y_predicted)
             r2 = r2_score(y_test, y_predicted)
 
-            temp_df = pd.DataFrame(
-                [[full_pipeline, (mse ** 5) * -1, mae * -1, r2]],
-                columns=[
-                    "model",
-                    "neg_root_mean_squared_error",
-                    "neg_median_absolute_error",
-                    "r2",
-                ],
-            )
-
             print(f"Mean Negative Root Mean Squared Errror: {(mse ** 5) * -1}")
             print(f"Mean Negative Median Absolute Error: {mae * -1}")
             print(f"Mean R2: {r2}")
-
-        try:
-            previous_df = pd.read_csv("model_results.csv")
-            model_results_df = pd.concat([previous_df, temp_df], axis=0)
-            model_results_df.reset_index(inplace=True, drop=True)
-        except Exception:
-            model_results_df = temp_df
-
-        model_results_df = model_results_df.reindex(
-            sorted(model_results_df.columns), axis=1
-        )
-
-        with open("model_results.csv", "w") as csvfile:
-            csvwriter = csv.writer(csvfile, delimiter=",")
-            csvwriter.writerow(model_results_df.columns)
-            for i, row in model_results_df.iterrows():
-                csvwriter.writerow(row)
 
         return full_pipeline, y_predicted
