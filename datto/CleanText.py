@@ -14,12 +14,24 @@ nlp = spacy.load("en")
 
 class CleanText:
     def remove_names(self, text):
+        """
+        Parameters
+        --------
+        text: str
+
+        Returns
+        --------
+        cleaned_text: str
+
+        """
         all_names = pd.read_pickle(
             os.path.join(os.path.dirname(__file__), "data/all_names")
         )
         cleaned_text = text
         for i, row in all_names.iterrows():
-            cleaned_text = re.sub(row["name"] + "[^\w\s]*[\s]+", " ", cleaned_text)
+            # Matches name as long as it is not followed by lowercase characters
+            # Removing names that are a part of another word
+            cleaned_text = re.sub(row["name"] + "(?![a-z])", " ", cleaned_text)
         return cleaned_text
 
     def remove_links(self, text):
