@@ -495,8 +495,8 @@ class ModelResults:
                 ],
             )
 
-            print(f"Mean Negative Root Mean Squared Errror: {mse}")
-            print(f"Mean Negative Median Absolute Error: {mae}")
+            print(f"Mean Negative Root Mean Squared Errror: {(mse ** 5) * -1}")
+            print(f"Mean Negative Median Absolute Error: {mae * -1}")
             print(f"Mean R2: {r2}")
 
         try:
