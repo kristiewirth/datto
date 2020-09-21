@@ -114,7 +114,7 @@ description = "An easy safelist-based HTML-sanitizing tool."
 name = "bleach"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "3.2.0"
+version = "3.2.1"
 
 [package.dependencies]
 packaging = "*"
@@ -146,10 +146,10 @@ description = "The AWS SDK for Python"
 name = "boto3"
 optional = false
 python-versions = "*"
-version = "1.15.0"
+version = "1.15.1"
 
 [package.dependencies]
-botocore = ">=1.18.0,<1.19.0"
+botocore = ">=1.18.1,<1.19.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.3.0,<0.4.0"
 
@@ -159,7 +159,7 @@ description = "Low-level, data-driven core of boto 3."
 name = "botocore"
 optional = false
 python-versions = "*"
-version = "1.18.0"
+version = "1.18.1"
 
 [package.dependencies]
 jmespath = ">=0.7.1,<1.0.0"
@@ -358,7 +358,7 @@ description = "A library for property-based testing"
 name = "hypothesis"
 optional = false
 python-versions = ">=3.6"
-version = "5.35.3"
+version = "5.35.4"
 
 [package.dependencies]
 attrs = ">=19.2.0"
@@ -465,7 +465,7 @@ description = "A Python utility / library to sort Python imports."
 name = "isort"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "5.5.2"
+version = "5.5.3"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
@@ -708,7 +708,7 @@ description = "Converting Jupyter Notebooks"
 name = "nbconvert"
 optional = false
 python-versions = ">=3.6"
-version = "6.0.3"
+version = "6.0.4"
 
 [package.dependencies]
 bleach = "*"
@@ -1264,7 +1264,7 @@ description = "A small package for big slicing."
 name = "slicer"
 optional = false
 python-versions = ">=3.6"
-version = "0.0.3"
+version = "0.0.4"
 
 [[package]]
 category = "main"
@@ -1341,11 +1341,11 @@ version = "1.0.2"
 
 [[package]]
 category = "main"
-description = "Terminals served to xterm.js using Tornado websockets"
+description = "Tornado websocket backend for the Xterm.js Javascript terminal emulator library."
 name = "terminado"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "0.8.3"
+python-versions = ">=3.6"
+version = "0.9.1"
 
 [package.dependencies]
 ptyprocess = "*"
@@ -1584,8 +1584,8 @@ black = [
     {file = "black-19.10b0.tar.gz", hash = "sha256:c2edb73a08e9e0e6f65a0e6af18b059b8b1cdd5bef997d7a0b181df93dc81539"},
 ]
 bleach = [
-    {file = "bleach-3.2.0-py2.py3-none-any.whl", hash = "sha256:769483204d247465c0b001ead257fb86bba6944bce6fe1b6759c812cceb54e3d"},
-    {file = "bleach-3.2.0.tar.gz", hash = "sha256:f9e0205cc57b558c21bdfc11034f9d96b14c4052c25be60885d94f4277c792e0"},
+    {file = "bleach-3.2.1-py2.py3-none-any.whl", hash = "sha256:9f8ccbeb6183c6e6cddea37592dfb0167485c1e3b13b3363bc325aa8bda3adbd"},
+    {file = "bleach-3.2.1.tar.gz", hash = "sha256:52b5919b81842b1854196eaae5ca29679a2f2e378905c346d3ca8227c2c66080"},
 ]
 blis = [
     {file = "blis-0.4.1-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:135450caabc8aea9bb9250329ebdf7189982d9b57d5c92789b2ba2fe52c247a7"},
@@ -1610,12 +1610,12 @@ boto = [
     {file = "boto-2.49.0.tar.gz", hash = "sha256:ea0d3b40a2d852767be77ca343b58a9e3a4b00d9db440efb8da74b4e58025e5a"},
 ]
 boto3 = [
-    {file = "boto3-1.15.0-py2.py3-none-any.whl", hash = "sha256:28bf1bce2979d4d1674d63b1b4d6ac30b6844b5d3604e69d8847b18602588861"},
-    {file = "boto3-1.15.0.tar.gz", hash = "sha256:78f3ebcdff149d5327f27a5c461a9e394306b7db9a60e8bd65c9401cc41d99d3"},
+    {file = "boto3-1.15.1-py2.py3-none-any.whl", hash = "sha256:888be45e289ba56c4e47cfae5d6b08f097bc981d077fbe6521a6d3dc7a4d757e"},
+    {file = "boto3-1.15.1.tar.gz", hash = "sha256:44073b1b1823ffc9edcf9027afbca908dad6bd5000f512ca73f929f6a604ae24"},
 ]
 botocore = [
-    {file = "botocore-1.18.0-py2.py3-none-any.whl", hash = "sha256:f3d509f06201582e60523263d52016b50415461bc6a03afb5434f477a1de3ba0"},
-    {file = "botocore-1.18.0.tar.gz", hash = "sha256:1dbd37af06432eda8a5736bd82f92ddd1ae8de74e4faa090bd728f8d58d24849"},
+    {file = "botocore-1.18.1-py2.py3-none-any.whl", hash = "sha256:d6bdf51c8880aa9974e6b61d2f7d9d1debe407287e2e9e60f36c789fe8ba6790"},
+    {file = "botocore-1.18.1.tar.gz", hash = "sha256:6bdf60281c2e80360fe904851a1a07df3dcfe066fe88dc7fba2b5e626ac05c8c"},
 ]
 catalogue = [
     {file = "catalogue-1.0.0-py2.py3-none-any.whl", hash = "sha256:584d78e7f4c3c6e2fd498eb56dfc8ef1f4ff738480237de2ccd26cbe2cf47172"},
@@ -1795,8 +1795,8 @@ graphviz = [
     {file = "graphviz-0.14.1.zip", hash = "sha256:f5aad52a652c06825dcc5ee018d920fca26aef339386866094597fb3f2f222ce"},
 ]
 hypothesis = [
-    {file = "hypothesis-5.35.3-py3-none-any.whl", hash = "sha256:ee7bad5a617beed17090375f6e8e0f4f06677e9db92eaf598a186e69479843fa"},
-    {file = "hypothesis-5.35.3.tar.gz", hash = "sha256:a480386934cdfb2e69adb3333e7156ad9149b1935a910e44041a87c5bd8374dd"},
+    {file = "hypothesis-5.35.4-py3-none-any.whl", hash = "sha256:72988c3cf29a89d2b506ffa2c6a1e90bbf1388ea35bac9096079457ed6107062"},
+    {file = "hypothesis-5.35.4.tar.gz", hash = "sha256:049398bc481fbc22d5cbf65aca0de421d09e332cd40ded7ab25fba4bd32edc3d"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
@@ -1819,8 +1819,8 @@ ipython-genutils = [
     {file = "ipython_genutils-0.2.0.tar.gz", hash = "sha256:eb2e116e75ecef9d4d228fdc66af54269afa26ab4463042e33785b887c628ba8"},
 ]
 isort = [
-    {file = "isort-5.5.2-py3-none-any.whl", hash = "sha256:ba91218eee31f1e300ecc079ef0c524cea3fc41bfbb979cbdf5fd3a889e3cfed"},
-    {file = "isort-5.5.2.tar.gz", hash = "sha256:171c5f365791073426b5ed3a156c2081a47f88c329161fd28228ff2da4c97ddb"},
+    {file = "isort-5.5.3-py3-none-any.whl", hash = "sha256:c16eaa7432a1c004c585d79b12ad080c6c421dd18fe27982ca11f95e6898e432"},
+    {file = "isort-5.5.3.tar.gz", hash = "sha256:6187a9f1ce8784cbc6d1b88790a43e6083a6302f03e9ae482acc0f232a98c843"},
 ]
 jedi = [
     {file = "jedi-0.17.2-py2.py3-none-any.whl", hash = "sha256:98cc583fa0f2f8304968199b01b6b4b94f469a1f4a74c1560506ca2a211378b5"},
@@ -2016,8 +2016,8 @@ nbclient = [
     {file = "nbclient-0.5.0.tar.gz", hash = "sha256:8ad52d27ba144fca1402db014857e53c5a864a2f407be66ca9d74c3a56d6591d"},
 ]
 nbconvert = [
-    {file = "nbconvert-6.0.3-py3-none-any.whl", hash = "sha256:06c64fd45d4b6424e88eb3bf7e5eb205a0fc8a4c0a69666f0b9a2262c76f59e1"},
-    {file = "nbconvert-6.0.3.tar.gz", hash = "sha256:d8490f40368a1324521f8e740a0e341dc40bcd6e6926da64fa64b3a8801f16a3"},
+    {file = "nbconvert-6.0.4-py3-none-any.whl", hash = "sha256:1539c838acc1b5d3227f72fa03d39ca2b9ad9489d7a0e3083e04dbe5f3e1237c"},
+    {file = "nbconvert-6.0.4.tar.gz", hash = "sha256:73b3cff6090a16bb8ce2bfb84a6f8654802104e81da71d8a42297f5660a9ecea"},
 ]
 nbformat = [
     {file = "nbformat-5.0.7-py3-none-any.whl", hash = "sha256:ea55c9b817855e2dfcd3f66d74857342612a60b1f09653440f4a5845e6e3523f"},
@@ -2414,8 +2414,8 @@ sklearn = [
     {file = "sklearn-0.0.tar.gz", hash = "sha256:e23001573aa194b834122d2b9562459bf5ae494a2d59ca6b8aa22c85a44c0e31"},
 ]
 slicer = [
-    {file = "slicer-0.0.3-py3-none-any.whl", hash = "sha256:027e87357785c1031cbeb8447a3b8c324efbb9fa184a678a4f4d9e182a62002d"},
-    {file = "slicer-0.0.3.tar.gz", hash = "sha256:c82500e0120e648dcd541f785e1c04a35fa9cd61baed5cf3f83e6b6b21667114"},
+    {file = "slicer-0.0.4-py3-none-any.whl", hash = "sha256:31ec2d3878a70c1f314caef67fa6b7b2d0884f7b989c0974cbcb13b63718e7de"},
+    {file = "slicer-0.0.4.tar.gz", hash = "sha256:21d53aac4e78c93fd83c0fd2f8f9d8a2195ac079dffdc0da81cd749da0f2f355"},
 ]
 smart-open = [
     {file = "smart_open-2.1.1.tar.gz", hash = "sha256:51b05acd85ec007e1d4dcdbf2bbf917218a45026f37d559559401114bb5e5840"},
@@ -2451,8 +2451,8 @@ srsly = [
     {file = "srsly-1.0.2.tar.gz", hash = "sha256:59258b81d567df207f8a0a33c4b5fa232afccf1d927c8ce3ba5395bfd64c0ed8"},
 ]
 terminado = [
-    {file = "terminado-0.8.3-py2.py3-none-any.whl", hash = "sha256:a43dcb3e353bc680dd0783b1d9c3fc28d529f190bc54ba9a229f72fe6e7a54d7"},
-    {file = "terminado-0.8.3.tar.gz", hash = "sha256:4804a774f802306a7d9af7322193c5390f1da0abb429e082a10ef1d46e6fb2c2"},
+    {file = "terminado-0.9.1-py3-none-any.whl", hash = "sha256:c55f025beb06c2e2669f7ba5a04f47bb3304c30c05842d4981d8f0fc9ab3b4e3"},
+    {file = "terminado-0.9.1.tar.gz", hash = "sha256:3da72a155b807b01c9e8a5babd214e052a0a45a975751da3521a1c3381ce6d76"},
 ]
 testpath = [
     {file = "testpath-0.4.4-py2.py3-none-any.whl", hash = "sha256:bfcf9411ef4bf3db7579063e0546938b1edda3d69f4e1fb8756991f5951f85d4"},
