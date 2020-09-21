@@ -264,13 +264,18 @@ class TrainModel:
                 d[k] = v
             lst_dict.append(d)
 
+        dateTimeObj = datetime.datetime.now()
+        timestampStr = dateTimeObj.strftime("%m-%d-%Y (%H:%M:%S.%f)")
+
+        temp_df = pd.DataFrame(lst_dict)
+        temp_df["timestamp"] = timestampStr
+
         try:
             previous_df = pd.read_csv("model_results.csv")
-            temp_df = pd.DataFrame(lst_dict)
             model_results_df = pd.concat([previous_df, temp_df], axis=0)
             model_results_df.reset_index(inplace=True, drop=True)
         except Exception:
-            model_results_df = pd.DataFrame(lst_dict)
+            model_results_df = temp_df
 
         model_results_df = model_results_df.reindex(
             sorted(model_results_df.columns), axis=1
