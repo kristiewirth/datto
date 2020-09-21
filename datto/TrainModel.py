@@ -1,4 +1,6 @@
+import csv
 import datetime
+import os
 import random
 
 import lightgbm as lgb
@@ -251,5 +253,33 @@ class TrainModel:
             print("{}\n{}\n{}\n{}\n\n".format(x[0], x[1], x[2], x[3]))
             for x in formatted_scores[:5]
         ]
+
+        lst_dict = []
+        for model in all_scores[:5]:
+            d = dict()
+            for k, v in zip(
+                list(model[0].keys()) + lst_scoring_methods,
+                list(model[0].values()) + [x for x in model[1:]],
+            ):
+                d[k] = v
+            lst_dict.append(d)
+
+        try:
+            previous_df = pd.read_csv("model_results.csv")
+            temp_df = pd.DataFrame(lst_dict)
+            model_results_df = pd.concat([previous_df, temp_df], axis=0)
+            model_results_df.reset_index(inplace=True, drop=True)
+        except Exception:
+            model_results_df = pd.DataFrame(lst_dict)
+
+        model_results_df = model_results_df.reindex(
+            sorted(model_results_df.columns), axis=1
+        )
+
+        with open("model_results.csv", "w") as csvfile:
+            csvwriter = csv.writer(csvfile, delimiter=",")
+            csvwriter.writerow(model_results_df.columns)
+            for i, row in model_results_df.iterrows():
+                csvwriter.writerow(row)
 
         return g.best_params_
