@@ -5,12 +5,14 @@ from hypothesis.extra.pandas import column, data_frames
 
 from datto.CleanText import CleanText
 
+
 ct = CleanText()
 
-# def test_remove_names():
-#     text = "Hello John, how are you doing?"
-#     cleaned_text = ct.remove_names(text)
-#     assert "John" not in cleaned_text
+
+def test_remove_names():
+    text = "Hello John, how are you doing?"
+    cleaned_text = ct.remove_names(text)
+    assert "John" not in cleaned_text
 
 
 @given(strategies.text())
