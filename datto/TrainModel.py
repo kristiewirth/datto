@@ -178,6 +178,7 @@ class TrainModel:
         tie_breaker_scoring_method: str
             For classification: "precision", "recall", or "roc_auc"
             For regression: "neg_root_mean_squared_error", "neg_median_absolute_error", or "r2"
+        save_to_csv: bool
         
         Returns
         --------
