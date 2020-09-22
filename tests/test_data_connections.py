@@ -27,10 +27,3 @@ def test_run_sql_redshift():
     sql = SQLConnections()
     df = sql.run_sql_redshift("""SELECT conv_id FROM hs_convs LIMIT 1""")
     assert ~df.empty
-
-
-@given(strategies.dictionaries(strategies.text(), strategies.text()))
-@settings(deadline=None)
-def test_kafka_interface(d):
-    ki = KafkaInterface("kristie-testing-1",)
-    ki.send([d])
