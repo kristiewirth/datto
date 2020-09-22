@@ -185,8 +185,8 @@
 <span class="kn">from</span> <span class="nn">datto.CleanText</span> <span class="kn">import</span> <span class="n">CleanText</span>
 
 
-<div class="viewcode-block" id="ModelResults"><a class="viewcode-back" href="../../generated/datto.ModelResults.html#datto.ModelResults">[docs]</a><span class="k">class</span> <span class="nc">ModelResults</span><span class="p">:</span>
-<div class="viewcode-block" id="ModelResults.most_similar_texts"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.most_similar_texts">[docs]</a>    <span class="k">def</span> <span class="nf">most_similar_texts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">,</span> <span class="n">text_column_name</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelResults"><a class="viewcode-back" href="../../generated/datto.ModelResults.html#datto.ModelResults.ModelResults">[docs]</a><span class="k">class</span> <span class="nc">ModelResults</span><span class="p">:</span>
+<div class="viewcode-block" id="ModelResults.most_similar_texts"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.ModelResults.most_similar_texts">[docs]</a>    <span class="k">def</span> <span class="nf">most_similar_texts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">,</span> <span class="n">text_column_name</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uses NMF clustering to create n topics based on adjusted word frequencies</span>
 
@@ -371,7 +371,7 @@
             <span class="n">combined_df</span><span class="p">[[</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="n">text_column_name</span><span class="p">,</span> <span class="s2">&quot;top_topic_num&quot;</span><span class="p">]],</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelResults.coefficients_graph"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.coefficients_graph">[docs]</a>    <span class="k">def</span> <span class="nf">coefficients_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">tree_based</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelResults.coefficients_graph"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.ModelResults.coefficients_graph">[docs]</a>    <span class="k">def</span> <span class="nf">coefficients_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">tree_based</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Displays graph of feature importances.</span>
 
@@ -401,7 +401,7 @@
         <span class="n">shap_values</span> <span class="o">=</span> <span class="n">explainer</span><span class="o">.</span><span class="n">shap_values</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="n">shap</span><span class="o">.</span><span class="n">summary_plot</span><span class="p">(</span><span class="n">shap_values</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelResults.coefficients_summary"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.coefficients_summary">[docs]</a>    <span class="k">def</span> <span class="nf">coefficients_summary</span><span class="p">(</span>
+<div class="viewcode-block" id="ModelResults.coefficients_summary"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.ModelResults.coefficients_summary">[docs]</a>    <span class="k">def</span> <span class="nf">coefficients_summary</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">num_repetitions</span><span class="p">,</span> <span class="n">num_coefficients</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{}</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -483,7 +483,7 @@
 
         <span class="k">return</span> <span class="n">simplified_df</span></div>
 
-<div class="viewcode-block" id="ModelResults.most_common_words_by_group"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.most_common_words_by_group">[docs]</a>    <span class="k">def</span> <span class="nf">most_common_words_by_group</span><span class="p">(</span>
+<div class="viewcode-block" id="ModelResults.most_common_words_by_group"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.ModelResults.most_common_words_by_group">[docs]</a>    <span class="k">def</span> <span class="nf">most_common_words_by_group</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">text_col_name</span><span class="p">,</span> <span class="n">group_col_name</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">,</span> <span class="n">num_times_min</span><span class="p">,</span> <span class="n">min_ngram</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -584,7 +584,7 @@
 
         <span class="k">return</span> <span class="n">overall_counts_df</span></div>
 
-<div class="viewcode-block" id="ModelResults.score_final_model"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.score_final_model">[docs]</a>    <span class="k">def</span> <span class="nf">score_final_model</span><span class="p">(</span>
+<div class="viewcode-block" id="ModelResults.score_final_model"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.ModelResults.score_final_model">[docs]</a>    <span class="k">def</span> <span class="nf">score_final_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">full_pipeline</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

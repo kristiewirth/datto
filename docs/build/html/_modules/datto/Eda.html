@@ -156,8 +156,8 @@
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
-<div class="viewcode-block" id="Eda"><a class="viewcode-back" href="../../generated/datto.Eda.html#datto.Eda">[docs]</a><span class="k">class</span> <span class="nc">Eda</span><span class="p">:</span>
-<div class="viewcode-block" id="Eda.separate_cols_by_type"><a class="viewcode-back" href="../../datto.html#datto.Eda.separate_cols_by_type">[docs]</a>    <span class="k">def</span> <span class="nf">separate_cols_by_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="Eda"><a class="viewcode-back" href="../../generated/datto.Eda.html#datto.Eda.Eda">[docs]</a><span class="k">class</span> <span class="nc">Eda</span><span class="p">:</span>
+<div class="viewcode-block" id="Eda.separate_cols_by_type"><a class="viewcode-back" href="../../datto.html#datto.Eda.Eda.separate_cols_by_type">[docs]</a>    <span class="k">def</span> <span class="nf">separate_cols_by_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Split the DataFrame into two groups by type</span>
 
@@ -175,7 +175,7 @@
 
         <span class="k">return</span> <span class="n">numerical_vals</span><span class="p">,</span> <span class="n">categorical_vals</span></div>
 
-<div class="viewcode-block" id="Eda.check_for_mistyped_booleans"><a class="viewcode-back" href="../../datto.html#datto.Eda.check_for_mistyped_booleans">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_mistyped_booleans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerical_vals</span><span class="p">):</span>
+<div class="viewcode-block" id="Eda.check_for_mistyped_booleans"><a class="viewcode-back" href="../../datto.html#datto.Eda.Eda.check_for_mistyped_booleans">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_mistyped_booleans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerical_vals</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check for columns coded as ints/floats that should actually be booleans</span>
 
@@ -197,7 +197,7 @@
 
         <span class="k">return</span> <span class="n">boolean_cols</span></div>
 
-<div class="viewcode-block" id="Eda.find_cols_to_exclude"><a class="viewcode-back" href="../../datto.html#datto.Eda.find_cols_to_exclude">[docs]</a>    <span class="k">def</span> <span class="nf">find_cols_to_exclude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="Eda.find_cols_to_exclude"><a class="viewcode-back" href="../../datto.html#datto.Eda.Eda.find_cols_to_exclude">[docs]</a>    <span class="k">def</span> <span class="nf">find_cols_to_exclude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns columns that may not be helpful for model building. </span>
 
@@ -271,7 +271,7 @@
 
         <span class="k">return</span> <span class="n">lst</span></div>
 
-<div class="viewcode-block" id="Eda.sample_unique_vals"><a class="viewcode-back" href="../../datto.html#datto.Eda.sample_unique_vals">[docs]</a>    <span class="k">def</span> <span class="nf">sample_unique_vals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="Eda.sample_unique_vals"><a class="viewcode-back" href="../../datto.html#datto.Eda.Eda.sample_unique_vals">[docs]</a>    <span class="k">def</span> <span class="nf">sample_unique_vals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Examine a few unique vals in each column</span>
 
@@ -288,7 +288,7 @@
                 <span class="k">pass</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Eda.find_correlated_features"><a class="viewcode-back" href="../../datto.html#datto.Eda.find_correlated_features">[docs]</a>    <span class="k">def</span> <span class="nf">find_correlated_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="Eda.find_correlated_features"><a class="viewcode-back" href="../../datto.html#datto.Eda.Eda.find_correlated_features">[docs]</a>    <span class="k">def</span> <span class="nf">find_correlated_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find &amp; sort correlated features</span>
 

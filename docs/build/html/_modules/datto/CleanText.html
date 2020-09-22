@@ -167,8 +167,8 @@
 <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="CleanText"><a class="viewcode-back" href="../../generated/datto.CleanText.html#datto.CleanText">[docs]</a><span class="k">class</span> <span class="nc">CleanText</span><span class="p">:</span>
-<div class="viewcode-block" id="CleanText.remove_names"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_names">[docs]</a>    <span class="k">def</span> <span class="nf">remove_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText"><a class="viewcode-back" href="../../generated/datto.CleanText.html#datto.CleanText.CleanText">[docs]</a><span class="k">class</span> <span class="nc">CleanText</span><span class="p">:</span>
+<div class="viewcode-block" id="CleanText.remove_names"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.remove_names">[docs]</a>    <span class="k">def</span> <span class="nf">remove_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        --------</span>
@@ -189,7 +189,7 @@
             <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;(?![a-z])&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">cleaned_text</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cleaned_text</span></div>
 
-<div class="viewcode-block" id="CleanText.remove_links"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_links">[docs]</a>    <span class="k">def</span> <span class="nf">remove_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText.remove_links"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.remove_links">[docs]</a>    <span class="k">def</span> <span class="nf">remove_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        --------</span>
@@ -209,7 +209,7 @@
             <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">cleaned_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cleaned_text</span></div>
 
-<div class="viewcode-block" id="CleanText.lematize"><a class="viewcode-back" href="../../datto.html#datto.CleanText.lematize">[docs]</a>    <span class="k">def</span> <span class="nf">lematize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText.lematize"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.lematize">[docs]</a>    <span class="k">def</span> <span class="nf">lematize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        --------</span>
@@ -223,7 +223,7 @@
         <span class="n">spacy_text</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">spacy_text</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_space</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="CleanText.remove_email_greetings_signatures"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_email_greetings_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">remove_email_greetings_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText.remove_email_greetings_signatures"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.remove_email_greetings_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">remove_email_greetings_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        In order to obtain the main text of an email only, this method removes greetings, signoffs,</span>
 <span class="sd">        and signatures by identifying sentences with less than 5% verbs to drop. Does not replace links.</span>
@@ -271,7 +271,7 @@
 
         <span class="k">return</span> <span class="n">text</span></div>
 
-<div class="viewcode-block" id="CleanText.clean_column_names"><a class="viewcode-back" href="../../datto.html#datto.CleanText.clean_column_names">[docs]</a>    <span class="k">def</span> <span class="nf">clean_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText.clean_column_names"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.clean_column_names">[docs]</a>    <span class="k">def</span> <span class="nf">clean_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rename all columns to use underscores to reference columns without bracket formatting</span>
 
@@ -289,7 +289,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="CleanText.remove_duplicate_columns"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_duplicate_columns">[docs]</a>    <span class="k">def</span> <span class="nf">remove_duplicate_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText.remove_duplicate_columns"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.remove_duplicate_columns">[docs]</a>    <span class="k">def</span> <span class="nf">remove_duplicate_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove columns with the same name</span>
 
@@ -305,7 +305,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="CleanText.fix_col_data_type"><a class="viewcode-back" href="../../datto.html#datto.CleanText.fix_col_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">fix_col_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">desired_dt</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText.fix_col_data_type"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.fix_col_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">fix_col_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">desired_dt</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change column datatype using the best method for each type.</span>
 
@@ -331,7 +331,7 @@
 
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="CleanText.compress_df"><a class="viewcode-back" href="../../datto.html#datto.CleanText.compress_df">[docs]</a>    <span class="k">def</span> <span class="nf">compress_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="CleanText.compress_df"><a class="viewcode-back" href="../../datto.html#datto.CleanText.CleanText.compress_df">[docs]</a>    <span class="k">def</span> <span class="nf">compress_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compresses each dataframe column as much as possible depending on type and values.</span>
 
