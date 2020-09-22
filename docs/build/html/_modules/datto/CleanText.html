@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datto.CleanText &#8212; datto  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for datto.CleanText</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">from</span> <span class="nn">spacy.cli</span> <span class="kn">import</span> <span class="n">download</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="n">download</span><span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CleanText"><a class="viewcode-back" href="../../datto.html#datto.CleanText">[docs]</a><span class="k">class</span> <span class="nc">CleanText</span><span class="p">:</span>
+<div class="viewcode-block" id="CleanText.remove_names"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_names">[docs]</a>    <span class="k">def</span> <span class="nf">remove_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        text: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        cleaned_text: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_names</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;data/all_names&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">all_names</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c1"># Matches name as long as it is not followed by lowercase characters</span>
+            <span class="c1"># Removing names that are a part of another word</span>
+            <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;(?![a-z])&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">cleaned_text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cleaned_text</span></div>
+
+<div class="viewcode-block" id="CleanText.remove_links"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_links">[docs]</a>    <span class="k">def</span> <span class="nf">remove_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        text: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        cleaned_text: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="n">links_found</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+            <span class="s2">&quot;(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})&quot;</span><span class="p">,</span>
+            <span class="n">cleaned_text</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links_found</span><span class="p">:</span>
+            <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">cleaned_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cleaned_text</span></div>
+
+<div class="viewcode-block" id="CleanText.lematize"><a class="viewcode-back" href="../../datto.html#datto.CleanText.lematize">[docs]</a>    <span class="k">def</span> <span class="nf">lematize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        text: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        list of spacy tokens</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">spacy_text</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">spacy_text</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_space</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CleanText.remove_email_greetings_signatures"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_email_greetings_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">remove_email_greetings_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In order to obtain the main text of an email only, this method removes greetings, signoffs,</span>
+<span class="sd">        and signatures by identifying sentences with less than 5% verbs to drop. Does not replace links.</span>
+
+<span class="sd">        Inspiration from: https://github.com/mynameisvinn/EmailParser</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        text: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        text: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sentences</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">non_sentences</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+            <span class="n">spacy_text</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">sentence</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">verb_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">(</span>
+                        <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">==</span> <span class="s2">&quot;VERB&quot;</span>
+                        <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">==</span> <span class="s2">&quot;AUX&quot;</span>
+                        <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">==</span> <span class="s2">&quot;ROOT&quot;</span>
+                        <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">==</span> <span class="s2">&quot;pcomp&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">spacy_text</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">verb_count</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">spacy_text</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+            <span class="c1"># If 5% or less of a sentence is verbs, it&#39;s probably not a real sentence</span>
+            <span class="k">if</span> <span class="n">prob</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">:</span>
+                <span class="n">non_sentences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">non_sentence</span> <span class="ow">in</span> <span class="n">non_sentences</span><span class="p">:</span>
+            <span class="c1"># Don&#39;t replace links</span>
+            <span class="k">if</span> <span class="s2">&quot;http&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">non_sentence</span> <span class="ow">and</span> <span class="n">non_sentence</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">non_sentence</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">text</span></div>
+
+<div class="viewcode-block" id="CleanText.clean_column_names"><a class="viewcode-back" href="../../datto.html#datto.CleanText.clean_column_names">[docs]</a>    <span class="k">def</span> <span class="nf">clean_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rename all columns to use underscores to reference columns without bracket formatting</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="CleanText.remove_duplicate_columns"><a class="viewcode-back" href="../../datto.html#datto.CleanText.remove_duplicate_columns">[docs]</a>    <span class="k">def</span> <span class="nf">remove_duplicate_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove columns with the same name</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="CleanText.fix_col_data_type"><a class="viewcode-back" href="../../datto.html#datto.CleanText.fix_col_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">fix_col_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">desired_dt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change column datatype using the best method for each type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">        col: str</span>
+<span class="sd">            Column to change the dtype for</span>
+<span class="sd">        desired_dt: str</span>
+<span class="sd">            {&#39;float&#39;, &#39;int&#39;, &#39;datetime&#39;, &#39;str&#39;}</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">desired_dt</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">):</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">desired_dt</span> <span class="o">==</span> <span class="s2">&quot;datetime&quot;</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">desired_dt</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="CleanText.compress_df"><a class="viewcode-back" href="../../datto.html#datto.CleanText.compress_df">[docs]</a>    <span class="k">def</span> <span class="nf">compress_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compresses each dataframe column as much as possible depending on type and values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;O&quot;</span><span class="p">:</span>
+                <span class="n">unique_vals</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+                <span class="n">count_vals</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">unique_vals</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">count_vals</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">):</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;int64&quot;</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;unsigned&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;float64&quot;</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">datto</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.CleanText.html">datto.CleanText</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.DataConnections.html">datto.DataConnections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Eda.html">datto.Eda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Experiments.html">datto.Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.FrontEnd.html">datto.FrontEnd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.ModelResults.html">datto.ModelResults</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.SetupMethods.html">datto.SetupMethods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.TrainModel.html">datto.TrainModel</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Kristie Wirth.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

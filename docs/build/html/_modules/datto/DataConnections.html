@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datto.DataConnections &#8212; datto  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for datto.DataConnections</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span><span class="p">,</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">s3fs</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+<span class="kn">from</span> <span class="nn">kafka</span> <span class="kn">import</span> <span class="n">KafkaProducer</span>
+<span class="kn">from</span> <span class="nn">kafka.errors</span> <span class="kn">import</span> <span class="n">NoBrokersAvailable</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">datto.SetupMethods</span> <span class="kn">import</span> <span class="n">SetupMethods</span>
+
+<span class="n">load_dotenv</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="S3Connections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections">[docs]</a><span class="k">class</span> <span class="nc">S3Connections</span><span class="p">:</span>
+<div class="viewcode-block" id="S3Connections.save_to_s3"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections.save_to_s3">[docs]</a>    <span class="k">def</span> <span class="nf">save_to_s3</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">object_to_save</span><span class="p">,</span> <span class="n">object_name</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pickle and save an object to s3. Creates the folder specified if it does not yet exist.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        directory_path: str</span>
+<span class="sd">            Starts with bucket name, slash any subdirectories</span>
+<span class="sd">        object_to_save: any object with a type that can be pickled</span>
+<span class="sd">        object_name: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span><span class="n">anon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">filepath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">s3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">object_to_save</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># If error, try creating folder</span>
+            <span class="n">s3</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory_path</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">s3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">object_to_save</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="S3Connections.load_from_s3"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections.load_from_s3">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a pickled object from s3.</span>
+<span class="sd">        Note: The pickle module is not secure. Only unpickle data you trust/saved yourself.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        directory_path: str</span>
+<span class="sd">            Starts with bucket name, slash any subdirectories</span>
+<span class="sd">        object_name: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        saved_object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span><span class="n">anon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">filepath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+
+        <span class="n">saved_object</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">saved_object</span></div></div>
+
+
+<div class="viewcode-block" id="SQLConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SQLConnections">[docs]</a><span class="k">class</span> <span class="nc">SQLConnections</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pandas doesn&#39;t integrate with Redshift directly. Instead use psycopg2 to connect.</span>
+<span class="sd">        Pulls credentials from environment automatically if set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        dbname: str</span>
+<span class="sd">        host: str</span>
+<span class="sd">        port: str</span>
+<span class="sd">        user: str</span>
+<span class="sd">        password: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        conn: cursor from database connection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLDBNAME</span> <span class="o">=</span> <span class="n">dbname</span> <span class="k">if</span> <span class="n">dbname</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SQLDBNAME&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLHOST</span> <span class="o">=</span> <span class="n">host</span> <span class="k">if</span> <span class="n">host</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SQLHOST&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLPORT</span> <span class="o">=</span> <span class="n">port</span> <span class="k">if</span> <span class="n">port</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SQLPORT&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLUSER</span> <span class="o">=</span> <span class="n">user</span> <span class="k">if</span> <span class="n">user</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SQLUSER&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLPASSWORD</span> <span class="o">=</span> <span class="n">password</span> <span class="k">if</span> <span class="n">password</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SQLPASSWORD&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">CONN</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLDBNAME</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLHOST</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLPORT</span><span class="p">,</span>
+            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLUSER</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLPASSWORD</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SQLConnections.run_sql_redshift"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SQLConnections.run_sql_redshift">[docs]</a>    <span class="k">def</span> <span class="nf">run_sql_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pandas doesn&#39;t integrate with Redshift directly. </span>
+<span class="sd">        Instead use psycopg2 to connect and transform results into a DataFrame manually.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        conn: cursor from database connection</span>
+<span class="sd">        query: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONN</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="c1"># Execute query</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+            <span class="c1"># Add exceptions for queries that insert data only and don&#39;t return dataframes</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Pull out column names from cursor</span>
+                <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">desc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
+
+                <span class="c1"># Fetch the entire query back</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Transfer data to pandas dataframe</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">colnames</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">df</span>
+
+        <span class="c1"># For queries that don&#39;t return data/write only queries</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="KafkaInterface"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.KafkaInterface">[docs]</a><span class="k">class</span> <span class="nc">KafkaInterface</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">topic</span><span class="p">,</span>
+        <span class="n">bootstrap_servers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rest_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kafka_manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rest_auth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dummy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_rest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pulls credentials from environment automatically if set.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span> <span class="o">=</span> <span class="n">topic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BOOTSTRAP_SERVERS</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">bootstrap_servers</span>
+            <span class="k">if</span> <span class="n">bootstrap_servers</span>
+            <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BOOTSTRAP_SERVERS&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KAFKA_REST_URL</span> <span class="o">=</span> <span class="n">rest_url</span> <span class="k">if</span> <span class="n">rest_url</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;KAFKA_REST_URL&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KAFKA_MANAGER</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">kafka_manager</span> <span class="k">if</span> <span class="n">kafka_manager</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;KAFKA_MANAGER&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KAFKA_REST_AUTH</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">rest_auth</span> <span class="k">if</span> <span class="n">rest_auth</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;KAFKA_REST_AUTH&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DUMMY_KAFKA</span> <span class="o">=</span> <span class="n">dummy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_rest</span> <span class="o">=</span> <span class="n">is_rest</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">log</span> <span class="o">=</span> <span class="n">SetupMethods</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_rest</span><span class="p">:</span>
+            <span class="c1"># This will raise if it cannot get any brokers, probably better to fail here then at send time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_kafka_producer</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Kafka producer is </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="p">)</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span><span class="si">}</span><span class="s2">, is_rest -&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">is_rest</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get connection info</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">KAFKA_AUTH_SPLIT</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KAFKA_REST_AUTH</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;Missing KAFKA_REST_AUTH Env Var&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unhandled error when importing KAFKA_REST_AUTH env var: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="KafkaInterface.get_mandatory_fields"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.KafkaInterface.get_mandatory_fields">[docs]</a>    <span class="k">def</span> <span class="nf">get_mandatory_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all fields that are mandatory for a Kafka message coming from this tool&quot;&quot;&quot;</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">ts</span><span class="p">,</span>
+            <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;_partition_key&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message_bundle_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()),</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="KafkaInterface.set_defaults"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.KafkaInterface.set_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">set_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lod</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Package up list of dicts, by setting defaults&quot;&quot;&quot;</span>
+        <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mandatory_fields</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mandatory_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># We use .setdefault rather than .update to avoid overwriting values that have been set by the sender</span>
+            <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lod</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">lod</span></div>
+
+<div class="viewcode-block" id="KafkaInterface.send"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.KafkaInterface.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lod</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;Send a list of dictionaries to the Kafka REST API &quot;&quot;&quot;</span>
+        <span class="n">lod_plus_defaults</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">lod</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_rest</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">KAFKA_REST_URL</span><span class="si">}</span><span class="s2">/topics/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lod_plus_defaults</span><span class="p">]},</span>
+                <span class="n">auth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KAFKA_AUTH_SPLIT</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/vnd.kafka.json.v2+json&quot;</span><span class="p">},</span>
+            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Timeout</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Timeout on post to Kafka API&quot;</span><span class="p">)</span>
+                <span class="c1"># Maybe set up for a retry, or continue in a retry loop</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">TooManyRedirects</span><span class="p">:</span>
+                <span class="c1"># Tell the user their URL was bad and try a different one</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Too many redirects on post to Kafka API&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Got a </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> because </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;We&#39;re eating this message for some reason... it seemed like a good idea at the time: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">publish_to_kafka</span><span class="p">(</span><span class="n">lod_plus_defaults</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KafkaInterface.publish_to_kafka"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.KafkaInterface.publish_to_kafka">[docs]</a>    <span class="k">def</span> <span class="nf">publish_to_kafka</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DUMMY_KAFKA</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;DUMMY_KAFKA is set&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;self.logger.infoing data&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">n_records</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_records</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;started_publishing to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span><span class="si">}</span><span class="s2">, records: </span><span class="si">{</span><span class="n">n_records</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span><span class="p">,</span> <span class="n">record</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">metrics</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;finished_publishing to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span><span class="si">}</span><span class="s2">, records: </span><span class="si">{</span><span class="n">n_records</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span><span class="si">}</span><span class="s2"> producer metrics: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+                <span class="c1"># Sometimes we hit an overflow error preserving the log so we can handle it better</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TOPIC_NAME</span><span class="si">}</span><span class="s2"> producer metrics: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KafkaInterface.get_kafka_producer"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.KafkaInterface.get_kafka_producer">[docs]</a>    <span class="k">def</span> <span class="nf">get_kafka_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">no_brokers_retry</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">producer</span> <span class="o">=</span> <span class="n">KafkaProducer</span><span class="p">(</span>
+                    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">BOOTSTRAP_SERVERS</span><span class="p">,</span>
+                    <span class="n">value_serializer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+                    <span class="n">acks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">producer</span>
+            <span class="k">except</span> <span class="n">NoBrokersAvailable</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">no_brokers_retry</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">no_brokers_retry</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">e</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">datto</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.CleanText.html">datto.CleanText</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.DataConnections.html">datto.DataConnections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Eda.html">datto.Eda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Experiments.html">datto.Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.FrontEnd.html">datto.FrontEnd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.ModelResults.html">datto.ModelResults</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.SetupMethods.html">datto.SetupMethods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.TrainModel.html">datto.TrainModel</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Kristie Wirth.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

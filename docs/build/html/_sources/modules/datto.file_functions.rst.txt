@@ -1,0 +1,29 @@
+﻿datto.file\_functions
+=====================
+
+.. automodule:: datto.file_functions
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_files_in_folder
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

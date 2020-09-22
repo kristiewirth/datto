@@ -1,0 +1,6 @@
+﻿datto.CleanText.\_\_init\_\_
+============================
+
+.. currentmodule:: datto.CleanText
+
+.. autodata:: __init__

@@ -1,0 +1,768 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datto package &#8212; datto  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="datto-package">
+<h1>datto package<a class="headerlink" href="#datto-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datto.data.html">datto.data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datto.data.html#module-datto.data">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-datto.CleanText">
+<span id="datto-cleantext-module"></span><h2>datto.CleanText module<a class="headerlink" href="#module-datto.CleanText" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.CleanText.CleanText">
+<em class="property">class </em><code class="sig-prename descclassname">datto.CleanText.</code><code class="sig-name descname">CleanText</code><a class="reference internal" href="_modules/datto/CleanText.html#CleanText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.clean_column_names">
+<code class="sig-name descname">clean_column_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.clean_column_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.clean_column_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename all columns to use underscores to reference columns without bracket formatting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.compress_df">
+<code class="sig-name descname">compress_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.compress_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.compress_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compresses each dataframe column as much as possible depending on type and values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.fix_col_data_type">
+<code class="sig-name descname">fix_col_data_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">col</span></em>, <em class="sig-param"><span class="n">desired_dt</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.fix_col_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.fix_col_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change column datatype using the best method for each type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>col</strong> (<em>str</em>) – Column to change the dtype for</p></li>
+<li><p><strong>desired_dt</strong> (<em>str</em>) – {‘float’, ‘int’, ‘datetime’, ‘str’}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.lematize">
+<code class="sig-name descname">lematize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.lematize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.lematize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of spacy tokens</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.remove_duplicate_columns">
+<code class="sig-name descname">remove_duplicate_columns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.remove_duplicate_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.remove_duplicate_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove columns with the same name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.remove_email_greetings_signatures">
+<code class="sig-name descname">remove_email_greetings_signatures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.remove_email_greetings_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.remove_email_greetings_signatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>In order to obtain the main text of an email only, this method removes greetings, signoffs,
+and signatures by identifying sentences with less than 5% verbs to drop. Does not replace links.</p>
+<p>Inspiration from: <a class="reference external" href="https://github.com/mynameisvinn/EmailParser">https://github.com/mynameisvinn/EmailParser</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>text</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.remove_links">
+<code class="sig-name descname">remove_links</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.remove_links"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.remove_links" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>cleaned_text</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.CleanText.CleanText.remove_names">
+<code class="sig-name descname">remove_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/CleanText.html#CleanText.remove_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.CleanText.CleanText.remove_names" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>cleaned_text</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto.DataConnections">
+<span id="datto-dataconnections-module"></span><h2>datto.DataConnections module<a class="headerlink" href="#module-datto.DataConnections" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.DataConnections.KafkaInterface">
+<em class="property">class </em><code class="sig-prename descclassname">datto.DataConnections.</code><code class="sig-name descname">KafkaInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">topic</span></em>, <em class="sig-param"><span class="n">bootstrap_servers</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rest_url</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kafka_manager</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rest_auth</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dummy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_rest</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#KafkaInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.KafkaInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.DataConnections.KafkaInterface.get_kafka_producer">
+<code class="sig-name descname">get_kafka_producer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#KafkaInterface.get_kafka_producer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.KafkaInterface.get_kafka_producer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="datto.DataConnections.KafkaInterface.get_mandatory_fields">
+<code class="sig-name descname">get_mandatory_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#KafkaInterface.get_mandatory_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.KafkaInterface.get_mandatory_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all fields that are mandatory for a Kafka message coming from this tool</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.DataConnections.KafkaInterface.publish_to_kafka">
+<code class="sig-name descname">publish_to_kafka</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Dict<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#KafkaInterface.publish_to_kafka"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.KafkaInterface.publish_to_kafka" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="datto.DataConnections.KafkaInterface.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lod</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#KafkaInterface.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.KafkaInterface.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Send a list of dictionaries to the Kafka REST API</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.DataConnections.KafkaInterface.set_defaults">
+<code class="sig-name descname">set_defaults</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lod</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#KafkaInterface.set_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.KafkaInterface.set_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Package up list of dicts, by setting defaults</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="datto.DataConnections.S3Connections">
+<em class="property">class </em><code class="sig-prename descclassname">datto.DataConnections.</code><code class="sig-name descname">S3Connections</code><a class="reference internal" href="_modules/datto/DataConnections.html#S3Connections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.S3Connections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.DataConnections.S3Connections.load_from_s3">
+<code class="sig-name descname">load_from_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory_path</span></em>, <em class="sig-param"><span class="n">object_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#S3Connections.load_from_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.S3Connections.load_from_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a pickled object from s3.
+Note: The pickle module is not secure. Only unpickle data you trust/saved yourself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory_path</strong> (<em>str</em>) – Starts with bucket name, slash any subdirectories</p></li>
+<li><p><strong>object_name</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>saved_object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.DataConnections.S3Connections.save_to_s3">
+<code class="sig-name descname">save_to_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory_path</span></em>, <em class="sig-param"><span class="n">object_to_save</span></em>, <em class="sig-param"><span class="n">object_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#S3Connections.save_to_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.S3Connections.save_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pickle and save an object to s3. Creates the folder specified if it does not yet exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory_path</strong> (<em>str</em>) – Starts with bucket name, slash any subdirectories</p></li>
+<li><p><strong>object_to_save</strong> (<em>any object with a type that can be pickled</em>) – </p></li>
+<li><p><strong>object_name</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="datto.DataConnections.SQLConnections">
+<em class="property">class </em><code class="sig-prename descclassname">datto.DataConnections.</code><code class="sig-name descname">SQLConnections</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dbname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">host</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">port</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">user</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#SQLConnections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.SQLConnections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.DataConnections.SQLConnections.run_sql_redshift">
+<code class="sig-name descname">run_sql_redshift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#SQLConnections.run_sql_redshift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.DataConnections.SQLConnections.run_sql_redshift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pandas doesn’t integrate with Redshift directly.
+Instead use psycopg2 to connect and transform results into a DataFrame manually.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<em>cursor from database connection</em>) – </p></li>
+<li><p><strong>query</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto.Eda">
+<span id="datto-eda-module"></span><h2>datto.Eda module<a class="headerlink" href="#module-datto.Eda" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.Eda.Eda">
+<em class="property">class </em><code class="sig-prename descclassname">datto.Eda.</code><code class="sig-name descname">Eda</code><a class="reference internal" href="_modules/datto/Eda.html#Eda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Eda.Eda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.Eda.Eda.check_for_mistyped_booleans">
+<code class="sig-name descname">check_for_mistyped_booleans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">numerical_vals</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/Eda.html#Eda.check_for_mistyped_booleans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Eda.Eda.check_for_mistyped_booleans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for columns coded as ints/floats that should actually be booleans</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>numerical_vals</strong> (<em>list</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>boolean_cols</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.Eda.Eda.find_cols_to_exclude">
+<code class="sig-name descname">find_cols_to_exclude</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/Eda.html#Eda.find_cols_to_exclude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Eda.Eda.find_cols_to_exclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns columns that may not be helpful for model building.</p>
+<p>Exclusion criteria:
+- Possible PII (address, name, username, date, etc. in col name)
+- Large proportion of nulls
+- Only 1 value in entire col
+- Dates
+- Low variance in col values
+- Large number of categorical values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>lst</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.Eda.Eda.find_correlated_features">
+<code class="sig-name descname">find_correlated_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/Eda.html#Eda.find_correlated_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Eda.Eda.find_correlated_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find &amp; sort correlated features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>s</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.Eda.Eda.sample_unique_vals">
+<code class="sig-name descname">sample_unique_vals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/Eda.html#Eda.sample_unique_vals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Eda.Eda.sample_unique_vals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Examine a few unique vals in each column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.Eda.Eda.separate_cols_by_type">
+<code class="sig-name descname">separate_cols_by_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/Eda.html#Eda.separate_cols_by_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Eda.Eda.separate_cols_by_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split the DataFrame into two groups by type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>DataFrame</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>numerical_vals</strong> (<em>DataFrame</em>)</p></li>
+<li><p><strong>categorical_vals</strong> (<em>DataFrame</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto.Experiments">
+<span id="datto-experiments-module"></span><h2>datto.Experiments module<a class="headerlink" href="#module-datto.Experiments" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.Experiments.Experiments">
+<em class="property">class </em><code class="sig-prename descclassname">datto.Experiments.</code><code class="sig-name descname">Experiments</code><a class="reference internal" href="_modules/datto/Experiments.html#Experiments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Experiments.Experiments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.Experiments.Experiments.assign_condition_by_id">
+<code class="sig-name descname">assign_condition_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">conditions</span></em>, <em class="sig-param"><span class="n">proportions_by_conditions</span></em>, <em class="sig-param"><span class="n">random_state</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/Experiments.html#Experiments.assign_condition_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.Experiments.Experiments.assign_condition_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign a given id to the same experimental condition every time for a consistent user experience.
+I.e. customer #15 will always be in the treatment condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>int</em>) – </p></li>
+<li><p><strong>conditions</strong> (<em>numpy array</em>) – E.g. [‘treatment’, ‘control’]</p></li>
+<li><p><strong>proportions_by_conditions</strong> (<em>numpy array</em>) – Should add up to 1, e.g. [0.8, 0.2]</p></li>
+<li><p><strong>random_state</strong> (<em>int</em>) – Divisor used for consistent assignment</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>chosen_condition</strong> – Chooses one of the conditions you provided</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto.FrontEnd">
+<span id="datto-frontend-module"></span><h2>datto.FrontEnd module<a class="headerlink" href="#module-datto.FrontEnd" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.FrontEnd.FrontEnd">
+<em class="property">class </em><code class="sig-prename descclassname">datto.FrontEnd.</code><code class="sig-name descname">FrontEnd</code><a class="reference internal" href="_modules/datto/FrontEnd.html#FrontEnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.FrontEnd.FrontEnd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.FrontEnd.FrontEnd.dropdown_from_dataframe">
+<code class="sig-name descname">dropdown_from_dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">chosen_col</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/FrontEnd.html#FrontEnd.dropdown_from_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.FrontEnd.FrontEnd.dropdown_from_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create text to use for rendering an HTML dropdown from a DataFrame.</p>
+<p>Render by using {{ df|safe }} in your HTML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name you’d like for the dropdown</p></li>
+<li><p><strong>df</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>chosen_col</strong> (<em>str</em>) – Which column’s values will populate the dropdown</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>html_choices</strong> – String you can use to render HTML</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto.ModelResults">
+<span id="datto-modelresults-module"></span><h2>datto.ModelResults module<a class="headerlink" href="#module-datto.ModelResults" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.ModelResults.ModelResults">
+<em class="property">class </em><code class="sig-prename descclassname">datto.ModelResults.</code><code class="sig-name descname">ModelResults</code><a class="reference internal" href="_modules/datto/ModelResults.html#ModelResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.ModelResults.ModelResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.ModelResults.ModelResults.coefficients_graph">
+<code class="sig-name descname">coefficients_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">type</span></em>, <em class="sig-param"><span class="n">tree_based</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/ModelResults.html#ModelResults.coefficients_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.ModelResults.ModelResults.coefficients_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays graph of feature importances.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Number of horizontal axis indicates magnitude of effect on</dt><dd><p>target variable (e.g. affected by 0.25)</p>
+</dd>
+</dl>
+</li>
+<li><p>Red/blue indicates feature value (increasing or decreasing feature has _ effect)</p></li>
+<li><p>Blue &amp; red mixed together indicate there isn’t a clear effect on the target variable</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>pd.DataFrame</em>) – </p></li>
+<li><p><strong>model</strong> (<em>fit model object</em>) – </p></li>
+<li><p><strong>type</strong> (<em>str</em>) – “classification” or “regression”</p></li>
+<li><p><strong>tree_based</strong> (<em>boolean</em>) – Flag for if your model is tree based</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.ModelResults.ModelResults.coefficients_summary">
+<code class="sig-name descname">coefficients_summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">num_repetitions</span></em>, <em class="sig-param"><span class="n">num_coefficients</span></em>, <em class="sig-param"><span class="n">model_type</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/ModelResults.html#ModelResults.coefficients_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.ModelResults.ModelResults.coefficients_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints average coefficient values using a regression model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>y</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>num_repetitions</strong> (<em>int</em>) – Number of times to create models</p></li>
+<li><p><strong>num_coefficients</strong> (<em>int</em>) – Number of top coefficients to display</p></li>
+<li><p><strong>model_type</strong> (<em>str</em>) – ‘classification’ or ‘regression’</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – Optional - add to change regression params, otherwise use default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>simplified_df</strong> – Has mean, median, and standard deviation for coefficients after several runs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.ModelResults.ModelResults.most_common_words_by_group">
+<code class="sig-name descname">most_common_words_by_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">text_col_name</span></em>, <em class="sig-param"><span class="n">group_col_name</span></em>, <em class="sig-param"><span class="n">num_examples</span></em>, <em class="sig-param"><span class="n">num_times_min</span></em>, <em class="sig-param"><span class="n">min_ngram</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/ModelResults.html#ModelResults.most_common_words_by_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.ModelResults.ModelResults.most_common_words_by_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the most commons phrases for defined groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>text_col_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>group_col_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>num_examples</strong> (<em>int</em>) – Number of text examples to include per group</p></li>
+<li><p><strong>num_times_min</strong> (<em>int</em>) – Minimum number of times word/phrase must appear in texts</p></li>
+<li><p><strong>min_ngram</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>overall_counts_df</strong> – Has groups, top words, and counts</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.ModelResults.ModelResults.most_similar_texts">
+<code class="sig-name descname">most_similar_texts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">num_examples</span></em>, <em class="sig-param"><span class="n">text_column_name</span></em>, <em class="sig-param"><span class="n">num_topics</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/ModelResults.html#ModelResults.most_similar_texts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.ModelResults.ModelResults.most_similar_texts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses NMF clustering to create n topics based on adjusted word frequencies</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>num_examples</strong> (<em>int</em>) – </p></li>
+<li><p><strong>text_column_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>num_topics</strong> (<em>int</em>) – Optional - if none algorithm will determine best number</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>topic_words_df</strong> (<em>DataFrame</em>) – Top 15 words/phrases per topic</p></li>
+<li><p><strong>combined_df</strong> (<em>DataFrame</em>) – Original text with topic number assigned to each</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.ModelResults.ModelResults.score_final_model">
+<code class="sig-name descname">score_final_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_type</span></em>, <em class="sig-param"><span class="n">X_train</span></em>, <em class="sig-param"><span class="n">y_train</span></em>, <em class="sig-param"><span class="n">X_test</span></em>, <em class="sig-param"><span class="n">y_test</span></em>, <em class="sig-param"><span class="n">full_pipeline</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/ModelResults.html#ModelResults.score_final_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.ModelResults.ModelResults.score_final_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.
+Run it after you have chosen your model &amp; parameters to avoid problems with overfitting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_type</strong> (<em>str</em>) – </p></li>
+<li><p><strong>X_train</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>y_train</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>X_test</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>y_test</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>full_pipeline</strong> (<em>sklearn Pipeline</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>full_pipeline</strong> (<em>model</em>) – Fit model</p></li>
+<li><p><strong>y_predicted</strong> (<em>array</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto.SetupMethods">
+<span id="datto-setupmethods-module"></span><h2>datto.SetupMethods module<a class="headerlink" href="#module-datto.SetupMethods" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.SetupMethods.SetupMethods">
+<em class="property">class </em><code class="sig-prename descclassname">datto.SetupMethods.</code><code class="sig-name descname">SetupMethods</code><a class="reference internal" href="_modules/datto/SetupMethods.html#SetupMethods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.SetupMethods.SetupMethods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.SetupMethods.SetupMethods.display_more_data">
+<code class="sig-name descname">display_more_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_to_display</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/SetupMethods.html#SetupMethods.display_more_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.SetupMethods.SetupMethods.display_more_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides Pandas and Numpy settings to display a larger amount of data instead of only a subset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_to_display</strong> (<em>int</em>) – How many rows/columns to display</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.SetupMethods.SetupMethods.setup_logger">
+<code class="sig-name descname">setup_logger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/SetupMethods.html#SetupMethods.setup_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.SetupMethods.SetupMethods.setup_logger" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>logger</strong></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>jsonlogger</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto.TrainModel">
+<span id="datto-trainmodel-module"></span><h2>datto.TrainModel module<a class="headerlink" href="#module-datto.TrainModel" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="datto.TrainModel.TrainModel">
+<em class="property">class </em><code class="sig-prename descclassname">datto.TrainModel.</code><code class="sig-name descname">TrainModel</code><a class="reference internal" href="_modules/datto/TrainModel.html#TrainModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.TrainModel.TrainModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="datto.TrainModel.TrainModel.model_testing">
+<code class="sig-name descname">model_testing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X_train</span></em>, <em class="sig-param"><span class="n">y_train</span></em>, <em class="sig-param"><span class="n">full_pipeline</span></em>, <em class="sig-param"><span class="n">model_type</span></em>, <em class="sig-param"><span class="n">tie_breaker_scoring_method</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/TrainModel.html#TrainModel.model_testing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.TrainModel.TrainModel.model_testing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gridsearches using a Pipeline for best models/params out of a list of commonly used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>y_train</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>full_pipeline</strong> (<em>sklearn Pipeline</em>) – </p></li>
+<li><p><strong>model_type</strong> (<em>str</em>) – ‘classification’ or ‘regression’</p></li>
+<li><p><strong>tie_breaker_scoring_method</strong> (<em>str</em>) – For classification: “precision”, “recall”, or “roc_auc”
+For regression: “neg_root_mean_squared_error”, “neg_median_absolute_error”, or “r2”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>best_params</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="datto.TrainModel.TrainModel.train_test_split_by_ids">
+<code class="sig-name descname">train_test_split_by_ids</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">id_col</span></em>, <em class="sig-param"><span class="n">target_col</span></em>, <em class="sig-param"><span class="n">prop_train</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/TrainModel.html#TrainModel.train_test_split_by_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datto.TrainModel.TrainModel.train_test_split_by_ids" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>id_col</strong> (<em>str</em>) – </p></li>
+<li><p><strong>target_col</strong> (<em>str</em>) – </p></li>
+<li><p><strong>prop_train</strong> (<em>float</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X_train</strong> (<em>DataFrame</em>)</p></li>
+<li><p><strong>y_train</strong> (<em>DataFrame</em>)</p></li>
+<li><p><strong>X_test</strong> (<em>DataFrame</em>)</p></li>
+<li><p><strong>y_test</strong> (<em>DataFrame</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datto">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-datto" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">datto</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.CleanText.html">datto.CleanText</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.DataConnections.html">datto.DataConnections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.Eda.html">datto.Eda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.Experiments.html">datto.Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.FrontEnd.html">datto.FrontEnd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.ModelResults.html">datto.ModelResults</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.SetupMethods.html">datto.SetupMethods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/datto.TrainModel.html">datto.TrainModel</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Kristie Wirth.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/datto.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

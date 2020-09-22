@@ -1,0 +1,6 @@
+﻿datto.\_\_init\_\_
+==================
+
+.. currentmodule:: datto
+
+.. autodata:: __init__
