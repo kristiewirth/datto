@@ -1,3 +1,4 @@
+import os
 import re
 import string
 
@@ -5,8 +6,6 @@ import numpy as np
 import pandas as pd
 import spacy
 from spacy.cli import download
-import os
-
 
 download("en")
 nlp = spacy.load("en")
@@ -28,7 +27,7 @@ class CleanText:
             os.path.join(os.path.dirname(__file__), "data/all_names")
         )
         cleaned_text = text
-        for i, row in all_names.iterrows():
+        for _, row in all_names.iterrows():
             # Matches name as long as it is not followed by lowercase characters
             # Removing names that are a part of another word
             cleaned_text = re.sub(row["name"] + "(?![a-z])", " ", cleaned_text)
@@ -47,7 +46,7 @@ class CleanText:
         """
         cleaned_text = text
         links_found = re.findall(
-            "(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})",
+            r"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})",
             cleaned_text,
         )
         for link in links_found:
@@ -201,4 +200,3 @@ class CleanText:
                 df[col] = pd.to_numeric(df[col], downcast="float")
 
         return df
-

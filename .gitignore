@@ -33,3 +33,4 @@ __pycache__/
 
 .hypothesis/
 catboost_info/
+model_results.csv

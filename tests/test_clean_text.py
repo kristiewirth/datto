@@ -1,5 +1,4 @@
 import pandas as pd
-import spacy
 from hypothesis import example, given, strategies
 from hypothesis.extra.pandas import column, data_frames
 

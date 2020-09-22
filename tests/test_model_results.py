@@ -72,7 +72,7 @@ def test_most_similar_texts():
     num_examples = 5
     text_column_name = "text"
 
-    top_words_df, topics_assigned_df = mr.most_similar_texts(
+    top_words_df, _ = mr.most_similar_texts(
         X_text, num_examples, text_column_name, num_topics
     )
 
@@ -93,7 +93,7 @@ def test_most_common_words_by_group():
 
 def test_score_final_model_classification():
     full_pipeline = Pipeline([("model", LogisticRegression()),])
-    fit_pipeline, y_predicted = mr.score_final_model(
+    _, y_predicted = mr.score_final_model(
         "classification", X_train, y_train, X_test, y_test, full_pipeline
     )
 
@@ -102,7 +102,7 @@ def test_score_final_model_classification():
 
 def test_score_final_model_regression():
     full_pipeline = Pipeline([("model", ElasticNet()),])
-    fit_pipeline, y_predicted = mr.score_final_model(
+    _, y_predicted = mr.score_final_model(
         "regression", X_train, y_train, X_test, y_test, full_pipeline
     )
 
@@ -119,4 +119,3 @@ def test_coefficients_graph_regression():
     model = ElasticNet()
     model.fit(X_train, y_train)
     mr.coefficients_graph(X_train, model, "regression", tree_based=False)
-

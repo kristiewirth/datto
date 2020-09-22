@@ -1,4 +1,3 @@
-import pandas as pd
 from hypothesis import given
 from hypothesis.extra.pandas import column, data_frames
 

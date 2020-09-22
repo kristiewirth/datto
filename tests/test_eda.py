@@ -1,5 +1,5 @@
 import pandas as pd
-from hypothesis import example, given, strategies
+from hypothesis import given, strategies
 from hypothesis.extra.pandas import column, data_frames
 
 from datto.Eda import Eda
@@ -13,7 +13,7 @@ eda = Eda()
     )
 )
 def test_separate_cols_by_type(df):
-    numerical_vals, categorical_vals = eda.separate_cols_by_type(df)
+    _, categorical_vals = eda.separate_cols_by_type(df)
 
     assert "text" in categorical_vals.columns
 
@@ -63,4 +63,4 @@ def test_find_cols_to_exclude(df):
 )
 def test_find_correlated_features(df):
     s = eda.find_correlated_features(df)
-    assert type(s) == pd.Series
+    assert isinstance(s, pd.Series)

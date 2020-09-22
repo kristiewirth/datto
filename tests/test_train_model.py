@@ -1,7 +1,8 @@
-from datto.TrainModel import TrainModel
 import pandas as pd
 from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.pipeline import Pipeline
+
+from datto.TrainModel import TrainModel
 
 tm = TrainModel()
 
@@ -27,9 +28,7 @@ def test_train_test_split_by_ids():
         columns=["id", "webpage", "converted"],
     )
 
-    X_train, X_test, y_train, y_test = tm.train_test_split_by_ids(
-        df, "id", "converted", 0.7
-    )
+    X_train, X_test, _, _ = tm.train_test_split_by_ids(df, "id", "converted", 0.7)
 
     assert X_train.shape[0] > X_test.shape[0]
 
@@ -43,7 +42,7 @@ def test_model_testing_classification():
         X_train, y_train, full_pipeline, model_type, tie_breaker_scoring_method,
     )
 
-    assert type(best_params) == dict
+    assert isinstance(best_params, dict)
 
 
 def test_model_testing_regression():
@@ -55,5 +54,4 @@ def test_model_testing_regression():
         X_train, y_train, full_pipeline, model_type, tie_breaker_scoring_method,
     )
 
-    assert type(best_params) == dict
-
+    assert isinstance(best_params, dict)

@@ -1,8 +1,8 @@
 import logging
 import sys
-import pandas as pd
-import numpy as np
 
+import numpy as np
+import pandas as pd
 from pythonjsonlogger import jsonlogger
 
 
@@ -41,4 +41,3 @@ class SetupMethods:
         np.set_printoptions(threshold=num_to_display)
         pd.set_option("display.max_columns", num_to_display)
         pd.set_option("display.max_rows", num_to_display)
-

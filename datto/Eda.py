@@ -44,7 +44,7 @@ class Eda:
 
     def find_cols_to_exclude(self, df):
         """
-        Returns columns that may not be helpful for model building. 
+        Returns columns that may not be helpful for model building.
 
         Exclusion criteria:
         - Possible PII (address, name, username, date, etc. in col name)

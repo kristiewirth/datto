@@ -5,7 +5,7 @@ import numpy as np
 
 class Experiments:
     def assign_condition_by_id(
-        self, id, conditions, proportions_by_conditions, random_state
+        self, user_id, conditions, proportions_by_conditions, random_state
     ):
         """
         Assign a given id to the same experimental condition every time for a consistent user experience.
@@ -35,7 +35,7 @@ class Experiments:
             np.array(proportions_by_conditions).sum() == 1.0
         ), "Need proportions to add up to 1."
 
-        md5_result = hashlib.md5(str(id).encode())
+        md5_result = hashlib.md5(str(user_id).encode())
         hex_string = md5_result.hexdigest()
 
         # Each hexadecimal character carries 4 bits of information.

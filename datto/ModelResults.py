@@ -1,6 +1,4 @@
-import csv
 import string
-import datetime
 from math import ceil
 from operator import itemgetter
 
@@ -17,7 +15,6 @@ from sklearn.feature_extraction.text import (
 )
 from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.metrics import (
-    accuracy_score,
     mean_squared_error,
     median_absolute_error,
     precision_score,
@@ -93,9 +90,7 @@ class ModelResults:
 
             topic_nums = list(np.arange(min_topics, max_topics, step))
 
-            proportions_list = []
-
-            texts = X[text_column_name].apply(lambda x: ct.lematize(x))
+            texts = X[text_column_name].apply(ct.lematize)
 
             # In gensim a dictionary is a mapping between words and their integer id
             dictionary = Dictionary(texts)
@@ -183,7 +178,7 @@ class ModelResults:
             ]
         )
 
-        topic_words_df["topic_num"] = [x for x in topic_words.keys()]
+        topic_words_df["topic_num"] = [k for k, _ in topic_words.items()]
         topic_words_df["num_in_category"] = (
             combined_df.groupby("top_topic_num").count().iloc[:, 0]
         )
@@ -216,11 +211,11 @@ class ModelResults:
             combined_df[["index", text_column_name, "top_topic_num"]],
         )
 
-    def coefficients_graph(self, X, model, type, tree_based=False):
+    def coefficients_graph(self, X, model, model_type, tree_based=False):
         """
         Displays graph of feature importances.
 
-        * Number of horizontal axis indicates magnitude of effect on 
+        * Number of horizontal axis indicates magnitude of effect on
             target variable (e.g. affected by 0.25)
         * Red/blue indicates feature value (increasing or decreasing feature has _ effect)
         * Blue & red mixed together indicate there isn't a clear effect on the target variable
@@ -229,19 +224,19 @@ class ModelResults:
         --------
         X: pd.DataFrame
         model: fit model object
-        type: str
+        model_type: str
             "classification" or "regression"
         tree_based: boolean
             Flag for if your model is tree based
         """
         # Tree based explainer is faster, use if it works with your model
-        if type == "regression" and tree_based:
+        if model_type == "regression" and tree_based:
             explainer = shap.TreeExplainer(model.predict, X)
-        elif type == "classification" and tree_based:
+        elif model_type == "classification" and tree_based:
             explainer = shap.TreeExplainer(model.predict_proba, X)
-        elif type == "regression":
+        elif model_type == "regression":
             explainer = shap.KernelExplainer(model.predict, X)
-        elif type == "classification":
+        elif model_type == "classification":
             explainer = shap.KernelExplainer(model.predict_proba, X)
         shap_values = explainer.shap_values(X)
         shap.summary_plot(shap_values, X)
@@ -278,8 +273,8 @@ class ModelResults:
         else:
             model = ElasticNet(**params)
 
-        for i in range(num_repetitions):
-            X_train, X_test, y_train, y_test = train_test_split(X, y)
+        for _ in range(num_repetitions):
+            X_train, _, y_train, _ = train_test_split(X, y)
             model.fit(X_train, y_train)
             coefs = model.coef_[0]
 
@@ -411,18 +406,18 @@ class ModelResults:
         overall_counts_df = pd.DataFrame(columns=["group_name", "top_words_and_counts"])
         i = 0
         for row in sums_by_col.index:
-            dict = {}
+            dict_scores = {}
             temp_df = pd.DataFrame(columns=["group_name", "top_words_and_counts"])
             temp_df["group_name"] = [row]
             top_columns = sums_by_col.columns[
                 sums_indices_descending[i][:num_examples]
             ].values
             top_counts = sums_values_descending[i][:num_examples]
-            [dict.update({x: y}) for x, y in zip(top_columns, top_counts)]
-            temp_df["top_words_and_counts"] = [dict]
+            [dict_scores.update({x: y}) for x, y in zip(top_columns, top_counts)]
+            temp_df["top_words_and_counts"] = [dict_scores]
             overall_counts_df = overall_counts_df.append([temp_df])
             print(f"Group Name: {row}\n")
-            for k, v in dict.items():
+            for k, v in dict_scores.items():
                 print(k, v)
             print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
             i += 1

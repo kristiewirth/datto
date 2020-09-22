@@ -7,4 +7,4 @@ s = SetupMethods()
 
 def test_setup_logger():
     logger = s.setup_logger()
-    assert type(logger) == logging.RootLogger
+    assert isinstance(logger, logging.RootLogger)

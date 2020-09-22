@@ -1,23 +1,9 @@
-import json
 import os
 import pickle
-from datetime import datetime
-from time import sleep, time
-from typing import Any, Dict, List
-from uuid import uuid4
 
 import pandas as pd
 import psycopg2
-import requests
 import s3fs
-from dotenv import load_dotenv
-from kafka import KafkaProducer
-from kafka.errors import NoBrokersAvailable
-from tqdm import tqdm
-
-from datto.SetupMethods import SetupMethods
-
-load_dotenv()
 
 
 class S3Connections:
@@ -111,7 +97,7 @@ class SQLConnections:
 
     def run_sql_redshift(self, query):
         """
-        Pandas doesn't integrate with Redshift directly. 
+        Pandas doesn't integrate with Redshift directly.
         Instead use psycopg2 to connect and transform results into a DataFrame manually.
 
         Parameters

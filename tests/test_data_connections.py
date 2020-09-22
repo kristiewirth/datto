@@ -1,6 +1,4 @@
-import os
-
-from hypothesis import example, given, strategies, settings
+from hypothesis import given, settings
 from hypothesis.extra.pandas import column, data_frames
 
 from datto.DataConnections import S3Connections, SQLConnections

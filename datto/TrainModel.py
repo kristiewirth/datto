@@ -1,10 +1,8 @@
 import csv
 import datetime
-import os
 import random
 
 import lightgbm as lgb
-import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.ensemble import (
@@ -17,7 +15,6 @@ from sklearn.ensemble import (
 )
 from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.model_selection import GridSearchCV
-from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from xgboost import XGBClassifier, XGBRegressor
@@ -179,7 +176,7 @@ class TrainModel:
             For classification: "precision", "recall", or "roc_auc"
             For regression: "neg_root_mean_squared_error", "neg_median_absolute_error", or "r2"
         save_to_csv: bool
-        
+
         Returns
         --------
         best_params: dict
@@ -292,7 +289,7 @@ class TrainModel:
             with open("model_results.csv", "w") as csvfile:
                 csvwriter = csv.writer(csvfile, delimiter=",")
                 csvwriter.writerow(model_results_df.columns)
-                for i, row in model_results_df.iterrows():
+                for _, row in model_results_df.iterrows():
                     csvwriter.writerow(row)
 
         return g.best_params_
