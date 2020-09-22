@@ -157,7 +157,13 @@ class TrainModel:
         return X_train, X_test, y_train, y_test
 
     def model_testing(
-        self, X_train, y_train, full_pipeline, model_type, tie_breaker_scoring_method,
+        self,
+        X_train,
+        y_train,
+        full_pipeline,
+        model_type,
+        tie_breaker_scoring_method,
+        save_to_csv=True,
     ):
         """
         Gridsearches using a Pipeline for best models/params out of a list of commonly used
@@ -254,37 +260,38 @@ class TrainModel:
             for x in formatted_scores[:5]
         ]
 
-        lst_dict = []
-        for model in all_scores[:5]:
-            d = dict()
-            for k, v in zip(
-                list(model[0].keys()) + lst_scoring_methods,
-                list(model[0].values()) + [x for x in model[1:]],
-            ):
-                d[k] = v
-            lst_dict.append(d)
+        if save_to_csv:
+            lst_dict = []
+            for model in all_scores[:5]:
+                d = dict()
+                for k, v in zip(
+                    list(model[0].keys()) + lst_scoring_methods,
+                    list(model[0].values()) + [x for x in model[1:]],
+                ):
+                    d[k] = v
+                lst_dict.append(d)
 
-        dateTimeObj = datetime.datetime.now()
-        timestampStr = dateTimeObj.strftime("%m-%d-%Y (%H:%M:%S.%f)")
+            dateTimeObj = datetime.datetime.now()
+            timestampStr = dateTimeObj.strftime("%m-%d-%Y (%H:%M:%S.%f)")
 
-        temp_df = pd.DataFrame(lst_dict)
-        temp_df["timestamp"] = timestampStr
+            temp_df = pd.DataFrame(lst_dict)
+            temp_df["timestamp"] = timestampStr
 
-        try:
-            previous_df = pd.read_csv("model_results.csv")
-            model_results_df = pd.concat([previous_df, temp_df], axis=0)
-            model_results_df.reset_index(inplace=True, drop=True)
-        except Exception:
-            model_results_df = temp_df
+            try:
+                previous_df = pd.read_csv("model_results.csv")
+                model_results_df = pd.concat([previous_df, temp_df], axis=0)
+                model_results_df.reset_index(inplace=True, drop=True)
+            except Exception:
+                model_results_df = temp_df
 
-        model_results_df = model_results_df.reindex(
-            sorted(model_results_df.columns), axis=1
-        )
+            model_results_df = model_results_df.reindex(
+                sorted(model_results_df.columns), axis=1
+            )
 
-        with open("model_results.csv", "w") as csvfile:
-            csvwriter = csv.writer(csvfile, delimiter=",")
-            csvwriter.writerow(model_results_df.columns)
-            for i, row in model_results_df.iterrows():
-                csvwriter.writerow(row)
+            with open("model_results.csv", "w") as csvfile:
+                csvwriter = csv.writer(csvfile, delimiter=",")
+                csvwriter.writerow(model_results_df.columns)
+                for i, row in model_results_df.iterrows():
+                    csvwriter.writerow(row)
 
         return g.best_params_
