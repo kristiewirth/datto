@@ -3,7 +3,7 @@ import os
 from hypothesis import example, given, strategies, settings
 from hypothesis.extra.pandas import column, data_frames
 
-from datto.DataConnections import S3Connections, SQLConnections, KafkaInterface
+from datto.DataConnections import S3Connections, SQLConnections
 
 s3 = S3Connections()
 
