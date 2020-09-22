@@ -26,6 +26,7 @@ lightgbm = "^3.0.0"
 catboost = "^0.24.1"
 shap = "^0.36.0"
 sphinx = "^3.2.1"
+sphinx-rtd-theme = "^0.5.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
