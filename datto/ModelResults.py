@@ -371,6 +371,7 @@ class ModelResults:
         count_words = pd.DataFrame(
             group_plus_vectors.groupby("group_column").count()["index"]
         )
+        count_words = count_words.loc[:, ~count_words.columns.duplicated()]
         # Fix for when "count" is an ngram column
         count_words.columns = ["count_ngrams"]
 
