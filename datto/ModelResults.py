@@ -360,7 +360,10 @@ class ModelResults:
         )
 
         cv = CountVectorizer(
-            stop_words=all_stop_words, ngram_range=(min_ngram, 3), min_df=num_times_min
+            stop_words=all_stop_words,
+            ngram_range=(min_ngram, 3),
+            min_df=num_times_min,
+            max_df=0.4,
         )
         vectors = cv.fit_transform(X[text_col_name]).todense()
         words = cv.get_feature_names()
