@@ -35,3 +35,6 @@ __pycache__/
 catboost_info/
 model_results.csv
 datto_examples_zapier.ipynb
+
+Golden path to machine learning external.ipynb
+titanic.csv
