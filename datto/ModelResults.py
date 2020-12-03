@@ -220,6 +220,7 @@ class ModelResults:
             target variable (e.g. affected by 0.25)
         * Red/blue indicates feature value (increasing or decreasing feature has _ effect)
         * Blue & red mixed together indicate there isn't a clear effect on the target variable
+        * Interpreting magnitude number / x axis - changes the predicted probability of y on average by _ percentage points (axis value * 100)
 
         Parameters
         --------
