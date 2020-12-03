@@ -21,6 +21,7 @@ from sklearn.metrics import (
     r2_score,
     recall_score,
     roc_auc_score,
+    accuracy_score,
 )
 from sklearn.model_selection import train_test_split
 
@@ -459,10 +460,12 @@ class ModelResults:
         if model_type == "classification":
             pscore = precision_score(y_test, y_predicted)
             rscore = recall_score(y_test, y_predicted)
+            accuracy = accuracy_score(y_test, y_predicted)
             roc_auc = roc_auc_score(y_test, y_predicted)
 
             print(f"Final Model Precision: {pscore}")
             print(f"Final Model Recall: {rscore}")
+            print(f"Final Model Accuracy: {accuracy}")
             print(f"Final Model ROC AUC: {roc_auc}")
 
             crosstab = pd.crosstab(
