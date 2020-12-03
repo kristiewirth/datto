@@ -255,12 +255,12 @@ class TrainModel:
         )
         [
             print("{}\n{}\n{}\n{}\n\n".format(x[0], x[1], x[2], x[3]))
-            for x in formatted_scores[:5]
+            for x in formatted_scores[:30]
         ]
 
         if save_to_csv:
             lst_dict = []
-            for model in all_scores[:5]:
+            for model in all_scores[:30]:
                 d = dict()
                 for k, v in zip(
                     list(model[0].keys()) + lst_scoring_methods,
