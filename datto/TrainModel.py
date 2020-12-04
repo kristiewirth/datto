@@ -173,7 +173,7 @@ class TrainModel:
         model_type: str
             'classification' or 'regression'
         tie_breaker_scoring_method: str
-            For classification: "precision", "recall", or "accuracy"
+            For classification: "precision", "recall", or "roc_auc"
             For regression: "neg_root_mean_squared_error", "neg_median_absolute_error", or "r2"
         save_to_csv: bool
 
@@ -182,7 +182,7 @@ class TrainModel:
         best_params: dict
         """
         if model_type == "classification":
-            lst_scoring_methods = ["precision", "recall", "accuracy"]
+            lst_scoring_methods = ["precision", "recall", "roc_auc"]
             param_list = self.classifier_param_list
         else:
             lst_scoring_methods = [
@@ -209,7 +209,7 @@ class TrainModel:
                     g.cv_results_["params"],
                     g.cv_results_["mean_test_recall"],
                     g.cv_results_["mean_test_precision"],
-                    g.cv_results_["mean_test_accuracy"],
+                    g.cv_results_["mean_test_roc_auc"],
                 )
             )
 
@@ -219,7 +219,7 @@ class TrainModel:
                     "Params: {}".format(x[0]),
                     "Mean Recall: {0:.4f}".format(x[1]),
                     "Mean Precision: {0:.4f}".format(x[2]),
-                    "Mean Accuracy: {0:.4f}".format(x[3]),
+                    "Mean ROC AUC: {0:.4f}".format(x[3]),
                 )
                 for x in all_scores
             ]
