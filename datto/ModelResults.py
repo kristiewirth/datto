@@ -212,118 +212,36 @@ class ModelResults:
             combined_df[["index", text_column_name, "top_topic_num"]],
         )
 
-    def coefficients_graph(self, X, model, model_type, tree_based=False):
+    def coefficients_graph(self, X_train, X_test, model):
         """
         Displays graph of feature importances.
 
         * Number of horizontal axis indicates magnitude of effect on
             target variable (e.g. affected by 0.25)
-        * Red/blue indicates feature value (increasing or decreasing feature has _ effect)
-        * Blue & red mixed together indicate there isn't a clear effect on the target variable
-        * Interpreting magnitude number / x axis - changes the predicted probability of y on average by _ percentage points (axis value * 100)
+        * Red/blue indicates feature value (increasing or decreasing feature 
+            has _ effect)
+        * Blue & red mixed together indicate there isn't a clear 
+            effect on the target variable
+        * Interpreting magnitude number / x axis - changes the 
+            predicted probability of y on average by _ percentage points (axis value * 100)
 
         Parameters
         --------
-        X: pd.DataFrame
+        X_train: pd.DataFrame
+        X_test: pd.DataFrame
         model: fit model object
-        model_type: str
-            "classification" or "regression"
-        tree_based: boolean
-            Flag for if your model is tree based
         """
-        # Tree based explainer is faster, use if it works with your model
-        if model_type == "regression" and tree_based:
-            explainer = shap.TreeExplainer(model.predict, X)
-        elif model_type == "classification" and tree_based:
-            explainer = shap.TreeExplainer(model.predict_proba, X)
-        elif model_type == "regression":
-            explainer = shap.KernelExplainer(model.predict, X)
-        elif model_type == "classification":
-            explainer = shap.KernelExplainer(model.predict_proba, X)
-        shap_values = explainer.shap_values(X)
-        shap.summary_plot(shap_values, X)
-
-    def coefficients_summary(
-        self, X, y, num_repetitions, num_coefficients, model_type, params={}
-    ):
-        """
-        Prints average coefficient values using a regression model.
-
-        Parameters
-        --------
-        X: DataFrame
-        y: DataFrame
-        num_repetitions: int
-            Number of times to create models
-        num_coefficients: int
-            Number of top coefficients to display
-        model_type: str
-            'classification' or 'regression'
-        params: dict
-            Optional - add to change regression params, otherwise use default
-
-        Returns
-        --------
-        simplified_df: DataFrame
-            Has mean, median, and standard deviation for coefficients after several runs
-
-        """
-        coefficients_df = pd.DataFrame(columns=["features", "coefficients"])
-
-        if model_type == "classification":
-            model = LogisticRegression(**params)
+        # Get probabilities for True class
+        f = lambda x: model.predict_proba(x)[:, 1]
+        med = X_train.median().values.reshape((1, X_train.shape[1]))
+        explainer = shap.KernelExplainer(f, med)
+        # Runs too slow if X_test is huge, take a representative sample
+        if X_test.shape[0] > 20000:
+            X_test_sample = X_test.sample(20000)
         else:
-            model = ElasticNet(**params)
-
-        for _ in range(num_repetitions):
-            X_train, _, y_train, _ = train_test_split(X, y)
-            model.fit(X_train, y_train)
-            coefs = model.coef_[0]
-
-            temp_df = pd.DataFrame(
-                [x for x in zip(X_train.columns, coefs)],
-                columns=["features", "coefficients"],
-            )
-
-            coefficients_df = coefficients_df.append(temp_df)
-
-        column_of_interest = "coefficients"
-
-        summary_coefficients_df = pd.DataFrame(
-            coefficients_df.groupby("features").agg(
-                {column_of_interest: ["mean", "std", "median"]}
-            )
-        )
-
-        summary_coefficients_df.columns = ["mean", "std", "median"]
-
-        summary_coefficients_df.reset_index(inplace=True)
-
-        value_counts_df = pd.DataFrame(columns=["features"])
-        for col in X_train.columns:
-            temp_df = pd.DataFrame([[col,]], columns=["features"],)
-            value_counts_df = value_counts_df.append(temp_df)
-        value_counts_df.reset_index(inplace=True, drop=True)
-
-        combined_df = summary_coefficients_df.merge(
-            value_counts_df, on="features", how="left"
-        )
-
-        combined_df["abs_val_mean"] = abs(combined_df["mean"])
-
-        combined_df.sort_values("abs_val_mean", inplace=True, ascending=False)
-
-        simplified_df = (
-            combined_df[["features", "mean", "std", "median"]]
-            .head(num_coefficients)
-            .round(7)
-        )
-
-        # 7 is the most before it flips back to scientific notation
-        print("Coefficients summary (descending by mean abs value):")
-        print(simplified_df)
-
-        return simplified_df
+            X_test_sample = X_test
+        shap_values = explainer.shap_values(X_test_sample)
+        shap.summary_plot(shap_values, X_test_sample)
 
     def most_common_words_by_group(
         self, X, text_col_name, group_col_name, num_examples, num_times_min, min_ngram,
