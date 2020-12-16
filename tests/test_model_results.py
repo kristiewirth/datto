@@ -106,10 +106,12 @@ def test_score_final_model_regression():
 def test_coefficients_graph_classification():
     model = LogisticRegression()
     model.fit(X_train, y_train)
-    mr.coefficients_graph(X_train, model, "classification", tree_based=False)
+    mr.coefficients_graph(
+        X_train, X_test, model, "classification", "classification_test"
+    )
 
 
 def test_coefficients_graph_regression():
     model = ElasticNet()
     model.fit(X_train, y_train)
-    mr.coefficients_graph(X_train, model, "regression", tree_based=False)
+    mr.coefficients_graph(X_train, X_test, model, "regression", "regression_test")
