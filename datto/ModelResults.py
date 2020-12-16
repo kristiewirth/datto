@@ -2,6 +2,7 @@ import string
 from math import ceil
 from operator import itemgetter
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import shap
@@ -15,13 +16,13 @@ from sklearn.feature_extraction.text import (
 )
 from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.metrics import (
+    accuracy_score,
     mean_squared_error,
     median_absolute_error,
     precision_score,
     r2_score,
     recall_score,
     roc_auc_score,
-    accuracy_score,
 )
 from sklearn.model_selection import train_test_split
 
@@ -212,7 +213,7 @@ class ModelResults:
             combined_df[["index", text_column_name, "top_topic_num"]],
         )
 
-    def coefficients_graph(self, X_train, X_test, model):
+    def coefficients_graph(self, X_train, X_test, model, model_type, filename):
         """
         Displays graph of feature importances.
 
@@ -222,7 +223,7 @@ class ModelResults:
             has _ effect)
         * Blue & red mixed together indicate there isn't a clear 
             effect on the target variable
-        * Interpreting magnitude number / x axis - changes the 
+        * For classification - interpreting magnitude number / x axis - changes the 
             predicted probability of y on average by _ percentage points (axis value * 100)
 
         Parameters
@@ -230,9 +231,14 @@ class ModelResults:
         X_train: pd.DataFrame
         X_test: pd.DataFrame
         model: fit model object
+        model_type: str
+            'classification' or 'regression'
+        filename: str
         """
-        # Get probabilities for True class
-        f = lambda x: model.predict_proba(x)[:, 1]
+        if model_type.lower() == "classification":
+            f = lambda x: model.predict_proba(x)[:, 1]
+        else:
+            f = lambda x: model.predict(x)
         med = X_train.median().values.reshape((1, X_train.shape[1]))
         explainer = shap.KernelExplainer(f, med)
         # Runs too slow if X_test is huge, take a representative sample
@@ -242,6 +248,8 @@ class ModelResults:
             X_test_sample = X_test
         shap_values = explainer.shap_values(X_test_sample)
         shap.summary_plot(shap_values, X_test_sample)
+        plt.tight_layout()
+        plt.savefig(filename)
 
     def most_common_words_by_group(
         self, X, text_col_name, group_col_name, num_examples, num_times_min, min_ngram,
@@ -376,7 +384,7 @@ class ModelResults:
         # Predict actual scores
         y_predicted = full_pipeline.predict(X_test)
 
-        if model_type == "classification":
+        if model_type.lower() == "classification":
             pscore = precision_score(y_test, y_predicted)
             rscore = recall_score(y_test, y_predicted)
             accuracy = accuracy_score(y_test, y_predicted)
