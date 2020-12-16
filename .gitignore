@@ -38,3 +38,5 @@ datto_examples_zapier.ipynb
 
 Golden path to machine learning external.ipynb
 titanic.csv
+*.png
+datto/*.png
