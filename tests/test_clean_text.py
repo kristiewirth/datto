@@ -7,6 +7,24 @@ from datto.CleanText import CleanText
 
 ct = CleanText()
 
+df = pd.DataFrame(
+    [
+        ["some text", 1, 1.2],
+        ["some other text", 1, 1.4],
+        ["i like bananas", 2, 6.5],
+        ["i like apples", 2, 7.5],
+        ["some text", 1, 1.2],
+        ["some other text", 1, 1.4],
+        ["i like bananas", 2, 6.5],
+        ["i like apples", 2, 7.5],
+        ["some text", 1, 1.2],
+        ["some other text", 1, 1.4],
+        ["i like bananas", 2, 6.5],
+        ["i like apples", 2, 7.5],
+    ],
+    columns=["text", "int", "float"],
+)
+
 
 def test_remove_names():
     text = "Hello John, how are you doing?"
@@ -90,31 +108,21 @@ def test_fix_col_data_type(df):
 
 
 def test_compress_df():
-    df = pd.DataFrame(
-        [
-            ["some text", 1, 1.2],
-            ["some other text", 1, 1.4],
-            ["i like bananas", 2, 6.5],
-            ["i like apples", 2, 7.5],
-            ["some text", 1, 1.2],
-            ["some other text", 1, 1.4],
-            ["i like bananas", 2, 6.5],
-            ["i like apples", 2, 7.5],
-            ["some text", 1, 1.2],
-            ["some other text", 1, 1.4],
-            ["i like bananas", 2, 6.5],
-            ["i like apples", 2, 7.5],
-        ],
-        columns=["text", "int", "float"],
-    )
     compressed_df = ct.compress_df(df)
     assert compressed_df["int"].dtype == "uint8"
     assert compressed_df["float"].dtype == "float32"
     assert compressed_df["text"].dtype == "category"
 
-    def test_make_uuid(id):
-        id = "609390d88cff44269c2e293bd6b89a0b"
-        id = ct.make_uuid(id)
-        assert id == "609390d8-8cff-4426-9c2e-293bd6b89a0b"
+
+def test_make_uuid():
+    id = "609390d88cff44269c2e293bd6b89a0b"
+    uuid = ct.make_uuid(id)
+    assert uuid == "609390d8-8cff-4426-9c2e-293bd6b89a0b"
 
 
+def test_most_common_only():
+    col = "text"
+    num = 1
+
+    df_cleaned = ct.df_most_common_only(df, col, num)
+    assert df_cleaned.shape[0] < df.shape[0]
