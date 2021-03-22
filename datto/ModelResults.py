@@ -242,8 +242,8 @@ class ModelResults:
         med = X_train.median().values.reshape((1, X_train.shape[1]))
         explainer = shap.KernelExplainer(f, med)
         # Runs too slow if X_test is huge, take a representative sample
-        if X_test.shape[0] > 20000:
-            X_test_sample = X_test.sample(20000)
+        if X_test.shape[0] > 1000:
+            X_test_sample = X_test.sample(1000)
         else:
             X_test_sample = X_test
         shap_values = explainer.shap_values(X_test_sample)
