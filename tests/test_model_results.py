@@ -126,3 +126,28 @@ def test_coefficients_graph_regression():
 def test_coefficients_summary():
     results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "classification")
     assert results_df.shape[0] == 3
+
+
+def test_coefficients_individual_predictions_classification():
+    model = LogisticRegression()
+    trained_model = model.fit(X_train, y_train)
+    id_col = "id"
+    num_samples = 10
+    model_type = "classification"
+    class_names = ["False", "True"]
+    features_list = mr.coefficients_individual_predictions(
+        trained_model, X_train, X_test, id_col, num_samples, model_type, class_names
+    )
+    assert isinstance(features_list, list)
+
+
+def test_coefficients_individual_predictions_regression():
+    model = ElasticNet()
+    trained_model = model.fit(X_train, y_train)
+    id_col = "id"
+    num_samples = 10
+    model_type = "regression"
+    features_list = mr.coefficients_individual_predictions(
+        trained_model, X_train, X_test, id_col, num_samples, model_type
+    )
+    assert isinstance(features_list, list)

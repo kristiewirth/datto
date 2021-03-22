@@ -497,3 +497,92 @@ class ModelResults:
         print(simplified_df)
 
         return simplified_df
+
+    def coefficients_individual_predictions(
+        self,
+        trained_model,
+        X_train,
+        X_test,
+        id_col,
+        num_samples,
+        model_type,
+        class_names=["False", "True"],
+    ):
+        def model_preds_adjusted(data):
+            if model_type.lower() == "classification":
+                predictions = np.array(trained_model.predict_proba(data))
+            else:
+                predictions = np.array(trained_model.predict(data))
+            return predictions
+
+        if model_type.lower() == "classification":
+            explainer = lime.lime_tabular.LimeTabularExplainer(
+                np.array(X_train),
+                feature_names=X_train.columns,
+                class_names=class_names,
+                mode="classification",
+            )
+        else:
+            explainer = lime.lime_tabular.LimeTabularExplainer(
+                np.array(X_train),
+                feature_names=X_train.columns,
+                class_names=class_names,
+                mode="regression",
+            )
+
+        for i in range(num_samples):
+            user_idx = randrange(X_test.shape[0])
+            exp = explainer.explain_instance(
+                np.array(X_test.iloc[user_idx]),
+                model_preds_adjusted,
+                num_features=50,
+                top_labels=10,
+            )
+
+            user_id = X_test.iloc[user_idx][id_col]
+            print(f"\nUser: {user_id}")
+
+            if model_type.lower() == "classification":
+                prediction = class_names[
+                    trained_model.predict_proba(
+                        pd.DataFrame(X_test.iloc[user_idx]).T
+                    ).argmax()
+                ]
+            else:
+                prediction = round(
+                    trained_model.predict(pd.DataFrame(X_test.iloc[user_idx]).T)[0], 7
+                )
+
+            print('We predicted "{}" for this user because...\n'.format(prediction))
+            features_list = []
+            for feature in exp.as_list():
+                features_list.append({user_id: exp.as_list()})
+                try:
+                    feature_name = re.findall("<.*<|>.*>", feature[0])[0]
+                except Exception:
+                    feature_name = re.findall(".*<|.*>", feature[0])[0]
+                cleaned_feature_name = (
+                    feature_name.replace("<=", "")
+                    .replace(">=", "")
+                    .replace("<", "")
+                    .replace(">", "")
+                    .strip()
+                )
+                comparison_val = float(
+                    feature[0].split(" <")[-1].split(" >")[-1].split("=")[-1].strip()
+                )
+                actual_feature_val = X_test.iloc[user_idx][cleaned_feature_name]
+                last_operator = feature[0].split(" ")[-2]
+
+                if "<" in last_operator and actual_feature_val <= comparison_val:
+                    print(" * This is true: " + feature[0])
+                else:
+                    print(" * This is false: " + feature[0])
+            exp.as_pyplot_figure()
+            plt.tight_layout()
+            plt.savefig(f"lime_graph_user_{user_id}.png")
+
+            print("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+
+        return features_list
+
