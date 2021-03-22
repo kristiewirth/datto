@@ -200,3 +200,22 @@ class CleanText:
                 df[col] = pd.to_numeric(df[col], downcast="float")
 
         return df
+
+    def make_uuid(self, id):
+        """
+        Make a UUID from a text string
+
+        Parameters
+        --------
+        id: str
+
+        Returns
+        --------
+        uuid: str
+
+        """
+        return (
+            id[:8] + "-" + id[8:12] + "-" + id[12:16] + "-" + id[16:20] + "-" + id[20:]
+        )
+
+    def df_most_common_only(self, df, col, num):

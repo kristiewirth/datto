@@ -111,3 +111,10 @@ def test_compress_df():
     assert compressed_df["int"].dtype == "uint8"
     assert compressed_df["float"].dtype == "float32"
     assert compressed_df["text"].dtype == "category"
+
+    def test_make_uuid(id):
+        id = "609390d88cff44269c2e293bd6b89a0b"
+        id = ct.make_uuid(id)
+        assert id == "609390d8-8cff-4426-9c2e-293bd6b89a0b"
+
+
