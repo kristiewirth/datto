@@ -1,7 +1,11 @@
+import re
 import string
 from math import ceil
 from operator import itemgetter
+from random import randrange
 
+import lime
+import lime.lime_tabular
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -443,14 +447,18 @@ class ModelResults:
         coefficients_df = pd.DataFrame(columns=["features", "coefficients"])
 
         for _ in range(num_repetitions):
-            if model_type == "classification":
+            if model_type.lower() == "classification":
                 model = LogisticRegression(**params)
             else:
                 model = ElasticNet(**params)
 
             X_train, _, y_train, _ = train_test_split(X, y)
             model.fit(X_train, y_train)
-            coefs = model.coef_[0]
+
+            if model_type.lower() == "classification":
+                coefs = model.coef_[0]
+            else:
+                coefs = model.coef_
 
             temp_df = pd.DataFrame(
                 [x for x in zip(X_train.columns, coefs)],

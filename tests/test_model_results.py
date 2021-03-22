@@ -123,8 +123,13 @@ def test_coefficients_graph_regression():
     assert type(shap_values) is np.ndarray
 
 
-def test_coefficients_summary():
+def test_coefficients_summary_classification():
     results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "classification")
+    assert results_df.shape[0] == 3
+
+
+def test_coefficients_summary_regression():
+    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "regression")
     assert results_df.shape[0] == 3
 
 
