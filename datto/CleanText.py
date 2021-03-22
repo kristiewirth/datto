@@ -1,6 +1,7 @@
 import os
 import re
 import string
+from collections import Counter
 
 import numpy as np
 import pandas as pd
@@ -237,3 +238,61 @@ class CleanText:
         df = df[df[col].isin(most_common_lst)]
         return df
 
+    def batch_pandas_operation(self, df, num_splits, identifier_col, func):
+        """
+        Use a function on a Pandas DataFrame in chunks for faster processing.
+
+        Parameters
+        --------
+        df: DataFrame
+        num_splits: int
+        identifier_col: str
+        func: Function
+
+        Returns
+        --------
+        new_df: DataFrame
+
+        """
+        new_df = pd.DataFrame()
+        ids = df[identifier_col].unique()
+        division = len(ids) / float(num_splits)
+        part_ids = [
+            ids[int(round(division * i)) : int(round(division * (i + 1)))]
+            for i in range(num_splits)
+        ]
+        for lst in part_ids:
+            temp_df = df[df[identifier_col].isin(lst)]
+            new_df = new_df.append(func(temp_df))
+
+        return new_df
+
+    def batch_merge_operation(self, df_1, df_2, num_splits, identifier_col, merge_col):
+        """
+        Merge two Pandas DataFrame in chunks for faster processing.
+
+        Parameters
+        --------
+        df_1: DataFrame
+        df_2: DataFrame
+        num_splits: int
+        identifier_col: str
+        merge_col: str
+
+        Returns
+        --------
+        new_df: DataFrame
+
+        """
+        new_df = pd.DataFrame()
+        ids = df_1[identifier_col].unique()
+        division = len(ids) / float(num_splits)
+        part_ids = [
+            ids[int(round(division * i)) : int(round(division * (i + 1)))]
+            for i in range(num_splits)
+        ]
+        for lst in part_ids:
+            temp_df = df_1[df_1[identifier_col].isin(lst)]
+            temp_df = pd.merge(temp_df, df_2, how="left", on=merge_col)
+            new_df = new_df.append(temp_df)
+        return new_df

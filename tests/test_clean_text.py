@@ -26,6 +26,11 @@ df = pd.DataFrame(
 )
 
 
+def replace_text_test(df):
+    df["text"] = df["text"].apply(lambda x: x.replace("i like", "i love"))
+    return df
+
+
 def test_remove_names():
     text = "Hello John, how are you doing?"
     cleaned_text = ct.remove_names(text)
@@ -126,3 +131,24 @@ def test_most_common_only():
 
     df_cleaned = ct.df_most_common_only(df, col, num)
     assert df_cleaned.shape[0] < df.shape[0]
+
+
+def test_batch_pandas_operation():
+    num_splits = 2
+    identifier_col = "int"
+    new_df = ct.batch_pandas_operation(
+        df, num_splits, identifier_col, replace_text_test
+    )
+    assert not new_df["text"].apply(lambda x: "i like" in x).max()
+
+
+def test_batch_merge_operation():
+    df_1 = df.copy()
+    df_2 = df.copy()
+    num_splits = 2
+    identifier_col = "int"
+    merge_col = "int"
+    merged_df = ct.batch_merge_operation(
+        df_1, df_2, num_splits, identifier_col, merge_col
+    )
+    assert merged_df.shape[1] == 5
