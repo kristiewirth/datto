@@ -57,18 +57,8 @@ class TrainModel:
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
-            {
-                "model": [lgb.LGBMClassifier()],
-                "model__learning_rate": [0.001, 0.01, 0.1],
-                "model__n_estimators": [5, 10, 15],
-                "model__num_leaves": [5, 10, 15],
-            },
-            {
-                "model": [CatBoostClassifier()],
-                "model__learning_rate": [0.001, 0.01, 0.1],
-                "model__depth": [5, 10, 15],
-                "model__l2_leaf_reg": [5, 10, 15],
-            },
+            {"model": [lgb.LGBMClassifier()], "model__learning_rate": [0.01],},
+            {"model": [CatBoostClassifier()], "model__learning_rate": [0.01],},
         ]
 
         self.regressor_param_list = [
@@ -107,18 +97,8 @@ class TrainModel:
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
-            {
-                "model": [lgb.LGBMRegressor()],
-                "model__learning_rate": [0.001, 0.01, 0.1],
-                "model__n_estimators": [5, 10, 15],
-                "model__num_leaves": [5, 10, 15],
-            },
-            {
-                "model": [CatBoostRegressor()],
-                "model__learning_rate": [0.001, 0.01, 0.1],
-                "model__depth": [5, 10, 15],
-                "model__l2_leaf_reg": [5, 10, 15],
-            },
+            {"model": [lgb.LGBMRegressor()], "model__learning_rate": [0.01],},
+            {"model": [CatBoostRegressor()], "model__learning_rate": [0.01],},
         ]
 
     def train_test_split_by_ids(self, df, id_col, target_col, prop_train):
@@ -182,7 +162,7 @@ class TrainModel:
         best_params: dict
         """
         if model_type == "classification":
-            lst_scoring_methods = ["precision", "recall", "roc_auc"]
+            lst_scoring_methods = ["recall", "precision", "roc_auc"]
             param_list = self.classifier_param_list
         else:
             lst_scoring_methods = [
