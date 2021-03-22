@@ -251,6 +251,8 @@ class ModelResults:
         plt.tight_layout()
         plt.savefig(filename)
 
+        return shap_values
+
     def most_common_words_by_group(
         self, X, text_col_name, group_col_name, num_examples, num_times_min, min_ngram,
     ):
