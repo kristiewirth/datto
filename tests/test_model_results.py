@@ -115,3 +115,9 @@ def test_coefficients_graph_regression():
     model = ElasticNet()
     model.fit(X_train, y_train)
     mr.coefficients_graph(X_train, X_test, model, "regression", "regression_test")
+
+
+def test_coefficients_summary():
+    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "classification")
+
+    assert results_df.shape[0] == 3

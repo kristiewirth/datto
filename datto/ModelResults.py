@@ -415,3 +415,83 @@ class ModelResults:
             print(f"Mean R2: {r2}")
 
         return full_pipeline, y_predicted
+
+    def coefficients_summary(
+        self, X, y, num_repetitions, num_coefficients, model_type, params={}
+    ):
+        """
+        Prints average coefficient values using a regression model.
+        Parameters
+        --------
+        X: DataFrame
+        y: DataFrame
+        num_repetitions: int
+            Number of times to create models
+        num_coefficients: int
+            Number of top coefficients to display
+        model_type: str
+            'classification' or 'regression'
+        params: dict
+            Optional - add to change regression params, otherwise use default
+        Returns
+        --------
+        simplified_df: DataFrame
+            Has mean, median, and standard deviation for coefficients after several runs
+        """
+        coefficients_df = pd.DataFrame(columns=["features", "coefficients"])
+
+        for _ in range(num_repetitions):
+            if model_type == "classification":
+                model = LogisticRegression(**params)
+            else:
+                model = ElasticNet(**params)
+
+            X_train, _, y_train, _ = train_test_split(X, y)
+            model.fit(X_train, y_train)
+            coefs = model.coef_[0]
+
+            temp_df = pd.DataFrame(
+                [x for x in zip(X_train.columns, coefs)],
+                columns=["features", "coefficients"],
+            )
+
+            coefficients_df = coefficients_df.append(temp_df)
+
+        column_of_interest = "coefficients"
+
+        summary_coefficients_df = pd.DataFrame(
+            coefficients_df.groupby("features").agg(
+                {column_of_interest: ["mean", "std", "median"]}
+            )
+        )
+
+        summary_coefficients_df.columns = ["mean", "std", "median"]
+
+        summary_coefficients_df.reset_index(inplace=True)
+
+        value_counts_df = pd.DataFrame(columns=["features"])
+        for col in X_train.columns:
+            temp_df = pd.DataFrame([[col,]], columns=["features"],)
+            value_counts_df = value_counts_df.append(temp_df)
+        value_counts_df.reset_index(inplace=True, drop=True)
+
+        combined_df = summary_coefficients_df.merge(
+            value_counts_df, on="features", how="left"
+        )
+
+        combined_df["abs_val_mean"] = abs(combined_df["mean"])
+        combined_df["abs_val_to_se"] = abs(combined_df["mean"]) / combined_df["std"]
+
+        combined_df.sort_values("abs_val_to_se", inplace=True, ascending=False)
+
+        simplified_df = (
+            combined_df[["features", "mean", "std", "median", "abs_val_to_se"]]
+            .head(num_coefficients)
+            .round(7)
+        )
+
+        # 7 is the most before it flips back to scientific notation
+        print("Coefficients summary (descending by mean abs se value):")
+        print(simplified_df)
+
+        return simplified_df
