@@ -16,6 +16,7 @@ from sklearn.ensemble import (
 from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier, MLPRegressor
+from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from xgboost import XGBClassifier, XGBRegressor
 
@@ -137,19 +138,18 @@ class TrainModel:
         self,
         X_train,
         y_train,
-        full_pipeline,
         model_type,
         tie_breaker_scoring_method,
         save_to_csv=True,
     ):
         """
-        Gridsearches using a Pipeline for best models/params out of a list of commonly used
+        Gridsearches using a model for best models/params out of a list of commonly used
 
         Parameters
         --------
         X_train: DataFrame
         y_train: DataFrame
-        full_pipeline: sklearn Pipeline
+        model: sklearn model
         model_type: str
             'classification' or 'regression'
         tie_breaker_scoring_method: str
@@ -162,9 +162,11 @@ class TrainModel:
         best_params: dict
         """
         if model_type == "classification":
+            model = Pipeline([("model", LogisticRegression()),])
             lst_scoring_methods = ["recall", "precision", "roc_auc"]
             param_list = self.classifier_param_list
         else:
+            model = Pipeline([("model", ElasticNet()),])
             lst_scoring_methods = [
                 "neg_root_mean_squared_error",
                 "neg_median_absolute_error",
@@ -173,7 +175,7 @@ class TrainModel:
             param_list = self.regressor_param_list
 
         g = GridSearchCV(
-            full_pipeline,
+            model,
             param_list,
             cv=3,
             n_jobs=-2,

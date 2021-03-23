@@ -366,9 +366,7 @@ class ModelResults:
 
         return overall_counts_df
 
-    def score_final_model(
-        self, model_type, X_train, y_train, X_test, y_test, full_pipeline
-    ):
+    def score_final_model(self, model_type, X_test, y_test, trained_model):
         """
         Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.
         Run it after you have chosen your model & parameters to avoid problems with overfitting.
@@ -376,23 +374,18 @@ class ModelResults:
         Parameters
         --------
         model_type: str
-        X_train: DataFrame
-        y_train: DataFrame
         X_test: DataFrame
         y_test: DataFrame
-        full_pipeline: sklearn Pipeline
+        trained_model: sklearn model
 
         Returns
         --------
-        full_pipeline: model
+        model: model
             Fit model
         y_predicted: array
         """
-        # Fitting the final model
-        full_pipeline.fit(X_train, y_train)
-
         # Predict actual scores
-        y_predicted = full_pipeline.predict(X_test)
+        y_predicted = trained_model.predict(X_test)
 
         if model_type.lower() == "classification":
             pscore = precision_score(y_test, y_predicted)
@@ -424,7 +417,7 @@ class ModelResults:
             print(f"Mean Negative Median Absolute Error: {mae * -1}")
             print(f"Mean R2: {r2}")
 
-        return full_pipeline, y_predicted
+        return trained_model, y_predicted
 
     def coefficients_summary(
         self, X, y, num_repetitions, num_coefficients, model_type, params={}

@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import ElasticNet, LogisticRegression
-from sklearn.pipeline import Pipeline
 
 from datto.ModelResults import ModelResults
 
@@ -87,19 +86,19 @@ def test_most_common_words_by_group():
 
 
 def test_score_final_model_classification():
-    full_pipeline = Pipeline([("model", LogisticRegression()),])
+    model = LogisticRegression()
+    trained_model = model.fit(X_train, y_train)
     _, y_predicted = mr.score_final_model(
-        "classification", X_train, y_train, X_test, y_test, full_pipeline
+        "classification", X_test, y_test, trained_model
     )
 
     assert len(y_predicted) == y_test.shape[0]
 
 
 def test_score_final_model_regression():
-    full_pipeline = Pipeline([("model", ElasticNet()),])
-    _, y_predicted = mr.score_final_model(
-        "regression", X_train, y_train, X_test, y_test, full_pipeline
-    )
+    model = ElasticNet()
+    trained_model = model.fit(X_train, y_train)
+    _, y_predicted = mr.score_final_model("regression", X_test, y_test, trained_model)
 
     assert len(y_predicted) == y_test.shape[0]
 
@@ -138,7 +137,7 @@ def test_coefficients_individual_predictions_classification():
     model = LogisticRegression()
     trained_model = model.fit(X_train, y_train)
     id_col = "id"
-    num_samples = 10
+    num_samples = 3
     model_type = "classification"
     class_names = ["False", "True"]
     features_list = mr.coefficients_individual_predictions(
@@ -151,7 +150,7 @@ def test_coefficients_individual_predictions_regression():
     model = ElasticNet()
     trained_model = model.fit(X_train, y_train)
     id_col = "id"
-    num_samples = 10
+    num_samples = 3
     model_type = "regression"
     features_list = mr.coefficients_individual_predictions(
         trained_model, X_train, X_test, id_col, num_samples, model_type
