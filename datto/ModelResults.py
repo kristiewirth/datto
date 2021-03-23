@@ -29,12 +29,15 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
 
 from datto.CleanText import CleanText
 
 
 class ModelResults:
-    def most_similar_texts(self, X, num_examples, text_column_name, num_topics=None):
+    def most_similar_texts(
+        self, X, num_examples, text_column_name, num_topics=None, chosen_stopwords=set()
+    ):
         """
         Uses NMF clustering to create n topics based on adjusted word frequencies
 
@@ -67,6 +70,7 @@ class ModelResults:
             | set(["-PRON-"])
             | set(string.punctuation)
             | set([" "])
+            | chosen_stopwords
         )
 
         ct = CleanText()
