@@ -424,6 +424,7 @@ class ModelResults:
     ):
         """
         Prints average coefficient values using a regression model.
+
         Parameters
         --------
         X: DataFrame
@@ -436,6 +437,7 @@ class ModelResults:
             'classification' or 'regression'
         params: dict
             Optional - add to change regression params, otherwise use default
+            
         Returns
         --------
         simplified_df: DataFrame
