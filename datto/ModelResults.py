@@ -18,7 +18,8 @@ from sklearn.feature_extraction.text import (
     CountVectorizer,
     TfidfVectorizer,
 )
-from sklearn.linear_model import ElasticNet, LogisticRegression
+from sklearn.linear_model import ElasticNet, LogisticRegression, SGDClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import (
     accuracy_score,
     mean_squared_error,
@@ -420,7 +421,14 @@ class ModelResults:
         return trained_model, y_predicted
 
     def coefficients_summary(
-        self, X, y, num_repetitions, num_coefficients, model_type, params={}
+        self,
+        X,
+        y,
+        num_repetitions,
+        num_coefficients,
+        model_type,
+        multiclass=False,
+        params={},
     ):
         """
         Prints average coefficient values using a regression model.
@@ -435,6 +443,7 @@ class ModelResults:
             Number of top coefficients to display
         model_type: str
             'classification' or 'regression'
+        multiclass: bool
         params: dict
             Optional - add to change regression params, otherwise use default
             
@@ -447,15 +456,20 @@ class ModelResults:
         X["intercept"] = 1
 
         for _ in range(num_repetitions):
-            if model_type.lower() == "classification":
+            if multiclass:
+                model = DecisionTreeClassifier()
+            elif model_type.lower() == "classification":
                 model = LogisticRegression(fit_intercept=False, **params)
             else:
                 model = ElasticNet(fit_intercept=False, **params)
 
             X_train, _, y_train, _ = train_test_split(X, y)
+
             model.fit(X_train, y_train)
 
-            if model_type.lower() == "classification":
+            if multiclass:
+                coefs = model.feature_importances_
+            elif model_type.lower() == "classification":
                 coefs = model.coef_[0]
             else:
                 coefs = model.coef_

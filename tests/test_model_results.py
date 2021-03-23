@@ -146,13 +146,12 @@ def test_coefficients_individual_predictions_classification():
     assert isinstance(features_list, list)
 
 
-def test_coefficients_individual_predictions_regression():
-    model = ElasticNet()
-    trained_model = model.fit(X_train, y_train)
-    id_col = "id"
-    num_samples = 3
-    model_type = "regression"
-    features_list = mr.coefficients_individual_predictions(
-        trained_model, X_train, X_test, id_col, num_samples, model_type
+def test_coefficients_summary_multiclass():
+    y_train = pd.DataFrame(
+        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1],],
+        columns=["var1", "var2"],
     )
-    assert isinstance(features_list, list)
+    results_df = mr.coefficients_summary(
+        X_train, y_train, 5, 3, "classification", multiclass=True
+    )
+    assert results_df.shape[0] == 3
