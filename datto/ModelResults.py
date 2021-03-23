@@ -442,12 +442,13 @@ class ModelResults:
             Has mean, median, and standard deviation for coefficients after several runs
         """
         coefficients_df = pd.DataFrame(columns=["features", "coefficients"])
+        X["intercept"] = 1
 
         for _ in range(num_repetitions):
             if model_type.lower() == "classification":
-                model = LogisticRegression(**params)
+                model = LogisticRegression(fit_intercept=False, **params)
             else:
-                model = ElasticNet(**params)
+                model = ElasticNet(fit_intercept=False, **params)
 
             X_train, _, y_train, _ = train_test_split(X, y)
             model.fit(X_train, y_train)
