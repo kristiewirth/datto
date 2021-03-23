@@ -110,7 +110,7 @@ def test_coefficients_graph_classification():
         X_train, X_test, model, "classification", "classification_test"
     )
 
-    assert type(shap_values) is np.ndarray
+    assert isinstance(shap_values, np.ndarray)
 
 
 def test_coefficients_graph_regression():
@@ -120,33 +120,10 @@ def test_coefficients_graph_regression():
         X_train, X_test, model, "regression", "regression_test"
     )
 
-    assert type(shap_values) is np.ndarray
-
-
-def test_coefficients_summary_classification():
-    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "classification")
-    assert results_df.shape[0] == 3
-
-
-def test_coefficients_summary_regression():
-    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "regression")
-    assert results_df.shape[0] == 3
+    assert isinstance(shap_values, np.ndarray)
 
 
 def test_coefficients_individual_predictions_classification():
-    X_train = pd.DataFrame(
-        [
-            [1434, 56456, 1],
-            [323, 768, 0],
-            [5435, 564746456, 1],
-            [544, 564456556, 1],
-            [54345345, 58, 1],
-            [54456565, 336, 1],
-            [544565, 858, 1],
-            [54365856, 56456, 1],
-        ],
-        columns=["id", "webpage", "count"],
-    )
     model = LogisticRegression()
     trained_model = model.fit(X_train, y_train)
     id_col = "id"
@@ -160,20 +137,6 @@ def test_coefficients_individual_predictions_classification():
 
 
 def test_coefficients_individual_predictions_regression():
-    # TODO: Figure out why this needs to be redefined and make a better fix
-    X_train = pd.DataFrame(
-        [
-            [1434, 56456, 1],
-            [323, 768, 0],
-            [5435, 564746456, 1],
-            [544, 564456556, 1],
-            [54345345, 58, 1],
-            [54456565, 336, 1],
-            [544565, 858, 1],
-            [54365856, 56456, 1],
-        ],
-        columns=["id", "webpage", "count"],
-    )
     model = ElasticNet()
     trained_model = model.fit(X_train, y_train)
     id_col = "id"
@@ -186,19 +149,6 @@ def test_coefficients_individual_predictions_regression():
 
 
 def test_score_final_model_multiclass():
-    X_train = pd.DataFrame(
-        [
-            [1434, 56456, 1],
-            [323, 768, 0],
-            [5435, 564746456, 1],
-            [544, 564456556, 1],
-            [54345345, 58, 1],
-            [54456565, 336, 1],
-            [544565, 858, 1],
-            [54365856, 56456, 1],
-        ],
-        columns=["id", "webpage", "count"],
-    )
     y_train = pd.DataFrame(
         [[1, 1], [1, 0], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1],],
         columns=["var1", "var2"],
@@ -224,4 +174,14 @@ def test_coefficients_summary_multiclass():
     results_df = mr.coefficients_summary(
         X_train, y_train, 5, 3, "classification", multiclass=True
     )
+    assert results_df.shape[0] == 3
+
+
+def test_coefficients_summary_classification():
+    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "classification")
+    assert results_df.shape[0] == 3
+
+
+def test_coefficients_summary_regression():
+    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "regression")
     assert results_df.shape[0] == 3
