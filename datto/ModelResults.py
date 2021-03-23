@@ -28,7 +28,7 @@ from sklearn.metrics import (
     r2_score,
     recall_score,
     roc_auc_score,
-    f1_score
+    f1_score,
 )
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
@@ -218,10 +218,19 @@ class ModelResults:
         print("Topics created with top words & example texts:")
         print(concated_topics)
 
+        original_plus_topics = combined_df[list(X.columns) + ["index", "top_topic_num"]]
+        original_with_keywords = pd.merge(
+            original_plus_topics,
+            concated_topics[["topic_num", "top_words_and_phrases"]],
+            left_on="top_topic_num",
+            right_on="topic_num",
+            how="left",
+        ).drop("top_topic_num", axis=1)
+
         return (
             concated_topics,
-            combined_df[["index", text_column_name, "top_topic_num"]],
-            model
+            original_with_keywords,
+            model,
         )
 
     def coefficients_graph(self, X_train, X_test, model, model_type, filename):
