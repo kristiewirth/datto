@@ -71,9 +71,10 @@ def test_most_similar_texts():
     num_topics = 4
     num_examples = 5
     text_column_name = "text"
+    chosen_stopwords = set(["the"])
 
     top_words_df, _ = mr.most_similar_texts(
-        X_text, num_examples, text_column_name, num_topics
+        X_text, num_examples, text_column_name, num_topics, chosen_stopwords
     )
 
     assert top_words_df.shape[0] == num_topics
