@@ -72,7 +72,7 @@ def test_most_similar_texts():
     text_column_name = "text"
     chosen_stopwords = set(["the"])
 
-    top_words_df, _ = mr.most_similar_texts(
+    top_words_df, _, _ = mr.most_similar_texts(
         X_text, num_examples, text_column_name, num_topics, chosen_stopwords
     )
 

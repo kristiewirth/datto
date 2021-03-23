@@ -221,6 +221,7 @@ class ModelResults:
         return (
             concated_topics,
             combined_df[["index", text_column_name, "top_topic_num"]],
+            model
         )
 
     def coefficients_graph(self, X_train, X_test, model, model_type, filename):
