@@ -25,10 +25,6 @@ class TrainModel:
     def __init__(self):
         self.classifier_param_list = [
             {
-                "model": [LogisticRegression(fit_intercept=False)],
-                "model__C": [1, 5, 10],
-            },
-            {
                 "model": [DecisionTreeClassifier()],
                 "model__min_samples_split": [0.25, 0.5, 1.0],
                 "model__max_depth": [5, 10, 15],
@@ -37,6 +33,15 @@ class TrainModel:
                 "model": [RandomForestClassifier()],
                 "model__min_samples_split": [0.25, 0.5, 1.0],
                 "model__max_depth": [5, 10, 15],
+            },
+            {
+                "model": [MLPClassifier()],
+                "model__activation": ["identity", "logistic", "tanh", "relu"],
+                "model__alpha": [0.001, 0.01, 0.1],
+            },
+            {
+                "model": [LogisticRegression(fit_intercept=False)],
+                "model__C": [1, 5, 10],
             },
             {
                 "model": [BaggingClassifier()],
@@ -49,11 +54,6 @@ class TrainModel:
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
             {
-                "model": [MLPClassifier()],
-                "model__activation": ["identity", "logistic", "tanh", "relu"],
-                "model__alpha": [0.001, 0.01, 0.1],
-            },
-            {
                 "model": [XGBClassifier()],
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
@@ -63,11 +63,6 @@ class TrainModel:
         ]
 
         self.regressor_param_list = [
-            {
-                "model": [ElasticNet(fit_intercept=False)],
-                "model__alpha": [0.001, 0.01, 0.1],
-                "model__l1_ratio": [0.25, 0.5, 1.0],
-            },
             {
                 "model": [DecisionTreeRegressor()],
                 "model__min_samples_split": [0.25, 0.5, 1.0],
@@ -79,6 +74,16 @@ class TrainModel:
                 "model__max_depth": [5, 10, 15],
             },
             {
+                "model": [MLPRegressor()],
+                "model__activation": ["identity", "logistic", "tanh", "relu"],
+                "model__alpha": [0.001, 0.01, 0.1],
+            },
+            {
+                "model": [ElasticNet(fit_intercept=False)],
+                "model__alpha": [0.001, 0.01, 0.1],
+                "model__l1_ratio": [0.25, 0.5, 1.0],
+            },
+            {
                 "model": [BaggingRegressor()],
                 "model__n_estimators": [5, 10, 15],
                 "model__max_features": [0.25, 0.5, 1.0],
@@ -87,11 +92,6 @@ class TrainModel:
                 "model": [AdaBoostRegressor()],
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
-            },
-            {
-                "model": [MLPRegressor()],
-                "model__activation": ["identity", "logistic", "tanh", "relu"],
-                "model__alpha": [0.001, 0.01, 0.1],
             },
             {
                 "model": [XGBRegressor()],
@@ -141,6 +141,7 @@ class TrainModel:
         model_type,
         tie_breaker_scoring_method,
         save_to_csv=True,
+        multiclass=False,
     ):
         """
         Gridsearches using a model for best models/params out of a list of commonly used
@@ -163,8 +164,17 @@ class TrainModel:
         """
         if model_type == "classification":
             model = Pipeline([("model", LogisticRegression()),])
-            lst_scoring_methods = ["recall", "precision", "roc_auc"]
-            param_list = self.classifier_param_list
+            # Only some models/scoring work with multiclass
+            if multiclass:
+                param_list = self.classifier_param_list[:3]
+                lst_scoring_methods = [
+                    "recall_weighted",
+                    "precision_weighted",
+                    "f1_weighted",
+                ]
+            else:
+                param_list = self.classifier_param_list[:3]
+                lst_scoring_methods = ["recall", "precision", "roc_auc"]
         else:
             model = Pipeline([("model", ElasticNet()),])
             lst_scoring_methods = [
@@ -186,25 +196,47 @@ class TrainModel:
         g.fit(X_train, y_train)
 
         if model_type == "classification":
-            all_scores = list(
-                zip(
-                    g.cv_results_["params"],
-                    g.cv_results_["mean_test_recall"],
-                    g.cv_results_["mean_test_precision"],
-                    g.cv_results_["mean_test_roc_auc"],
+            if multiclass:
+                all_scores = list(
+                    zip(
+                        g.cv_results_["params"],
+                        g.cv_results_["mean_test_recall_weighted"],
+                        g.cv_results_["mean_test_precision_weighted"],
+                        g.cv_results_["mean_test_f1_weighted"],
+                    )
                 )
-            )
 
-            all_scores.sort(key=lambda x: x[1], reverse=True)
-            formatted_scores = [
-                (
-                    "Params: {}".format(x[0]),
-                    "Mean Recall: {0:.4f}".format(x[1]),
-                    "Mean Precision: {0:.4f}".format(x[2]),
-                    "Mean ROC AUC: {0:.4f}".format(x[3]),
+                all_scores.sort(key=lambda x: x[1], reverse=True)
+                formatted_scores = [
+                    (
+                        "Params: {}".format(x[0]),
+                        "Mean Recall Weighted: {0:.4f}".format(x[1]),
+                        "Mean Precision Weighted: {0:.4f}".format(x[2]),
+                        "Mean F1 Weighted: {0:.4f}".format(x[3]),
+                    )
+                    for x in all_scores
+                ]
+
+            else:
+                all_scores = list(
+                    zip(
+                        g.cv_results_["params"],
+                        g.cv_results_["mean_test_recall"],
+                        g.cv_results_["mean_test_precision"],
+                        g.cv_results_["mean_test_roc_auc"],
+                    )
                 )
-                for x in all_scores
-            ]
+
+                all_scores.sort(key=lambda x: x[1], reverse=True)
+                formatted_scores = [
+                    (
+                        "Params: {}".format(x[0]),
+                        "Mean Recall: {0:.4f}".format(x[1]),
+                        "Mean Precision: {0:.4f}".format(x[2]),
+                        "Mean ROC AUC: {0:.4f}".format(x[3]),
+                    )
+                    for x in all_scores
+                ]
         else:
             all_scores = list(
                 zip(

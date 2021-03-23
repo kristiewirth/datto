@@ -1,6 +1,4 @@
 import pandas as pd
-from sklearn.linear_model import ElasticNet, LogisticRegression
-from sklearn.pipeline import Pipeline
 
 from datto.TrainModel import TrainModel
 
@@ -50,6 +48,22 @@ def test_model_testing_regression():
 
     best_params = tm.model_testing(
         X_train, y_train, model_type, tie_breaker_scoring_method,
+    )
+
+    assert isinstance(best_params, dict)
+
+
+def test_model_testing_multiclass():
+    y_train = pd.DataFrame(
+        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1],],
+        columns=["var1", "var2"],
+    )
+
+    model_type = "classification"
+    tie_breaker_scoring_method = "precision_weighted"
+
+    best_params = tm.model_testing(
+        X_train, y_train, model_type, tie_breaker_scoring_method, multiclass=True
     )
 
     assert isinstance(best_params, dict)
