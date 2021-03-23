@@ -28,6 +28,7 @@ from sklearn.metrics import (
     r2_score,
     recall_score,
     roc_auc_score,
+    f1_score
 )
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
@@ -367,7 +368,9 @@ class ModelResults:
 
         return overall_counts_df
 
-    def score_final_model(self, model_type, X_test, y_test, trained_model):
+    def score_final_model(
+        self, model_type, X_test, y_test, trained_model, multiclass=False
+    ):
         """
         Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.
         Run it after you have chosen your model & parameters to avoid problems with overfitting.
@@ -378,6 +381,7 @@ class ModelResults:
         X_test: DataFrame
         y_test: DataFrame
         trained_model: sklearn model
+        multiclass: bool
 
         Returns
         --------
@@ -388,7 +392,15 @@ class ModelResults:
         # Predict actual scores
         y_predicted = trained_model.predict(X_test)
 
-        if model_type.lower() == "classification":
+        if multiclass:
+            pscore = precision_score(y_test, y_predicted, average="weighted")
+            rscore = recall_score(y_test, y_predicted, average="weighted")
+            f1score = f1_score(y_test, y_predicted, average="weighted")
+
+            print(f"Final Model Precision Weighted: {pscore}")
+            print(f"Final Model Recall Weighted: {rscore}")
+            print(f"Final Model F1 Weighted: {f1score}")
+        elif model_type.lower() == "classification":
             pscore = precision_score(y_test, y_predicted)
             rscore = recall_score(y_test, y_predicted)
             accuracy = accuracy_score(y_test, y_predicted)

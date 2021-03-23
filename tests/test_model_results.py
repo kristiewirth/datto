@@ -133,17 +133,36 @@ def test_coefficients_summary_regression():
     assert results_df.shape[0] == 3
 
 
-def test_coefficients_individual_predictions_classification():
-    model = LogisticRegression()
-    trained_model = model.fit(X_train, y_train)
-    id_col = "id"
-    num_samples = 3
-    model_type = "classification"
-    class_names = ["False", "True"]
-    features_list = mr.coefficients_individual_predictions(
-        trained_model, X_train, X_test, id_col, num_samples, model_type, class_names
+
+def test_score_final_model_multiclass():
+    X_train = pd.DataFrame(
+        [
+            [1434, 56456, 1],
+            [323, 768, 0],
+            [5435, 564746456, 1],
+            [544, 564456556, 1],
+            [54345345, 58, 1],
+            [54456565, 336, 1],
+            [544565, 858, 1],
+            [54365856, 56456, 1],
+        ],
+        columns=["id", "webpage", "count"],
     )
-    assert isinstance(features_list, list)
+    y_train = pd.DataFrame(
+        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1],],
+        columns=["var1", "var2"],
+    )
+    y_test = pd.DataFrame(
+        [[0, 1], [0, 0], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1],],
+        columns=["var1", "var2"],
+    )
+    model = DecisionTreeClassifier()
+    trained_model = model.fit(X_train, y_train)
+    _, y_predicted = mr.score_final_model(
+        "classification", X_test, y_test, trained_model, multiclass=True
+    )
+
+    assert len(y_predicted) == y_test.shape[0]
 
 
 def test_coefficients_summary_multiclass():
