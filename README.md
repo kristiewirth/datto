@@ -23,3 +23,41 @@ Some examples of what you can do:
 - Take some data and test a bunch of machine learning models on it
 
 For detailed examples of how you can use it, check out [this Juypter notebook](datto_examples.ipynb).
+
+# Contributing
+
+Create virtualenv (specify version of Python you want):
+
+```bash
+pyenv virtualenv 3.6 datto
+```
+
+Activate virtualenv:
+
+```bash
+pyenv activate datto
+```
+
+Install dependencies (specified in pyproject.toml file) in virtualenv:
+
+```bash
+poetry install
+```
+
+To add any new dependencies you need to Poetry, run:
+
+```bash
+poetry add PACKAGE_NAME
+```
+
+Run tests:
+
+Run the following to make sure all tests pass:
+
+```bash
+make test
+```
+
+Submitting a change:
+
+Create a PR with your desired change(s), and request review from the code owner!
