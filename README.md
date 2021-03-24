@@ -1,3 +1,5 @@
+![](https://api.travis-ci.com/kristiewirth/datto.svg?branch=master)
+
 # Installation
 
 `pip install datto`
