@@ -1,4 +1,4 @@
-![](https://api.travis-ci.com/kristiewirth/datto.svg?branch=master)
+[![](https://api.travis-ci.com/kristiewirth/datto.svg?branch=master)](https://travis-ci.com/github/kristiewirth/datto)
 
 # Installation
 
