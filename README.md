@@ -1,4 +1,5 @@
 [![](https://api.travis-ci.com/kristiewirth/datto.svg?branch=master)](https://travis-ci.com/github/kristiewirth/datto)
+[![](https://readthedocs.org/projects/datto/badge/)](https://datto.readthedocs.io/en/latest/)
 
 # Installation
 
