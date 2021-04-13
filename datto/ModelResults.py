@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import shap
+import statsmodels.api as sm
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel, nmf
 from sklearn.decomposition import NMF
@@ -18,20 +19,21 @@ from sklearn.feature_extraction.text import (
     CountVectorizer,
     TfidfVectorizer,
 )
+from sklearn.feature_selection import VarianceThreshold
 from sklearn.linear_model import ElasticNet, LogisticRegression, SGDClassifier
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import (
     accuracy_score,
+    f1_score,
     mean_squared_error,
     median_absolute_error,
     precision_score,
     r2_score,
     recall_score,
     roc_auc_score,
-    f1_score,
 )
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
+from sklearn.tree import DecisionTreeClassifier
 
 from datto.CleanText import CleanText
 
@@ -474,67 +476,71 @@ class ModelResults:
         simplified_df: DataFrame
             Has mean, median, and standard deviation for coefficients after several runs
         """
-        coefficients_df = pd.DataFrame(columns=["features", "coefficients"])
+        coefficients_df = pd.DataFrame(
+            columns=["coeff", "pvals", "conf_lower", "conf_higher"]
+        )
         X["intercept"] = 1
 
+        # Fix for Singular matrix error
+        vt = VarianceThreshold(0.1)
+        vt.fit(X)
+        cols_to_keep = X.columns[np.where(vt.get_support() == True)].values
+        X = X[cols_to_keep]
+
         for _ in range(num_repetitions):
-            if multiclass:
-                model = DecisionTreeClassifier()
-            elif model_type.lower() == "classification":
-                model = LogisticRegression(fit_intercept=False, **params)
-            else:
-                model = ElasticNet(fit_intercept=False, **params)
 
             X_train, _, y_train, _ = train_test_split(X, y)
 
-            model.fit(X_train, y_train)
+            if multiclass:
+                model = sm.MNLogit(
+                    np.array(y_train.astype(float)), X_train.astype(float)
+                )
+            elif model_type.lower() == "classification":
+                model = sm.Logit(np.array(y_train.astype(float)), X_train.astype(float))
+            else:
+                model = sm.OLS(np.array(y_train.astype(float)), X_train.astype(float))
+
+            results = model.fit()
+
+            features = results.params.index
 
             if multiclass:
-                coefs = model.feature_importances_
-            elif model_type.lower() == "classification":
-                coefs = model.coef_[0]
+                pvals = [x[0] for x in results.pvalues.values]
+                coeff = [x[0] for x in results.params.values]
+                conf_lower = results.conf_int()["lower"].values
+                conf_higher = results.conf_int()["upper"].values
             else:
-                coefs = model.coef_
+                pvals = results.pvalues.values
+                coeff = results.params.values
+                conf_lower = results.conf_int()[0]
+                conf_higher = results.conf_int()[1]
 
             temp_df = pd.DataFrame(
-                [x for x in zip(X_train.columns, coefs)],
-                columns=["features", "coefficients"],
+                {
+                    "features": features,
+                    "pvals": pvals,
+                    "coeff": coeff,
+                    "conf_lower": conf_lower,
+                    "conf_higher": conf_higher,
+                }
             )
+            temp_df = temp_df[
+                ["features", "coeff", "pvals", "conf_lower", "conf_higher"]
+            ].reset_index(drop=True)
 
             coefficients_df = coefficients_df.append(temp_df)
 
-        column_of_interest = "coefficients"
-
         summary_coefficients_df = pd.DataFrame(
-            coefficients_df.groupby("features").agg(
-                {column_of_interest: ["mean", "std", "median"]}
-            )
-        )
+            coefficients_df.groupby("features").agg(["mean", "median",])
+        ).reset_index(drop=False)
 
-        summary_coefficients_df.columns = ["mean", "std", "median"]
+        summary_coefficients_df.columns = [
+            "_".join(col) for col in summary_coefficients_df.columns
+        ]
 
-        summary_coefficients_df.reset_index(inplace=True)
+        summary_coefficients_df.sort_values("pvals_mean", inplace=True, ascending=True)
 
-        value_counts_df = pd.DataFrame(columns=["features"])
-        for col in X_train.columns:
-            temp_df = pd.DataFrame([[col,]], columns=["features"],)
-            value_counts_df = value_counts_df.append(temp_df)
-        value_counts_df.reset_index(inplace=True, drop=True)
-
-        combined_df = summary_coefficients_df.merge(
-            value_counts_df, on="features", how="left"
-        )
-
-        combined_df["abs_val_mean"] = abs(combined_df["mean"])
-        combined_df["abs_val_to_se"] = abs(combined_df["mean"]) / combined_df["std"]
-
-        combined_df.sort_values("abs_val_to_se", inplace=True, ascending=False)
-
-        simplified_df = (
-            combined_df[["features", "mean", "std", "median", "abs_val_to_se"]]
-            .head(num_coefficients)
-            .round(7)
-        )
+        simplified_df = summary_coefficients_df.head(num_coefficients).round(7)
 
         # 7 is the most before it flips back to scientific notation
         print("Coefficients summary (descending by mean abs se value):")
