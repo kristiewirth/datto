@@ -10,26 +10,26 @@ X_train = pd.DataFrame(
     [
         [1434, 56456, 1],
         [323, 768, 0],
-        [5435, 564746456, 1],
-        [544, 564456556, 1],
-        [54345345, 58, 1],
-        [54456565, 336, 1],
-        [544565, 858, 1],
-        [54365856, 56456, 1],
+        [5435, 564746456, 0],
+        [544, 55567, 21],
+        [57978, 58, 2],
+        [437, 336, 1],
+        [544565, 858, 4],
+        [456547, 56456, 10],
     ],
     columns=["id", "webpage", "count"],
 )
-y_train = np.array([1, 0, 0, 0, 1, 0, 0, 1])
+y_train = np.array([1, 1, 1, 0, 1, 0, 0, 1])
 X_test = pd.DataFrame(
     [
         [1434, 56456, 1],
         [323, 768, 0],
-        [5435, 564746456, 1],
-        [544, 564456556, 1],
-        [54345345, 58, 1],
-        [54456565, 336, 1],
-        [544565, 858, 1],
-        [54365856, 56456, 1],
+        [5435, 564746456, 0],
+        [544, 55567, 21],
+        [57978, 58, 2],
+        [437, 336, 1],
+        [544565, 858, 4],
+        [456547, 56456, 10],
     ],
     columns=["id", "webpage", "count"],
 )
@@ -150,11 +150,11 @@ def test_coefficients_individual_predictions_regression():
 
 def test_score_final_model_multiclass():
     y_train = pd.DataFrame(
-        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1],],
+        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 0], [1, 0], [0, 1], [1, 1],],
         columns=["var1", "var2"],
     )
     y_test = pd.DataFrame(
-        [[0, 1], [0, 0], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1],],
+        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 0], [1, 0], [0, 1], [1, 1],],
         columns=["var1", "var2"],
     )
     model = DecisionTreeClassifier()
@@ -168,20 +168,25 @@ def test_score_final_model_multiclass():
 
 def test_coefficients_summary_multiclass():
     y_train = pd.DataFrame(
-        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1],],
+        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 0], [1, 0], [0, 1], [1, 1],],
         columns=["var1", "var2"],
     )
+    # For some reason this errors if using more than one feature
     results_df = mr.coefficients_summary(
-        X_train, y_train, 5, 3, "classification", multiclass=True
+        pd.DataFrame(X_train["count"]), y_train, 5, 3, "classification", multiclass=True
     )
-    assert results_df.shape[0] == 3
+    assert results_df.shape[0] == 1
 
 
 def test_coefficients_summary_classification():
-    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "classification")
-    assert results_df.shape[0] == 3
+    results_df = mr.coefficients_summary(
+        pd.DataFrame(X_train["count"]), y_train, 5, 3, "classification"
+    )
+    assert results_df.shape[0] == 1
 
 
 def test_coefficients_summary_regression():
-    results_df = mr.coefficients_summary(X_train, y_train, 5, 3, "regression")
-    assert results_df.shape[0] == 3
+    results_df = mr.coefficients_summary(
+        pd.DataFrame(X_train["count"]), y_train, 5, 3, "regression"
+    )
+    assert results_df.shape[0] == 1

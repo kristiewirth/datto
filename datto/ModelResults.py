@@ -405,18 +405,18 @@ class ModelResults:
         y_predicted = trained_model.predict(X_test)
 
         if multiclass:
-            pscore = precision_score(y_test, y_predicted, average="weighted")
-            rscore = recall_score(y_test, y_predicted, average="weighted")
-            f1score = f1_score(y_test, y_predicted, average="weighted")
+            pscore = round(precision_score(y_test, y_predicted, average="weighted"), 3)
+            rscore = round(recall_score(y_test, y_predicted, average="weighted"), 3)
+            f1score = round(f1_score(y_test, y_predicted, average="weighted"), 3)
 
             print(f"Final Model Precision Weighted: {pscore}")
             print(f"Final Model Recall Weighted: {rscore}")
             print(f"Final Model F1 Weighted: {f1score}")
         elif model_type.lower() == "classification":
-            pscore = precision_score(y_test, y_predicted)
-            rscore = recall_score(y_test, y_predicted)
-            accuracy = accuracy_score(y_test, y_predicted)
-            roc_auc = roc_auc_score(y_test, y_predicted)
+            pscore = round(precision_score(y_test, y_predicted), 3)
+            rscore = round(recall_score(y_test, y_predicted), 3)
+            accuracy = round(accuracy_score(y_test, y_predicted), 3)
+            roc_auc = round(roc_auc_score(y_test, y_predicted), 3)
 
             print(f"Final Model Precision: {pscore}")
             print(f"Final Model Recall: {rscore}")
@@ -436,23 +436,18 @@ class ModelResults:
         else:
             mse = mean_squared_error(y_test, y_predicted)
             mae = median_absolute_error(y_test, y_predicted)
-            r2 = r2_score(y_test, y_predicted)
+            r2 = round(r2_score(y_test, y_predicted), 3)
 
-            print(f"Mean Negative Root Mean Squared Errror: {(mse ** 5) * -1}")
-            print(f"Mean Negative Median Absolute Error: {mae * -1}")
+            print(
+                f"Mean Negative Root Mean Squared Errror: {round((mse ** 5) * -1, 3)}"
+            )
+            print(f"Mean Negative Median Absolute Error: {round((mae * -1), 3)}")
             print(f"Mean R2: {r2}")
 
         return trained_model, y_predicted
 
     def coefficients_summary(
-        self,
-        X,
-        y,
-        num_repetitions,
-        num_coefficients,
-        model_type,
-        multiclass=False,
-        params={},
+        self, X, y, num_repetitions, num_coefficients, model_type, multiclass=False,
     ):
         """
         Prints average coefficient values using a regression model.
@@ -468,8 +463,6 @@ class ModelResults:
         model_type: str
             'classification' or 'regression'
         multiclass: bool
-        params: dict
-            Optional - add to change regression params, otherwise use default
             
         Returns
         --------
@@ -481,15 +474,15 @@ class ModelResults:
         )
         X["intercept"] = 1
 
-        # Fix for Singular matrix error
-        vt = VarianceThreshold(0.001)
-        vt.fit(X)
-        cols_to_keep = X.columns[np.where(vt.get_support() == True)].values
-        X = X[cols_to_keep]
-
         for _ in range(num_repetitions):
 
             X_train, _, y_train, _ = train_test_split(X, y)
+
+            # Fix for Singular matrix error
+            vt = VarianceThreshold(0)
+            vt.fit(X_train)
+            cols_to_keep = X_train.columns[np.where(vt.get_support() == True)].values
+            X_train = X_train[cols_to_keep]
 
             if multiclass:
                 model = sm.MNLogit(
@@ -540,9 +533,8 @@ class ModelResults:
 
         summary_coefficients_df.sort_values("pvals_mean", inplace=True, ascending=True)
 
-        simplified_df = summary_coefficients_df.head(num_coefficients).round(7)
+        simplified_df = summary_coefficients_df.head(num_coefficients).round(3)
 
-        # 7 is the most before it flips back to scientific notation
         print("Coefficients summary (descending by mean abs se value):")
         print(simplified_df)
 
