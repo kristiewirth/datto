@@ -482,7 +482,7 @@ class ModelResults:
         X["intercept"] = 1
 
         # Fix for Singular matrix error
-        vt = VarianceThreshold(0.1)
+        vt = VarianceThreshold(0.001)
         vt.fit(X)
         cols_to_keep = X.columns[np.where(vt.get_support() == True)].values
         X = X[cols_to_keep]
