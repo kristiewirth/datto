@@ -1,11 +1,16 @@
+import re
 import string
 from math import ceil
 from operator import itemgetter
+from random import randrange
 
+import lime
+import lime.lime_tabular
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import shap
+import statsmodels.api as sm
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel, nmf
 from sklearn.decomposition import NMF
@@ -14,9 +19,11 @@ from sklearn.feature_extraction.text import (
     CountVectorizer,
     TfidfVectorizer,
 )
-from sklearn.linear_model import ElasticNet, LogisticRegression
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.linear_model import ElasticNet, LogisticRegression, SGDClassifier
 from sklearn.metrics import (
     accuracy_score,
+    f1_score,
     mean_squared_error,
     median_absolute_error,
     precision_score,
@@ -25,12 +32,16 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.tree import DecisionTreeClassifier
 
 from datto.CleanText import CleanText
 
 
 class ModelResults:
-    def most_similar_texts(self, X, num_examples, text_column_name, num_topics=None):
+    def most_similar_texts(
+        self, X, num_examples, text_column_name, num_topics=None, chosen_stopwords=set()
+    ):
         """
         Uses NMF clustering to create n topics based on adjusted word frequencies
 
@@ -63,6 +74,7 @@ class ModelResults:
             | set(["-PRON-"])
             | set(string.punctuation)
             | set([" "])
+            | chosen_stopwords
         )
 
         ct = CleanText()
@@ -208,9 +220,19 @@ class ModelResults:
         print("Topics created with top words & example texts:")
         print(concated_topics)
 
+        original_plus_topics = combined_df[list(X.columns) + ["index", "top_topic_num"]]
+        original_with_keywords = pd.merge(
+            original_plus_topics,
+            concated_topics[["topic_num", "top_words_and_phrases"]],
+            left_on="top_topic_num",
+            right_on="topic_num",
+            how="left",
+        ).drop("top_topic_num", axis=1)
+
         return (
             concated_topics,
-            combined_df[["index", text_column_name, "top_topic_num"]],
+            original_with_keywords,
+            model,
         )
 
     def coefficients_graph(self, X_train, X_test, model, model_type, filename):
@@ -242,14 +264,16 @@ class ModelResults:
         med = X_train.median().values.reshape((1, X_train.shape[1]))
         explainer = shap.KernelExplainer(f, med)
         # Runs too slow if X_test is huge, take a representative sample
-        if X_test.shape[0] > 20000:
-            X_test_sample = X_test.sample(20000)
+        if X_test.shape[0] > 1000:
+            X_test_sample = X_test.sample(1000)
         else:
             X_test_sample = X_test
         shap_values = explainer.shap_values(X_test_sample)
         shap.summary_plot(shap_values, X_test_sample)
         plt.tight_layout()
         plt.savefig(filename)
+
+        return shap_values
 
     def most_common_words_by_group(
         self, X, text_col_name, group_col_name, num_examples, num_times_min, min_ngram,
@@ -357,7 +381,7 @@ class ModelResults:
         return overall_counts_df
 
     def score_final_model(
-        self, model_type, X_train, y_train, X_test, y_test, full_pipeline
+        self, model_type, X_test, y_test, trained_model, multiclass=False
     ):
         """
         Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.
@@ -366,29 +390,33 @@ class ModelResults:
         Parameters
         --------
         model_type: str
-        X_train: DataFrame
-        y_train: DataFrame
         X_test: DataFrame
         y_test: DataFrame
-        full_pipeline: sklearn Pipeline
+        trained_model: sklearn model
+        multiclass: bool
 
         Returns
         --------
-        full_pipeline: model
+        model: model
             Fit model
         y_predicted: array
         """
-        # Fitting the final model
-        full_pipeline.fit(X_train, y_train)
-
         # Predict actual scores
-        y_predicted = full_pipeline.predict(X_test)
+        y_predicted = trained_model.predict(X_test)
 
-        if model_type.lower() == "classification":
-            pscore = precision_score(y_test, y_predicted)
-            rscore = recall_score(y_test, y_predicted)
-            accuracy = accuracy_score(y_test, y_predicted)
-            roc_auc = roc_auc_score(y_test, y_predicted)
+        if multiclass:
+            pscore = round(precision_score(y_test, y_predicted, average="weighted"), 3)
+            rscore = round(recall_score(y_test, y_predicted, average="weighted"), 3)
+            f1score = round(f1_score(y_test, y_predicted, average="weighted"), 3)
+
+            print(f"Final Model Precision Weighted: {pscore}")
+            print(f"Final Model Recall Weighted: {rscore}")
+            print(f"Final Model F1 Weighted: {f1score}")
+        elif model_type.lower() == "classification":
+            pscore = round(precision_score(y_test, y_predicted), 3)
+            rscore = round(recall_score(y_test, y_predicted), 3)
+            accuracy = round(accuracy_score(y_test, y_predicted), 3)
+            roc_auc = round(roc_auc_score(y_test, y_predicted), 3)
 
             print(f"Final Model Precision: {pscore}")
             print(f"Final Model Recall: {rscore}")
@@ -408,10 +436,195 @@ class ModelResults:
         else:
             mse = mean_squared_error(y_test, y_predicted)
             mae = median_absolute_error(y_test, y_predicted)
-            r2 = r2_score(y_test, y_predicted)
+            r2 = round(r2_score(y_test, y_predicted), 3)
 
-            print(f"Mean Negative Root Mean Squared Errror: {(mse ** 5) * -1}")
-            print(f"Mean Negative Median Absolute Error: {mae * -1}")
+            print(
+                f"Mean Negative Root Mean Squared Errror: {round((mse ** 5) * -1, 3)}"
+            )
+            print(f"Mean Negative Median Absolute Error: {round((mae * -1), 3)}")
             print(f"Mean R2: {r2}")
 
-        return full_pipeline, y_predicted
+        return trained_model, y_predicted
+
+    def coefficients_summary(
+        self, X, y, num_repetitions, num_coefficients, model_type, multiclass=False,
+    ):
+        """
+        Prints average coefficient values using a regression model.
+
+        Parameters
+        --------
+        X: DataFrame
+        y: DataFrame
+        num_repetitions: int
+            Number of times to create models
+        num_coefficients: int
+            Number of top coefficients to display
+        model_type: str
+            'classification' or 'regression'
+        multiclass: bool
+            
+        Returns
+        --------
+        simplified_df: DataFrame
+            Has mean, median, and standard deviation for coefficients after several runs
+        """
+        coefficients_df = pd.DataFrame(
+            columns=["coeff", "pvals", "conf_lower", "conf_higher"]
+        )
+        X["intercept"] = 1
+
+        for _ in range(num_repetitions):
+
+            X_train, _, y_train, _ = train_test_split(X, y)
+
+            # Fix for Singular matrix error
+            vt = VarianceThreshold(0)
+            vt.fit(X_train)
+            cols_to_keep = X_train.columns[np.where(vt.get_support() == True)].values
+            X_train = X_train[cols_to_keep]
+
+            if multiclass:
+                model = sm.MNLogit(
+                    np.array(y_train.astype(float)), X_train.astype(float)
+                )
+            elif model_type.lower() == "classification":
+                model = sm.Logit(np.array(y_train.astype(float)), X_train.astype(float))
+            else:
+                model = sm.OLS(np.array(y_train.astype(float)), X_train.astype(float))
+
+            results = model.fit()
+
+            features = results.params.index
+
+            if multiclass:
+                pvals = [x[0] for x in results.pvalues.values]
+                coeff = [x[0] for x in results.params.values]
+                conf_lower = results.conf_int()["lower"].values
+                conf_higher = results.conf_int()["upper"].values
+            else:
+                pvals = results.pvalues.values
+                coeff = results.params.values
+                conf_lower = results.conf_int()[0]
+                conf_higher = results.conf_int()[1]
+
+            temp_df = pd.DataFrame(
+                {
+                    "features": features,
+                    "pvals": pvals,
+                    "coeff": coeff,
+                    "conf_lower": conf_lower,
+                    "conf_higher": conf_higher,
+                }
+            )
+            temp_df = temp_df[
+                ["features", "coeff", "pvals", "conf_lower", "conf_higher"]
+            ].reset_index(drop=True)
+
+            coefficients_df = coefficients_df.append(temp_df)
+
+        summary_coefficients_df = pd.DataFrame(
+            coefficients_df.groupby("features").agg(["mean", "median",])
+        ).reset_index(drop=False)
+
+        summary_coefficients_df.columns = [
+            "_".join(col) for col in summary_coefficients_df.columns
+        ]
+
+        summary_coefficients_df.sort_values("pvals_mean", inplace=True, ascending=True)
+
+        simplified_df = summary_coefficients_df.head(num_coefficients).round(3)
+
+        print("Coefficients summary (descending by mean abs se value):")
+        print(simplified_df)
+
+        return simplified_df
+
+    def coefficients_individual_predictions(
+        self,
+        trained_model,
+        X_train,
+        X_test,
+        id_col,
+        num_samples,
+        model_type,
+        class_names=["False", "True"],
+    ):
+        def model_preds_adjusted(data):
+            if model_type.lower() == "classification":
+                predictions = np.array(trained_model.predict_proba(data))
+            else:
+                predictions = np.array(trained_model.predict(data))
+            return predictions
+
+        if model_type.lower() == "classification":
+            explainer = lime.lime_tabular.LimeTabularExplainer(
+                np.array(X_train),
+                feature_names=X_train.columns,
+                class_names=class_names,
+                mode="classification",
+            )
+        else:
+            explainer = lime.lime_tabular.LimeTabularExplainer(
+                np.array(X_train),
+                feature_names=X_train.columns,
+                class_names=class_names,
+                mode="regression",
+            )
+
+        for i in range(num_samples):
+            user_idx = randrange(X_test.shape[0])
+            exp = explainer.explain_instance(
+                np.array(X_test.iloc[user_idx]),
+                model_preds_adjusted,
+                num_features=50,
+                top_labels=10,
+            )
+
+            user_id = X_test.iloc[user_idx][id_col]
+            print(f"\nUser: {user_id}")
+
+            if model_type.lower() == "classification":
+                prediction = class_names[
+                    trained_model.predict_proba(
+                        pd.DataFrame(X_test.iloc[user_idx]).T
+                    ).argmax()
+                ]
+            else:
+                prediction = round(
+                    trained_model.predict(pd.DataFrame(X_test.iloc[user_idx]).T)[0], 7
+                )
+
+            print('We predicted "{}" for this user because...\n'.format(prediction))
+            features_list = []
+            for feature in exp.as_list():
+                features_list.append({user_id: exp.as_list()})
+                try:
+                    feature_name = re.findall("<.*<|>.*>", feature[0])[0]
+                except Exception:
+                    feature_name = re.findall(".*<|.*>", feature[0])[0]
+                cleaned_feature_name = (
+                    feature_name.replace("<=", "")
+                    .replace(">=", "")
+                    .replace("<", "")
+                    .replace(">", "")
+                    .strip()
+                )
+                comparison_val = float(
+                    feature[0].split(" <")[-1].split(" >")[-1].split("=")[-1].strip()
+                )
+                actual_feature_val = X_test.iloc[user_idx][cleaned_feature_name]
+                last_operator = feature[0].split(" ")[-2]
+
+                if "<" in last_operator and actual_feature_val <= comparison_val:
+                    print(" * This is true: " + feature[0])
+                else:
+                    print(" * This is false: " + feature[0])
+            exp.as_pyplot_figure()
+            plt.tight_layout()
+            plt.savefig(f"lime_graph_user_{user_id}.png")
+
+            print("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+
+        return features_list
+

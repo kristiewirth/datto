@@ -1,6 +1,7 @@
 import os
 import re
 import string
+from collections import Counter
 
 import numpy as np
 import pandas as pd
@@ -226,3 +227,98 @@ class CleanText:
                 df[col] = pd.to_numeric(df[col], downcast="float")
 
         return df
+
+    def make_uuid(self, id):
+        """
+        Make a UUID from a text string
+
+        Parameters
+        --------
+        id: str
+
+        Returns
+        --------
+        uuid: str
+
+        """
+        return (
+            id[:8] + "-" + id[8:12] + "-" + id[12:16] + "-" + id[16:20] + "-" + id[20:]
+        )
+
+    def df_most_common_only(self, df, col, num):
+        """
+        From a given column in a dataframe, find the most common values and return a dataframe that has those most common values only.
+
+        Parameters
+        --------
+        df: DataFrame
+        col: str
+        num: int
+
+        Returns
+        --------
+        cleaned_df: DataFrame
+
+        """
+        most_common_lst = [x[0] for x in Counter(df[col]).most_common(num)]
+        df = df[df[col].isin(most_common_lst)]
+        return df
+
+    def batch_pandas_operation(self, df, num_splits, identifier_col, func):
+        """
+        Use a function on a Pandas DataFrame in chunks for faster processing.
+
+        Parameters
+        --------
+        df: DataFrame
+        num_splits: int
+        identifier_col: str
+        func: Function
+
+        Returns
+        --------
+        new_df: DataFrame
+
+        """
+        new_df = pd.DataFrame()
+        ids = df[identifier_col].unique()
+        division = len(ids) / float(num_splits)
+        part_ids = [
+            ids[int(round(division * i)) : int(round(division * (i + 1)))]
+            for i in range(num_splits)
+        ]
+        for lst in part_ids:
+            temp_df = df[df[identifier_col].isin(lst)]
+            new_df = new_df.append(func(temp_df))
+
+        return new_df
+
+    def batch_merge_operation(self, df_1, df_2, num_splits, identifier_col, merge_col):
+        """
+        Merge two Pandas DataFrame in chunks for faster processing.
+
+        Parameters
+        --------
+        df_1: DataFrame
+        df_2: DataFrame
+        num_splits: int
+        identifier_col: str
+        merge_col: str
+
+        Returns
+        --------
+        new_df: DataFrame
+
+        """
+        new_df = pd.DataFrame()
+        ids = df_1[identifier_col].unique()
+        division = len(ids) / float(num_splits)
+        part_ids = [
+            ids[int(round(division * i)) : int(round(division * (i + 1)))]
+            for i in range(num_splits)
+        ]
+        for lst in part_ids:
+            temp_df = df_1[df_1[identifier_col].isin(lst)]
+            temp_df = pd.merge(temp_df, df_2, how="left", on=merge_col)
+            new_df = new_df.append(temp_df)
+        return new_df

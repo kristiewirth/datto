@@ -19,11 +19,12 @@ class FrontEnd:
             String you can use to render HTML
 
         """
-        html_choices = """<select id="{}" width: 400px;><option value="---">---</option>""".format(
-            name
-        )
+        html_choices = f"""<select id="{name}" name="{name}" width: 400px;><option value="---">---</option>"""
+
+        df.sort_values(by=chosen_col, inplace=True, ascending=True)
+
         for option in df[chosen_col].unique():
-            html_choices += """<option value="{0}">{0}</option>""".format(option)
+            html_choices += f"""<option value="{option}">{option}</option>"""
         html_choices += """</select>"""
 
         return html_choices
