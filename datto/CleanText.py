@@ -33,6 +33,32 @@ class CleanText:
             cleaned_text = re.sub(row["name"] + "(?![a-z])", " ", cleaned_text)
         return cleaned_text
 
+    def remove_pii(self, text):
+        """
+        Remove common patterns of personally identifiable information (PII)
+        Parameters
+        --------
+        text: str
+        Returns
+        --------
+        cleaned_text: str
+        """
+
+        regex_dict = {
+            "credit_card_numbers": r"(?:\d[ -]*?){13,16}",
+            "phone_numbers": r"[\+]?[\d]{0,3}[\s]?[\(]?\d{3}[\)]?[\s\-\.]{0,1}\d{3}[\s\-\.]{0,1}\d{4}",
+            "social_security_numbers": r"(\d{3}[-\s]?\d{2}[-\s]?\d{4})",
+            "ip_addresses": r"((?:[0-9]{1,3}\.){3}[0-9]{1,3})",
+            "email_addresses": r"([a-zA-Z0-9_\.-]+)@([1-9a-zA-Z\.-]+)\.([a-zA-Z\.]{2,6})",
+            "urls": r"((https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,255}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))",
+        }
+
+        cleaned_text = text
+        for this_pii_item in regex_dict:
+            cleaned_text = re.sub(regex_dict[this_pii_item], "", cleaned_text,)
+
+        return cleaned_text
+
     def remove_links(self, text):
         """
         Parameters

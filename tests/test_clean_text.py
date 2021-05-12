@@ -111,3 +111,21 @@ def test_compress_df():
     assert compressed_df["int"].dtype == "uint8"
     assert compressed_df["float"].dtype == "float32"
     assert compressed_df["text"].dtype == "category"
+
+
+def test_remove_pii():
+    text = """
+        Hi my phone number is (123) 456-7890 can you call me
+        actually wait it's +1 123 456 7890
+        also my email address is cool.guy.12@aol.uk.us.biz.us
+        my social is 123-12-1234
+        and you can charge this credit card 1234123412341234
+        wait actually use my amex 123412345612345
+        check out my cool site https://www.stuff.cool.site.gov.us?param=1&other_param=2
+        btw, i've submitted like 125 support tickets and i'm furious!
+    """
+    cleaned_text = ct.remove_pii(text)
+    assert "cool.guy.27" not in cleaned_text
+    assert "123" not in cleaned_text
+    assert "https" not in cleaned_text
+    assert "125" in cleaned_text  # we don't want to remove non-PII numbers
