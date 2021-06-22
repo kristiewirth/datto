@@ -1,3 +1,9 @@
+import base64
+from io import BytesIO
+
+import matplotlib
+
+
 class FrontEnd:
     def dropdown_from_dataframe(self, name, df, chosen_col):
         """
@@ -32,25 +38,60 @@ class FrontEnd:
     def dataframe_to_html(self, df, title=""):
         """
         Write an entire dataframe to an HTML file with nice formatting.
+
+        Parameters
+        --------
+        df: DataFrame
+        title: str (optional)
+
+
+        Returns
+        --------
+        html: str
+
         """
-        result = """
+
+        html = """
         <html>
         <body>
             """
 
         min_col_widths = {col: 150 for col in df.columns}
 
-        result += "<h2> %s </h2>\n" % title
-        result += df.to_html(
+        html += "<h2> %s </h2>\n" % title
+        html += df.to_html(
             col_space=min_col_widths,
             classes="wide",
             max_rows=1000,
             escape=False,
             index=False,
         )
-        result += """
+        html += """
         </body>
         </html>
         """
 
-        return result
+        return html
+
+    def fig_to_html(self, fig):
+        """
+        Create HTML file from a matplotlib fig with workarounds for using inside a Flask app.
+
+        Parameters
+        --------
+        fig: matplotlib figure
+
+        Returns
+        --------
+        html: str
+        """
+        matplotlib.use("Agg")
+
+        tmpfile = BytesIO()
+        fig.savefig(tmpfile, format="png")
+        encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+        html = "<img src='data:image/png;base64,{}'>".format(encoded)
+
+        return html
+

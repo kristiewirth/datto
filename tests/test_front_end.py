@@ -1,7 +1,8 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+from datto.FrontEnd import FrontEnd
 from hypothesis import given
 from hypothesis.extra.pandas import column, data_frames
-
-from datto.FrontEnd import FrontEnd
 
 fe = FrontEnd()
 
@@ -26,3 +27,14 @@ def test_dropdown_from_dataframe(df):
     df_html = fe.dataframe_to_html(df)
 
     assert "<html>" in df_html
+
+
+def test_fig_to_html():
+    df = pd.DataFrame(["cat1", "cat2", "cat2", "cat3"], columns=["categories"])
+
+    fig = plt.figure()
+    fig = df["categories"].hist().get_figure()
+
+    fig_html = fe.fig_to_html(fig)
+
+    assert "img src" in fig_html
