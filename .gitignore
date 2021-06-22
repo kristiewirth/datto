@@ -1,42 +1,25 @@
-# Environments
 venv/
 bootstrap.log
 .env
-
-# Makefile flags
 .flag.*
-
-# Docker
 .container_data/
-
-# Sphinx
 docs/_build/
-
-# Logs
 *.log
 *.logs
-
-# OSX extras
 .DS_Store
-
-# Test cache
 .cache/
 __pycache__/
-
-# Jupyter notebook checkpoints
 .ipynb_checkpoints
-
-# VS Code
 .history/
 *.code-workspace
 .vscode/
-
 .hypothesis/
 catboost_info/
 model_results.csv
 datto_examples_zapier.ipynb
-
 Golden path to machine learning external.ipynb
 titanic.csv
 *.png
 datto/*.png
+dist/*
+datto.egg-info/*
