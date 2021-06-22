@@ -64,3 +64,11 @@ def test_find_cols_to_exclude(df):
 def test_find_correlated_features(df):
     s = eda.find_correlated_features(df)
     assert isinstance(s, pd.Series)
+
+
+def test_check_unique_by_identifier_col():
+    df = pd.DataFrame(["user_1234", "user_32434", "user_1234"], columns=["ids"])
+    identifier_col = "ids"
+    dup_rows = eda.check_unique_by_identifier_col(df, identifier_col)
+
+    assert not dup_rows.empty

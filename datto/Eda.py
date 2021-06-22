@@ -155,3 +155,26 @@ class Eda:
         s = s.sort_values(ascending=False)
         print(s)
         return s
+
+    def check_unique_by_identifier_col(self, df, identifier_col):
+        """
+        Check if there are duplicates by entity (e.g. user, item).
+
+        Parameters
+        --------
+        df: DataFrame
+
+        Returns
+        --------
+
+
+        """
+
+        dup_rows = pd.concat(
+            x for col, x in df.groupby(identifier_col) if len(x) > 1
+        ).sort_values(identifier_col)
+
+        print("Duplicate identifier columns:")
+        print(dup_rows)
+
+        return dup_rows
