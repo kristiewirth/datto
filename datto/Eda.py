@@ -248,13 +248,13 @@ class Eda:
                     continue
 
                 else:
-                    height = len(df[col].unique()) + 10
-                    fig = plt.figure(figsize=(20, height))
+                    fig = plt.figure(figsize=(7, 7))
                     ax = fig.add_subplot(111)
                     ax.set_title(col)
-                    df[col].value_counts().plot(kind="barh")
-                    ax.invert_yaxis()
+
+                    sns.histplot(x=df[col], ax=ax, palette="pastel")
                     plt.tight_layout()
+
                     plt.savefig("../images/bargraph_{}.png".format(col))
             except Exception:
                 continue
