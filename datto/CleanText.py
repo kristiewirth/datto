@@ -8,8 +8,10 @@ import pandas as pd
 import spacy
 from spacy.cli import download
 
-download("en")
-nlp = spacy.load("en")
+try:
+    nlp = spacy.load("en")
+except Exception:
+    download("en")
 
 
 class CleanText:
