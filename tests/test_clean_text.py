@@ -153,7 +153,7 @@ def test_batch_merge_operation():
     )
     assert merged_df.shape[1] == 5
 
-    
+
 def test_remove_pii():
     text = """
         Hi my phone number is (123) 456-7890 can you call me
