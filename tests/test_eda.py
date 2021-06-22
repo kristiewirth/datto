@@ -6,6 +6,24 @@ from datto.Eda import Eda
 
 eda = Eda()
 
+df = pd.DataFrame(
+    [
+        ["some text", 1, 1.2],
+        ["some other text", 1, 1.4],
+        ["i like bananas", 2, 6.5],
+        ["i like apples", 2, 7.5],
+        ["some text", 1, 1.2],
+        ["some other text", 1, 1.4],
+        ["i like bananas", 2, 6.5],
+        ["i like apples", 2, 7.5],
+        ["some text", 1, 1.2],
+        ["some other text", 1, 1.4],
+        ["i like bananas", 2, 6.5],
+        ["i like apples", 2, 7.5],
+    ],
+    columns=["text", "int", "float"],
+)
+
 
 @given(
     data_frames(
@@ -72,3 +90,11 @@ def test_check_unique_by_identifier_col():
     dup_rows = eda.check_unique_by_identifier_col(df, identifier_col)
 
     assert not dup_rows.empty
+
+
+def test_violin_plots_by_col():
+    eda.violin_plots_by_col(df)
+
+
+def test_bar_graphs_by_col():
+    eda.bar_graphs_by_col(df)

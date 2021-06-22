@@ -1,4 +1,12 @@
+import os
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import progressbar
+import seaborn as sns
+from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
 
 
 class Eda:
@@ -166,7 +174,7 @@ class Eda:
 
         Returns
         --------
-
+        dup_rows: DataFrame
 
         """
 
@@ -178,3 +186,68 @@ class Eda:
         print(dup_rows)
 
         return dup_rows
+
+    def violin_plots_by_col(self, df):
+        """
+        Makes a violin plot for each numerical column.
+
+        Parameters
+        --------
+        df: DataFrame
+        """
+
+        numerical_vals, _ = self.separate_cols_by_type(df)
+
+        if numerical_vals.empty:
+            return "No numerical columns to graph."
+
+        iter_bar = progressbar.ProgressBar()
+        for col in iter_bar(numerical_vals):
+            fig = plt.figure(figsize=(7, 7))
+            ax = fig.add_subplot(111)
+            ax.set_title(col)
+
+            sns.violinplot(x=df[col], orient="v", ax=ax, palette="pastel")
+
+            text = "75th Percentile: {}\nMedian: {}\n25th Percentile: {}".format(
+                np.percentile(df[col], 75),
+                np.median(df[col]),
+                np.percentile(df[col], 25),
+            )
+            at = AnchoredText(text, prop=dict(size=15), frameon=True, loc=1)
+            ax.add_artist(at)
+            plt.tight_layout()
+
+            plt.savefig("violinplot_{}".format(col))
+
+    def bar_graphs_by_col(self, df):
+        """
+        Makes a bar graph for each categorical column.
+
+        Parameters
+        --------
+        df: DataFrame
+        """
+        _, categorical_vals = self.separate_cols_by_type(df)
+
+        if categorical_vals.empty:
+            return "No categorical columns to graph."
+
+        iter_bar = progressbar.ProgressBar()
+        for col in iter_bar(categorical_vals):
+            try:
+                if len(df[col].unique()) > 100 or len(df[col].unique()) == 1:
+                    continue
+
+                else:
+                    height = len(df[col].unique()) + 10
+                    fig = plt.figure(figsize=(20, height))
+                    ax = fig.add_subplot(111)
+                    ax.set_title(col)
+                    df[col].value_counts().plot(kind="barh")
+                    ax.invert_yaxis()
+                    plt.tight_layout()
+
+                    plt.savefig("bargraph_{}".format(col))
+            except Exception:
+                continue
