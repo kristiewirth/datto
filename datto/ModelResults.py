@@ -1,3 +1,4 @@
+import os
 import re
 import string
 from math import ceil
@@ -257,6 +258,9 @@ class ModelResults:
             'classification' or 'regression'
         filename: str
         """
+        if not os.path.exists("../images"):
+            os.makedirs("../images/")
+
         if model_type.lower() == "classification":
             f = lambda x: model.predict_proba(x)[:, 1]
         else:
@@ -271,7 +275,7 @@ class ModelResults:
         shap_values = explainer.shap_values(X_test_sample)
         shap.summary_plot(shap_values, X_test_sample)
         plt.tight_layout()
-        plt.savefig(filename)
+        plt.savefig(f"../images/{filename}.png")
 
         return shap_values
 
@@ -550,6 +554,9 @@ class ModelResults:
         model_type,
         class_names=["False", "True"],
     ):
+        if not os.path.exists("../images"):
+            os.makedirs("../images/")
+
         def model_preds_adjusted(data):
             if model_type.lower() == "classification":
                 predictions = np.array(trained_model.predict_proba(data))
@@ -622,7 +629,7 @@ class ModelResults:
                     print(" * This is false: " + feature[0])
             exp.as_pyplot_figure()
             plt.tight_layout()
-            plt.savefig(f"lime_graph_user_{user_id}.png")
+            plt.savefig(f"../images/lime_graph_user_{user_id}.png")
 
             print("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 

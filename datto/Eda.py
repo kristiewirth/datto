@@ -201,6 +201,9 @@ class Eda:
         if numerical_vals.empty:
             return "No numerical columns to graph."
 
+        if not os.path.exists("../images/"):
+            os.makedirs("../images")
+
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(numerical_vals):
             fig = plt.figure(figsize=(7, 7))
@@ -218,7 +221,7 @@ class Eda:
             ax.add_artist(at)
             plt.tight_layout()
 
-            plt.savefig("violinplot_{}".format(col))
+            plt.savefig("../images/violinplot_{}.png".format(col))
 
     def bar_graphs_by_col(self, df):
         """
@@ -232,6 +235,9 @@ class Eda:
 
         if categorical_vals.empty:
             return "No categorical columns to graph."
+
+        if not os.path.exists("../images"):
+            os.makedirs("../images/")
 
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(categorical_vals):
@@ -247,7 +253,6 @@ class Eda:
                     df[col].value_counts().plot(kind="barh")
                     ax.invert_yaxis()
                     plt.tight_layout()
-
-                    plt.savefig("bargraph_{}".format(col))
+                    plt.savefig("../images/bargraph_{}.png".format(col))
             except Exception:
                 continue
