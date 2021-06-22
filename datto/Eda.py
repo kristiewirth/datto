@@ -213,7 +213,7 @@ class Eda:
             ax.set_title(col)
 
             sns.violinplot(
-                x=df[col], orient="v", ax=ax,
+                x=df[col], ax=ax,
             )
 
             text = "75th Percentile: {}\nMedian: {}\n25th Percentile: {}".format(
