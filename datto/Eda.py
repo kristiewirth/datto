@@ -215,9 +215,9 @@ class Eda:
             sns.violinplot(x=df[col], orient="v", ax=ax, palette="pastel")
 
             text = "75th Percentile: {}\nMedian: {}\n25th Percentile: {}".format(
-                np.percentile(df[col], 75),
-                np.median(df[col]),
-                np.percentile(df[col], 25),
+                round(np.percentile(df[col], 75), 2),
+                round(np.median(df[col]), 2),
+                round(np.percentile(df[col], 25), 2),
             )
             at = AnchoredText(text, prop=dict(size=15), frameon=True, loc=1)
             ax.add_artist(at)
