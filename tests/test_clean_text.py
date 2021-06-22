@@ -152,3 +152,22 @@ def test_batch_merge_operation():
         df_1, df_2, num_splits, identifier_col, merge_col
     )
     assert merged_df.shape[1] == 5
+
+    
+def test_remove_pii():
+    text = """
+        Hi my phone number is (123) 456-7890 can you call me
+        actually wait it's +1 123 456 7890
+        also my email address is cool.guy.123@aol.uk.us.biz.us
+        my social is 123-12-1234
+        and you can charge this credit card 1234123412341234
+        wait actually use my amex 123412345612345
+        check out my cool site https://www.stuff.aol.uk.us.biz.us?param=1&other_param=2
+        btw, i've submitted like 500 support tickets and i'm furious!
+    """
+    cleaned_text = ct.remove_pii(text)
+    assert "cool.guy.123" not in cleaned_text
+    assert "123" not in cleaned_text
+    assert "https" not in cleaned_text
+    assert "aol.uk.us.biz.us" not in cleaned_text
+    assert "500" in cleaned_text  # we don't want to remove non-PII numbers
