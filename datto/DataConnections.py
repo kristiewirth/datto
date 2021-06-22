@@ -110,6 +110,9 @@ class SQLConnections:
         df: DataFrame
 
         """
+        # Need to commit insert queries
+        self.CONN.set_session(autocommit=True)
+
         with self.CONN.cursor() as cursor:
             # Execute query
             cursor.execute(query)
