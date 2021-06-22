@@ -1,17 +1,12 @@
 [tool.poetry]
 name = "datto"
-version = "0.5.2"
+version = "0.5.3"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
-ipython = "^7.8"
-pytest = "^5.2"
-black = "^19.10b0"
-pylint = "^2.5.0"
 pandas = "^1.0.4"
-notebook = "^6.0.3"
 spacy = "^2.2.4"
 s3fs = "^0.4.2"
 psycopg2-binary = "^2.8.5"
@@ -27,7 +22,6 @@ sphinx = "^3.2.1"
 sphinx-rtd-theme = "^0.5.0"
 lime = "^0.2.0"
 statsmodels = "^0.12.2"
-
 
 [tool.poetry.dev-dependencies]
 pycodestyle = "^2.6.0"
