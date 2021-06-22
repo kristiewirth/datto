@@ -155,7 +155,7 @@ class Eda:
 
         """
         if df.empty:
-            return pd.Series()
+            return pd.DataFrame()
 
         c = df.corr().abs()
         s = c.unstack()

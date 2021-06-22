@@ -81,7 +81,7 @@ def test_find_cols_to_exclude(df):
 )
 def test_find_correlated_features(df):
     s = eda.find_correlated_features(df)
-    assert isinstance(s, pd.Series)
+    assert isinstance(s, pd.DataFrame)
 
 
 def test_check_unique_by_identifier_col():
