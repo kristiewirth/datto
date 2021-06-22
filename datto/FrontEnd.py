@@ -28,3 +28,29 @@ class FrontEnd:
         html_choices += """</select>"""
 
         return html_choices
+
+    def dataframe_to_html(self, df, title=""):
+        """
+        Write an entire dataframe to an HTML file with nice formatting.
+        """
+        result = """
+        <html>
+        <body>
+            """
+
+        min_col_widths = {col: 150 for col in df.columns}
+
+        result += "<h2> %s </h2>\n" % title
+        result += df.to_html(
+            col_space=min_col_widths,
+            classes="wide",
+            max_rows=1000,
+            escape=False,
+            index=False,
+        )
+        result += """
+        </body>
+        </html>
+        """
+
+        return result
