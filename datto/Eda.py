@@ -212,7 +212,9 @@ class Eda:
             ax = fig.add_subplot(111)
             ax.set_title(col)
 
-            sns.violinplot(x=df[col], orient="v", ax=ax, palette="pastel")
+            sns.violinplot(
+                x=df[col], orient="v", ax=ax,
+            )
 
             text = "75th Percentile: {}\nMedian: {}\n25th Percentile: {}".format(
                 round(np.percentile(df[col], 75), 2),
@@ -252,9 +254,12 @@ class Eda:
                     ax = fig.add_subplot(111)
                     ax.set_title(col)
 
-                    sns.histplot(x=df[col], ax=ax, palette="pastel")
+                    counts_df = df[col].value_counts().reset_index()
+                    counts_df.sort_values(by=col, ascending=False, inplace=True)
+                    sns.barplot(
+                        x=counts_df[col], y=counts_df["index"], ax=ax,
+                    )
                     plt.tight_layout()
-
                     plt.savefig("../images/bargraph_{}.png".format(col))
             except Exception:
                 continue
