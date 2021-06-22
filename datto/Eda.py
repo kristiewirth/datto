@@ -161,8 +161,10 @@ class Eda:
         s = c.unstack()
         s = s[s <= 0.99999]
         s = s.sort_values(ascending=False)
-        print(s)
-        return s
+        s_df = s.reset_index()
+        s_df.columns = ["feature_1", "feature_2", "corr"]
+        print(s_df.head(20))
+        return s_df
 
     def check_unique_by_identifier_col(self, df, identifier_col):
         """
