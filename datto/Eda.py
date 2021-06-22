@@ -180,12 +180,12 @@ class Eda:
 
         """
 
-        dup_rows = pd.concat(
-            x for col, x in df.groupby(identifier_col) if len(x) > 1
-        ).sort_values(identifier_col)
-
-        print("Duplicate identifier columns:")
-        print(dup_rows)
+        try:
+            dup_rows = pd.concat(
+                x for col, x in df.groupby(identifier_col) if len(x) > 1
+            ).sort_values(identifier_col)
+        except Exception:
+            return "No duplicate rows found."
 
         return dup_rows
 
