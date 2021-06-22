@@ -1,12 +1,10 @@
 import os
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import progressbar
 import seaborn as sns
-from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
 
 
 class Eda:
@@ -220,8 +218,18 @@ class Eda:
                 round(np.median(df[col]), 2),
                 round(np.percentile(df[col], 25), 2),
             )
-            at = AnchoredText(text, prop=dict(size=15), frameon=True, loc=1)
-            ax.add_artist(at)
+
+            # Place a text box in upper left in axes coords
+            props = dict(boxstyle="round", facecolor="white", alpha=0.5)
+            ax.text(
+                0.05,
+                0.95,
+                text,
+                transform=ax.transAxes,
+                fontsize=14,
+                verticalalignment="top",
+                bbox=props,
+            )
             plt.tight_layout()
 
             plt.savefig("../images/violinplot_{}.png".format(col))
