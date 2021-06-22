@@ -22,6 +22,8 @@ sphinx = "^3.2.1"
 sphinx-rtd-theme = "^0.5.0"
 lime = "^0.2.0"
 statsmodels = "^0.12.2"
+seaborn = "^0.11.1"
+progressbar = "^2.5"
 
 [tool.poetry.dev-dependencies]
 pycodestyle = "^2.6.0"
