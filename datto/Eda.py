@@ -186,7 +186,7 @@ class Eda:
 
         return dup_rows
 
-    def violin_plots_by_col(self, df):
+    def violin_plots_by_col(self, df, path="../images/"):
         """
         Makes a violin plot for each numerical column.
 
@@ -200,8 +200,8 @@ class Eda:
         if numerical_vals.empty:
             return "No numerical columns to graph."
 
-        if not os.path.exists("../images/"):
-            os.makedirs("../images")
+        if not os.path.exists(path):
+            os.makedirs(path)
 
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(numerical_vals):
@@ -232,9 +232,9 @@ class Eda:
             )
             plt.tight_layout()
 
-            plt.savefig("../images/violinplot_{}.png".format(col))
+            plt.savefig(f"{path}violinplot_{col}.png")
 
-    def bar_graphs_by_col(self, df):
+    def bar_graphs_by_col(self, df, path="../images/"):
         """
         Makes a bar graph for each categorical column.
 
@@ -247,8 +247,8 @@ class Eda:
         if categorical_vals.empty:
             return "No categorical columns to graph."
 
-        if not os.path.exists("../images"):
-            os.makedirs("../images/")
+        if not os.path.exists(path):
+            os.makedirs(path)
 
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(categorical_vals):
@@ -267,6 +267,6 @@ class Eda:
                         x=counts_df[col], y=counts_df["index"], ax=ax,
                     )
                     plt.tight_layout()
-                    plt.savefig("../images/bargraph_{}.png".format(col))
+                    plt.savefig(f"{path}bargraph_{col}.png")
             except Exception:
                 continue

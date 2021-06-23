@@ -236,7 +236,9 @@ class ModelResults:
             model,
         )
 
-    def coefficients_graph(self, X_train, X_test, model, model_type, filename):
+    def coefficients_graph(
+        self, X_train, X_test, model, model_type, filename, path="../images/"
+    ):
         """
         Displays graph of feature importances.
 
@@ -258,8 +260,8 @@ class ModelResults:
             'classification' or 'regression'
         filename: str
         """
-        if not os.path.exists("../images"):
-            os.makedirs("../images/")
+        if not os.path.exists(path):
+            os.makedirs(path)
 
         if model_type.lower() == "classification":
             f = lambda x: model.predict_proba(x)[:, 1]
@@ -275,7 +277,7 @@ class ModelResults:
         shap_values = explainer.shap_values(X_test_sample)
         shap.summary_plot(shap_values, X_test_sample)
         plt.tight_layout()
-        plt.savefig(f"../images/{filename}.png")
+        plt.savefig(f"{path}{filename}.png")
 
         return shap_values
 
@@ -553,9 +555,10 @@ class ModelResults:
         num_samples,
         model_type,
         class_names=["False", "True"],
+        path="../images/",
     ):
-        if not os.path.exists("../images"):
-            os.makedirs("../images/")
+        if not os.path.exists(path):
+            os.makedirs(path)
 
         def model_preds_adjusted(data):
             if model_type.lower() == "classification":
@@ -629,7 +632,7 @@ class ModelResults:
                     print(" * This is false: " + feature[0])
             exp.as_pyplot_figure()
             plt.tight_layout()
-            plt.savefig(f"../images/lime_graph_user_{user_id}.png")
+            plt.savefig(f"{path}lime_graph_user_{user_id}.png")
 
             print("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
