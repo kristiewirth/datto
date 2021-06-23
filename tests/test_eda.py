@@ -36,23 +36,17 @@ def test_separate_cols_by_type(df):
     assert "text" in categorical_vals.columns
 
 
-@given(
-    data_frames(
-        columns=[
-            column(dtype=str),
-            column(dtype=int),
-            column(
-                name="boolean",
-                dtype=int,
-                elements=strategies.integers(min_value=0, max_value=1),
-            ),
-        ]
-    )
-)
-def test_check_for_mistyped_booleans(df):
-    boolean_vals = eda.check_for_mistyped_booleans(df)
+def test_check_for_mistyped_cols():
+    numerical_vals = pd.DataFrame([1, 2, 1, 2, 1, 2, 1, 2], columns=["coded_int"])
 
-    assert "boolean" in boolean_vals
+    categorical_vals = pd.DataFrame(
+        ["1", "2", "1", "2", "2", "2"], columns=["coded_categorical"]
+    )
+
+    mistyped_vals = eda.check_for_mistyped_cols(numerical_vals, categorical_vals)
+
+    assert "coded_int" in mistyped_vals
+    assert "coded_categorical" in mistyped_vals
 
 
 @given(

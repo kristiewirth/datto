@@ -26,27 +26,46 @@ class Eda:
 
         return numerical_vals, categorical_vals
 
-    def check_for_mistyped_booleans(self, numerical_vals):
+    def check_for_mistyped_cols(self, numerical_vals, categorical_vals):
         """
-        Check for columns coded as ints/floats that should actually be booleans
+        Check for columns coded incorrectly
 
         Parameters
         --------
         numerical_vals: list
+        categorical_vals: list
 
         Returns
         --------
-        boolean_cols: list
+        mistyped_cols: list
 
         """
-        boolean_cols = []
-        for col in numerical_vals:
-            if numerical_vals[col].nunique() <= 2:
+        mistyped_cols = []
+
+        for col in numerical_vals.columns:
+            if numerical_vals[col].nunique() <= 20:
+                print("Coded as numerical, is this actually an object / bool?\n")
                 print(col)
                 print(numerical_vals[col].unique())
-                boolean_cols.append(col)
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                mistyped_cols.append(col)
 
-        return boolean_cols
+        for col in categorical_vals.columns:
+            if "_id" in col:
+                continue
+            try:
+                # Test two random values
+                float(categorical_vals[col][0])
+                float(categorical_vals[col][5])
+                print("Coded as categorical, is this actually an int / float?\n")
+                print(col)
+                print(categorical_vals[col].unique()[:10])
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                mistyped_cols.append(col)
+            except Exception:
+                pass
+
+        return mistyped_cols
 
     def find_cols_to_exclude(self, df):
         """
