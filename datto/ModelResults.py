@@ -33,10 +33,8 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeClassifier
 
-from datto.CleanText import CleanText
+from datto.CleanDataframe import CleanDataframe
 
 
 class ModelResults:

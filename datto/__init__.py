@@ -1,4 +1,4 @@
-from datto.CleanText import CleanText
+from datto.CleanDataframe import CleanDataframe
 from datto.Experiments import Experiments
 from datto.DataConnections import SQLConnections
 from datto.DataConnections import S3Connections
