@@ -557,6 +557,24 @@ class ModelResults:
         class_names=["False", "True"],
         path="../images/",
     ):
+        """
+        Uses LIME to inspect an individual prediction and the features that influenced that prediction.
+
+        Parameters
+        --------
+        trained_model: sklearn model (already fitted)
+        X_train: pd.DataFrame
+        X_test: pd.DataFrame
+        id_col: str
+        num_samples: int
+        model_type: str
+        class_names: str
+        path: str
+
+        Returns
+        --------
+        features: list
+        """
         if not os.path.exists(path):
             os.makedirs(path)
 
