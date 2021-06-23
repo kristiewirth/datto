@@ -1,9 +1,8 @@
+import numpy as np
 import pandas as pd
+from datto.CleanDataframe import CleanDataframe
 from hypothesis import example, given, strategies
 from hypothesis.extra.pandas import column, data_frames
-
-from datto.CleanDataframe import CleanDataframe
-
 
 cdf = CleanDataframe()
 
@@ -171,3 +170,17 @@ def test_remove_pii():
     assert "https" not in cleaned_text
     assert "aol.uk.us.biz.us" not in cleaned_text
     assert "500" in cleaned_text  # we don't want to remove non-PII numbers
+
+
+def test_fill_nulls_using_regression_model():
+    X_train = pd.DataFrame(
+        [[1, 4], [2, 4], [4, 3], [1, np.nan]], columns=["col1", "col2"]
+    )
+    X_test = pd.DataFrame(
+        [[1, 2], [2, 4], [1, 3], [4, np.nan]], columns=["col1", "col2"]
+    )
+
+    X_train, X_test = cdf.fill_nulls_using_regression_model(X_train, X_test)
+
+    assert not X_train.isnull().values.any()
+    assert not X_test.isnull().values.any()

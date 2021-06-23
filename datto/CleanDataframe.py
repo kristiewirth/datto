@@ -6,6 +6,7 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 import spacy
+from sklearn.linear_model import ElasticNet
 from spacy.cli import download
 
 try:
@@ -333,3 +334,72 @@ class CleanDataframe:
             temp_df = pd.merge(temp_df, df_2, how="left", on=merge_col)
             new_df = new_df.append(temp_df)
         return new_df
+
+    def fill_nulls_using_regression_model(self, X_train, X_test):
+        """
+        Trains a regression model on non-null data and predicts values to fill in nulls
+
+        Parameters
+        --------
+        X_train: pd.DataFrame
+        X_test: pd.DataFrme
+
+
+        Returns
+        --------
+        X_train: pd.DataFrame
+        X_test: pd.DataFrame        
+
+        """
+        numerical_vals = X_train.select_dtypes(exclude=["object", "bool"])
+
+        # Filling null values using a smaller regression model
+        for column in numerical_vals.columns:
+            # Getting indices in which the given column is not null
+            filled = list(X_train[column].dropna().index)
+
+            # Getting all the X train data for the rows in which the given column is not blank
+            mini_training_data = (
+                X_train.drop(column, axis=1)
+                .apply(lambda x: x.fillna(x.mean()), axis=0)
+                .iloc[filled]
+            )
+            # Getting the column to be filled data where it is not null
+            mini_training_target = X_train[column].iloc[filled]
+
+            # Instantiating model to predict values
+            model = ElasticNet(alpha=0.1, l1_ratio=0.5)
+            model.fit(mini_training_data, mini_training_target)
+
+            # Getting indices in which the given column is null
+            nulls = [x for x in X_train.index if x not in filled]
+
+            # Getting all the X train data for the rows in which the given column has blank values
+            mini_testing_data1 = (
+                X_train.drop(column, axis=1)
+                .apply(lambda x: x.fillna(x.mean()), axis=0)
+                .iloc[nulls]
+            )
+            if mini_testing_data1.empty == False:
+                # Predicting the values of the given column where it is blank
+                predictions1 = model.predict(mini_testing_data1)
+                # Filling in the values that are blank using the predictions
+                X_train[column].iloc[nulls] = predictions1
+
+            # Repeating the process for X test (but just using the already trained model)
+            nulls = [x for x in X_test.index if x not in filled]
+
+            # Getting all the X test data for the rows in which the given column has blank values
+            mini_testing_data2 = (
+                X_test.drop(column, axis=1)
+                .apply(lambda x: x.fillna(x.mean()), axis=0)
+                .iloc[nulls]
+            )
+
+            if mini_testing_data2.empty == False:
+                # Predicting the values of the given column where it is blank
+                predictions2 = model.predict(mini_testing_data2)
+                # Filling in the values that are blank using the predictions
+                X_test[column].iloc[nulls] = predictions2
+
+        return X_train, X_test
