@@ -12,6 +12,7 @@ try:
     nlp = spacy.load("en")
 except Exception:
     download("en")
+    nlp = spacy.load("en")
 
 
 class CleanText:
