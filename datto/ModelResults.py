@@ -21,7 +21,6 @@ from sklearn.feature_extraction.text import (
     TfidfVectorizer,
 )
 from sklearn.feature_selection import VarianceThreshold
-from sklearn.linear_model import ElasticNet, LogisticRegression, SGDClassifier
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -76,7 +75,7 @@ class ModelResults:
             | chosen_stopwords
         )
 
-        ct = CleanText()
+        ct = CleanDataframe()
         vectorizer = TfidfVectorizer(
             tokenizer=ct.lematize,
             ngram_range=(1, 3),
@@ -242,11 +241,11 @@ class ModelResults:
 
         * Number of horizontal axis indicates magnitude of effect on
             target variable (e.g. affected by 0.25)
-        * Red/blue indicates feature value (increasing or decreasing feature 
+        * Red/blue indicates feature value (increasing or decreasing feature
             has _ effect)
-        * Blue & red mixed together indicate there isn't a clear 
+        * Blue & red mixed together indicate there isn't a clear
             effect on the target variable
-        * For classification - interpreting magnitude number / x axis - changes the 
+        * For classification - interpreting magnitude number / x axis - changes the
             predicted probability of y on average by _ percentage points (axis value * 100)
 
         Parameters
@@ -467,7 +466,7 @@ class ModelResults:
         model_type: str
             'classification' or 'regression'
         multiclass: bool
-            
+
         Returns
         --------
         simplified_df: DataFrame
@@ -598,7 +597,7 @@ class ModelResults:
                 mode="regression",
             )
 
-        for i in range(num_samples):
+        for _ in range(num_samples):
             user_idx = randrange(X_test.shape[0])
             exp = explainer.explain_instance(
                 np.array(X_test.iloc[user_idx]),
@@ -653,4 +652,3 @@ class ModelResults:
             print("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
         return features_list
-
