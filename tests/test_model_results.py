@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pandas as pd
 from datto.ModelResults import ModelResults
@@ -190,3 +192,13 @@ def test_coefficients_summary_regression():
         pd.DataFrame(X_train["count"]), y_train, 5, 3, "regression"
     )
     assert results_df.shape[0] == 1
+
+
+def test_get_tree_diagram():
+    path = "../images/"
+    model = DecisionTreeClassifier()
+    model.fit(X_train, y_train)
+
+    mr.get_tree_diagram(model, X_train, path)
+
+    assert os.path.exists(f"{path}decision-tree.png")

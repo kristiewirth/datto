@@ -5,6 +5,7 @@ from math import ceil
 from operator import itemgetter
 from random import randrange
 
+import graphviz
 import lime
 import lime.lime_tabular
 import matplotlib.pyplot as plt
@@ -32,6 +33,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.model_selection import train_test_split
+from sklearn.tree import export_graphviz
 
 from datto.CleanDataframe import CleanDataframe
 
@@ -652,3 +654,34 @@ class ModelResults:
             print("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
         return features_list
+
+    def get_tree_diagram(self, model, X_train, path="../images/"):
+        """
+        Save a diagram of a trained DecisionTree model
+
+        Parameters
+        --------
+        model: sklearn model (trained)
+        X_train: pd.DataFrame
+        path: str
+        """
+        # Exporting text form of decision tree
+        dot_data = export_graphviz(
+            model,
+            out_file=f"{path}decision-tree.dot",
+            feature_names=X_train.columns,
+            filled=True,
+            rounded=True,
+            special_characters=True,
+        )
+        graph = graphviz.Source(dot_data)
+
+        # Converting text to a visual png file
+        os.system(f"dot -Tpng {path}decision-tree.dot -o {path}decision-tree.png")
+
+        # If the file didn't write, try reinstalling graphviz
+        if not os.path.exists(f"{path}decision-tree.png"):
+            os.system("brew install graphviz")
+            os.system(f"dot -Tpng {path}decision-tree.dot -o {path}decision-tree.png")
+
+        return graph
