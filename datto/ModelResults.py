@@ -201,7 +201,7 @@ class ModelResults:
                             text_column_name
                         ].values
                     )
-                    if topic_words[topic][0]
+                    if topic_words[topic][0] in x
                     or topic_words[topic][1] in x
                     or topic_words[topic][2] in x
                     or topic_words[topic][3] in x
