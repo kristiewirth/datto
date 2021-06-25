@@ -40,7 +40,16 @@ from datto.CleanDataframe import CleanDataframe
 
 class ModelResults:
     def most_similar_texts(
-        self, X, num_examples, text_column_name, num_topics=None, chosen_stopwords=set()
+        self,
+        X,
+        num_examples,
+        text_column_name,
+        num_topics=None,
+        chosen_stopwords=set(),
+        min_df=3,
+        max_df=0.1,
+        min_ngrams=1,
+        max_ngrams=3,
     ):
         """
         Uses NMF clustering to create n topics based on adjusted word frequencies
@@ -52,14 +61,22 @@ class ModelResults:
         text_column_name: str
         num_topics: int
             Optional - if none algorithm will determine best number
+        min_df: float
+            Minimum number/proportion of docs that need to have the words
+        max_df: float
+            Maximum number/proportion of docs that can have the words
+        min_ngrams: int
+            Minimum number of words needed in phrases found
+        max_ngrams: int
+            Maximum number of words in phrases found
 
         Returns
         --------
-        topic_words_df: DataFrame
-            Top 15 words/phrases per topic
-        combined_df: DataFrame
+        concated_topics: DataFrame
+            Top n words/phrases per topic
+        original_with_keywords: DataFrame
             Original text with topic number assigned to each
-
+        model: NMF model
         """
         X = X[~X[text_column_name].isna()]
         X = X[X[text_column_name] != ""]
@@ -80,10 +97,10 @@ class ModelResults:
         ct = CleanDataframe()
         vectorizer = TfidfVectorizer(
             tokenizer=ct.lematize,
-            ngram_range=(1, 3),
+            ngram_range=(min_ngrams, max_ngrams),
             stop_words=all_stop_words,
-            min_df=5,
-            max_df=0.4,
+            min_df=min_df,
+            max_df=max_df,
         )
         vectors = vectorizer.fit_transform(X[text_column_name]).todense()
 
