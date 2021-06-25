@@ -192,12 +192,21 @@ class ModelResults:
         for topic, comp in enumerate(model.components_):
             word_idx = np.argsort(comp)[::-1][:num_examples]
             topic_words[topic] = [vocab[i] for i in word_idx]
+            # Append examples that have one of the top keywords in topic
             sample_texts_lst.append(
-                list(
-                    combined_df[combined_df["top_topic_num"] == topic][
-                        text_column_name
-                    ].values[:num_examples]
-                )
+                [
+                    x
+                    for x in list(
+                        combined_df[combined_df["top_topic_num"] == topic][
+                            text_column_name
+                        ].values
+                    )
+                    if topic_words[topic][0]
+                    or topic_words[topic][1] in x
+                    or topic_words[topic][2] in x
+                    or topic_words[topic][3] in x
+                    or topic_words[topic][4] in x
+                ][:num_examples]
             )
 
         topic_words_df = pd.DataFrame(
