@@ -141,7 +141,13 @@ def test_coefficients_individual_predictions_classification():
     model_type = "classification"
     class_names = ["False", "True"]
     features_list = mr.coefficients_individual_predictions(
-        trained_model, X_train, X_test, id_col, num_samples, model_type, class_names,
+        trained_model,
+        X_train,
+        X_test,
+        id_col,
+        num_samples,
+        model_type,
+        class_names,
     )
     assert isinstance(features_list, list)
 
@@ -153,18 +159,41 @@ def test_coefficients_individual_predictions_regression():
     num_samples = 3
     model_type = "regression"
     features_list = mr.coefficients_individual_predictions(
-        trained_model, X_train, X_test, id_col, num_samples, model_type,
+        trained_model,
+        X_train,
+        X_test,
+        id_col,
+        num_samples,
+        model_type,
     )
     assert isinstance(features_list, list)
 
 
 def test_score_final_model_multiclass():
     y_train = pd.DataFrame(
-        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 0], [1, 0], [0, 1], [1, 1],],
+        [
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [1, 1],
+            [1, 0],
+            [1, 0],
+            [0, 1],
+            [1, 1],
+        ],
         columns=["var1", "var2"],
     )
     y_test = pd.DataFrame(
-        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 0], [1, 0], [0, 1], [1, 1],],
+        [
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [1, 1],
+            [1, 0],
+            [1, 0],
+            [0, 1],
+            [1, 1],
+        ],
         columns=["var1", "var2"],
     )
     model = DecisionTreeClassifier()
@@ -178,7 +207,16 @@ def test_score_final_model_multiclass():
 
 def test_coefficients_summary_multiclass():
     y_train = pd.DataFrame(
-        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 0], [1, 0], [0, 1], [1, 1],],
+        [
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [1, 1],
+            [1, 0],
+            [1, 0],
+            [0, 1],
+            [1, 1],
+        ],
         columns=["var1", "var2"],
     )
     # For some reason this errors if using more than one feature

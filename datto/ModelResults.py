@@ -217,7 +217,8 @@ class ModelResults:
         topic_words_df["sample_texts"] = sample_texts_lst
 
         topic_words_explode = pd.DataFrame(
-            topic_words_df["sample_texts"].tolist(), index=topic_words_df.index,
+            topic_words_df["sample_texts"].tolist(),
+            index=topic_words_df.index,
         )
 
         topic_words_explode.columns = [
@@ -298,7 +299,13 @@ class ModelResults:
         return shap_values
 
     def most_common_words_by_group(
-        self, X, text_col_name, group_col_name, num_examples, num_times_min, min_ngram,
+        self,
+        X,
+        text_col_name,
+        group_col_name,
+        num_examples,
+        num_times_min,
+        min_ngram,
     ):
         """
         Get the most commons phrases for defined groups.
@@ -361,7 +368,12 @@ class ModelResults:
         sums_by_col = (
             group_plus_vectors[
                 group_plus_vectors.columns[
-                    ~group_plus_vectors.columns.isin([text_col_name, "index",])
+                    ~group_plus_vectors.columns.isin(
+                        [
+                            text_col_name,
+                            "index",
+                        ]
+                    )
                 ]
             ]
             .groupby("group_column")
@@ -446,13 +458,19 @@ class ModelResults:
             print(f"Final Model ROC AUC: {roc_auc}")
 
             crosstab = pd.crosstab(
-                y_test, y_predicted, rownames=["Actual"], colnames=["Predicted"],
+                y_test,
+                y_predicted,
+                rownames=["Actual"],
+                colnames=["Predicted"],
             )
             print(crosstab)
             sum_crosstab = crosstab.to_numpy().sum()
             print(
                 pd.crosstab(
-                    y_test, y_predicted, rownames=["Actual"], colnames=["Predicted"],
+                    y_test,
+                    y_predicted,
+                    rownames=["Actual"],
+                    colnames=["Predicted"],
                 ).apply(lambda r: round(r / sum_crosstab, 3))
             )
         else:
@@ -469,7 +487,13 @@ class ModelResults:
         return trained_model, y_predicted
 
     def coefficients_summary(
-        self, X, y, num_repetitions, num_coefficients, model_type, multiclass=False,
+        self,
+        X,
+        y,
+        num_repetitions,
+        num_coefficients,
+        model_type,
+        multiclass=False,
     ):
         """
         Prints average coefficient values using a regression model.
@@ -546,7 +570,12 @@ class ModelResults:
             coefficients_df = coefficients_df.append(temp_df)
 
         summary_coefficients_df = pd.DataFrame(
-            coefficients_df.groupby("features").agg(["mean", "median",])
+            coefficients_df.groupby("features").agg(
+                [
+                    "mean",
+                    "median",
+                ]
+            )
         ).reset_index(drop=False)
 
         summary_coefficients_df.columns = [
