@@ -322,7 +322,10 @@ class Eda:
                         ax=ax,
                     )
 
-                    plt.tight_layout()
-                    plt.savefig(f"{path}bargraph_{col}.png")
+                ax.set_xlabel("Count")
+                ax.set_ylabel("Values")
+
+                plt.tight_layout()
+                plt.savefig(f"{path}bargraph_{col}.png")
             except Exception:
                 continue
