@@ -253,13 +253,14 @@ class Eda:
             ax.set_title(col)
 
             sns.violinplot(
-                x=df[col], ax=ax,
+                x=numerical_vals[col],
+                ax=ax,
             )
 
             text = "75th Percentile: {}\nMedian: {}\n25th Percentile: {}".format(
-                round(np.percentile(df[col], 75), 2),
-                round(np.median(df[col]), 2),
-                round(np.percentile(df[col], 25), 2),
+                round(np.percentile(numerical_vals[col], 75), 2),
+                round(np.median(numerical_vals[col]), 2),
+                round(np.percentile(numerical_vals[col], 25), 2),
             )
 
             # Place a text box in upper left in axes coords
