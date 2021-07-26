@@ -123,7 +123,9 @@ class Eda:
                 lst.append(
                     {
                         col: "Considering excluding because {}% of column is null.".format(
-                            (df[col].isnull().sum() / float(df.shape[0]) * 100.0)
+                            round(
+                                (df[col].isnull().sum() / float(df.shape[0]) * 100.0), 2
+                            )
                         )
                     }
                 )
@@ -142,7 +144,7 @@ class Eda:
                     lst.append(
                         {
                             col: "Considering excluding because column variance is low ({})".format(
-                                df[col].var()
+                                round(df[col].var(), 2)
                             )
                         }
                     )
