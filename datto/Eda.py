@@ -307,9 +307,21 @@ class Eda:
 
                     counts_df = df[col].value_counts().reset_index()
                     counts_df.sort_values(by=col, ascending=False, inplace=True)
+                if adjust_vals.dtypes == bool:
+                    # For some reason seaborn flips these incorrectly for boolean variables
                     sns.barplot(
-                        x=counts_df[col], y=counts_df["index"], ax=ax,
+                        x=counts_df["index"],
+                        y=counts_df[col],
+                        ax=ax,
                     )
+
+                else:
+                    sns.barplot(
+                        x=counts_df[col],
+                        y=counts_df["index"],
+                        ax=ax,
+                    )
+
                     plt.tight_layout()
                     plt.savefig(f"{path}bargraph_{col}.png")
             except Exception:
