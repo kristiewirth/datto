@@ -1,4 +1,5 @@
 import os
+from collections import Counter
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -297,16 +298,24 @@ class Eda:
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(categorical_vals):
             try:
-                if len(df[col].unique()) > 100 or len(df[col].unique()) == 1:
+                if len(df[col].unique()) == 1:
                     continue
 
+                # More values than this doesn't display well, just show the top values
+                if len(df[col].unique()) > 45:
+                    adjust_vals = df[
+                        df[col].isin([x[0] for x in Counter(df[col]).most_common(45)])
+                    ][col]
                 else:
-                    fig = plt.figure(figsize=(7, 7))
-                    ax = fig.add_subplot(111)
-                    ax.set_title(col)
+                    adjust_vals = df[col]
 
-                    counts_df = df[col].value_counts().reset_index()
-                    counts_df.sort_values(by=col, ascending=False, inplace=True)
+                fig = plt.figure(figsize=(7, 7))
+                ax = fig.add_subplot(111)
+                ax.set_title(col)
+
+                counts_df = adjust_vals.value_counts().reset_index()
+                counts_df.sort_values(by=col, ascending=False, inplace=True)
+
                 if adjust_vals.dtypes == bool:
                     # For some reason seaborn flips these incorrectly for boolean variables
                     sns.barplot(
