@@ -27,7 +27,11 @@ df = pd.DataFrame(
 
 @given(
     data_frames(
-        columns=[column(name="text", dtype=str), column(dtype=int), column(dtype=bool),]
+        columns=[
+            column(name="text", dtype=str),
+            column(dtype=int),
+            column(dtype=bool),
+        ]
     )
 )
 def test_separate_cols_by_type(df):
