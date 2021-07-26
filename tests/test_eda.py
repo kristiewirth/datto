@@ -41,10 +41,10 @@ def test_separate_cols_by_type(df):
 
 
 def test_check_for_mistyped_cols():
-    numerical_vals = pd.DataFrame([1, 2, 1, 2, 1, 2, 1, 2], columns=["coded_int"])
+    numerical_vals = pd.DataFrame([1, 2, 1, 9, 1, 2, 5, 2], columns=["coded_int"])
 
     categorical_vals = pd.DataFrame(
-        ["1", "2", "1", "2", "2", "2"], columns=["coded_categorical"]
+        ["1", "2", "4", "2", "7", "2"], columns=["coded_categorical"]
     )
 
     mistyped_vals = eda.check_for_mistyped_cols(numerical_vals, categorical_vals)
