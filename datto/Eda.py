@@ -237,6 +237,9 @@ class Eda:
 
         numerical_vals, _ = self.separate_cols_by_type(df)
 
+        # Need to fill zeros to get accurate percentile numbers
+        numerical_vals.fillna(0, inplace=True)
+
         if numerical_vals.empty:
             return "No numerical columns to graph."
 
