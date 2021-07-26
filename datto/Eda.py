@@ -149,7 +149,7 @@ class Eda:
                         }
                     )
             elif df[col].dtype in ["object", "bool"]:
-                if len(df[col].unique()) > 200:
+                if len(df[col].unique()) > 500:
                     lst.append(
                         {
                             col: "Considering excluding because object column has large number of unique values ({})".format(
