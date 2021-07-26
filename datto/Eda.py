@@ -69,6 +69,9 @@ class Eda:
         for col in categorical_vals.columns:
             if "_id" in col:
                 continue
+            # Booleans can be recoded as floats but still are good as booleans
+            elif categorical_vals[col].dtypes == bool:
+                continue
             try:
                 # Test two random values
                 float(categorical_vals[col][0])
