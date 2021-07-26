@@ -21,8 +21,24 @@ class Eda:
         numerical_vals: DataFrame
         categorical_vals: DataFrame
         """
-        numerical_vals = df.select_dtypes(exclude=["object", "bool"])
-        categorical_vals = df.select_dtypes(include=["object", "bool"])
+        numerical_vals = df[
+            [
+                col
+                for col in df.select_dtypes(
+                    exclude=["object", "bool", "datetime"]
+                ).columns
+                # ID columns values aren't particularly important to examine
+                if "_id" not in str(col)
+            ]
+        ]
+
+        categorical_vals = df[
+            [
+                col
+                for col in df.select_dtypes(include=["object", "bool"]).columns
+                if "_id" not in str(col)
+            ]
+        ]
 
         return numerical_vals, categorical_vals
 
