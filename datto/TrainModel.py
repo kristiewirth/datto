@@ -104,8 +104,14 @@ class TrainModel:
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
-            {"model": [lgb.LGBMRegressor()], "model__learning_rate": [0.01],},
-            {"model": [CatBoostRegressor()], "model__learning_rate": [0.01],},
+            {
+                "model": [lgb.LGBMRegressor()],
+                "model__learning_rate": [0.01, 0.001],
+            },
+            {
+                "model": [CatBoostRegressor()],
+                "model__learning_rate": [0.01, 0.001],
+            },
         ]
 
     def train_test_split_by_ids(self, df, id_col, target_col, prop_train):
