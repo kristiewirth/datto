@@ -58,8 +58,14 @@ class TrainModel:
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
-            {"model": [lgb.LGBMClassifier()], "model__learning_rate": [0.01],},
-            {"model": [CatBoostClassifier()], "model__learning_rate": [0.01],},
+            {
+                "model": [lgb.LGBMClassifier()],
+                "model__learning_rate": [0.01, 0.001],
+            },
+            {
+                "model": [CatBoostClassifier()],
+                "model__learning_rate": [0.01, 0.001],
+            },
         ]
 
         self.regressor_param_list = [
