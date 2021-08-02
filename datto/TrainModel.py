@@ -167,7 +167,7 @@ class TrainModel:
         model_type: str
             'classification' or 'regression'
         tie_breaker_scoring_method: str
-            For classification: "precision", "recall", or "roc_auc"
+            For classification: "precision", "recall", or "f1"
             For regression: "neg_root_mean_squared_error", "neg_median_absolute_error", or "r2"
         save_to_csv: bool
         file_name: str
@@ -178,7 +178,11 @@ class TrainModel:
         best_params: dict
         """
         if model_type == "classification":
-            model = Pipeline([("model", LogisticRegression()),])
+            model = Pipeline(
+                [
+                    ("model", LogisticRegression()),
+                ]
+            )
             # Only some models/scoring work with multiclass
             if multiclass:
                 param_list = self.classifier_param_list[:3]
@@ -189,9 +193,13 @@ class TrainModel:
                 ]
             else:
                 param_list = self.classifier_param_list[:3]
-                lst_scoring_methods = ["recall", "precision", "roc_auc"]
+                lst_scoring_methods = ["recall", "precision", "f1"]
         else:
-            model = Pipeline([("model", ElasticNet()),])
+            model = Pipeline(
+                [
+                    ("model", ElasticNet()),
+                ]
+            )
             lst_scoring_methods = [
                 "neg_root_mean_squared_error",
                 "neg_median_absolute_error",
@@ -238,7 +246,7 @@ class TrainModel:
                         g.cv_results_["params"],
                         g.cv_results_["mean_test_recall"],
                         g.cv_results_["mean_test_precision"],
-                        g.cv_results_["mean_test_roc_auc"],
+                        g.cv_results_["mean_test_f1"],
                     )
                 )
 
@@ -248,7 +256,7 @@ class TrainModel:
                         "Params: {}".format(x[0]),
                         "Mean Recall: {0:.4f}".format(x[1]),
                         "Mean Precision: {0:.4f}".format(x[2]),
-                        "Mean ROC AUC: {0:.4f}".format(x[3]),
+                        "Mean F1 Score: {0:.4f}".format(x[3]),
                     )
                     for x in all_scores
                 ]
