@@ -257,25 +257,6 @@ class CleanDataframe:
             + id_num[20:]
         )
 
-    def df_most_common_only(self, df, col, num):
-        """
-        From a given column in a dataframe, find the most common values and return a dataframe that has those most common values only.
-
-        Parameters
-        --------
-        df: DataFrame
-        col: str
-        num: int
-
-        Returns
-        --------
-        cleaned_df: DataFrame
-
-        """
-        most_common_lst = [x[0] for x in Counter(df[col]).most_common(num)]
-        df = df[df[col].isin(most_common_lst)]
-        return df
-
     def batch_pandas_operation(self, df, num_splits, identifier_col, func):
         """
         Use a function on a Pandas DataFrame in chunks for faster processing.

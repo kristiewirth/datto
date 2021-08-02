@@ -68,14 +68,30 @@ def test_remove_email_greetings_signatures(text):
     assert "Hello" not in cleaned_body
 
 
-@given(data_frames(columns=[column(dtype=str), column(dtype=int), column(dtype=bool),]))
+@given(
+    data_frames(
+        columns=[
+            column(dtype=str),
+            column(dtype=int),
+            column(dtype=bool),
+        ]
+    )
+)
 @example(pd.DataFrame([["Kristie", "Smith"]], columns=["First Name", "Last Name"]))
 def test_clean_column_names(df):
     cleaned_df = cdf.clean_column_names(df)
     assert " " not in cleaned_df.columns
 
 
-@given(data_frames(columns=[column(dtype=str), column(dtype=int), column(dtype=bool),]))
+@given(
+    data_frames(
+        columns=[
+            column(dtype=str),
+            column(dtype=int),
+            column(dtype=bool),
+        ]
+    )
+)
 @example(
     pd.DataFrame(
         [["Kristie", "Smith", "Smith"]],
@@ -122,14 +138,6 @@ def test_make_uuid():
     id_num = "609390d88cff44269c2e293bd6b89a0b"
     uuid = cdf.make_uuid(id_num)
     assert uuid == "609390d8-8cff-4426-9c2e-293bd6b89a0b"
-
-
-def test_most_common_only():
-    col = "text"
-    num = 1
-
-    df_cleaned = cdf.df_most_common_only(df, col, num)
-    assert df_cleaned.shape[0] < df.shape[0]
 
 
 def test_batch_pandas_operation():
