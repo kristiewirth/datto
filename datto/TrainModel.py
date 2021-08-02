@@ -153,6 +153,7 @@ class TrainModel:
         model_type,
         tie_breaker_scoring_method,
         save_to_csv=True,
+        file_name="model_results",
         multiclass=False,
     ):
         """
@@ -169,6 +170,7 @@ class TrainModel:
             For classification: "precision", "recall", or "roc_auc"
             For regression: "neg_root_mean_squared_error", "neg_median_absolute_error", or "r2"
         save_to_csv: bool
+        file_name: str
         multiclass: bool
 
         Returns
@@ -303,7 +305,7 @@ class TrainModel:
             temp_df["timestamp"] = timestampStr
 
             try:
-                previous_df = pd.read_csv("model_results.csv")
+                previous_df = pd.read_csv(f"{file_name}.csv")
                 model_results_df = pd.concat([previous_df, temp_df], axis=0)
                 model_results_df.reset_index(inplace=True, drop=True)
             except Exception:
@@ -313,7 +315,7 @@ class TrainModel:
                 sorted(model_results_df.columns), axis=1
             )
 
-            with open("model_results.csv", "w") as csvfile:
+            with open(f"{file_name}.csv", "w") as csvfile:
                 csvwriter = csv.writer(csvfile, delimiter=",")
                 csvwriter.writerow(model_results_df.columns)
                 for _, row in model_results_df.iterrows():
