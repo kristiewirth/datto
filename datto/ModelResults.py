@@ -24,13 +24,14 @@ from sklearn.feature_extraction.text import (
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.metrics import (
     accuracy_score,
+    classification_report,
     f1_score,
     mean_squared_error,
     median_absolute_error,
+    multilabel_confusion_matrix,
     precision_score,
     r2_score,
     recall_score,
-    roc_auc_score,
 )
 from sklearn.model_selection import train_test_split
 from sklearn.tree import export_graphviz
@@ -450,21 +451,49 @@ class ModelResults:
         if multiclass:
             pscore = round(precision_score(y_test, y_predicted, average="weighted"), 3)
             rscore = round(recall_score(y_test, y_predicted, average="weighted"), 3)
+            ascore = round(accuracy_score(y_test, y_predicted), 3)
             f1score = round(f1_score(y_test, y_predicted, average="weighted"), 3)
 
-            print(f"Final Model Precision Weighted: {pscore}")
-            print(f"Final Model Recall Weighted: {rscore}")
-            print(f"Final Model F1 Weighted: {f1score}")
+            print(f"Precision Weighted: {pscore}")
+            print(f"Recall Weighted: {rscore}")
+            print(f"Accuracy: {ascore}")
+            print(f"F1 Score Weighted: {f1score}")
+            print("\n")
+
+            # Precision / recall / f1-score for each predicted class
+            print(
+                classification_report(y_test, y_predicted, target_names=y_test.columns)
+            )
+            print("\n")
+
+            # Counts of predicted vs actuals + true vs false
+            confusion_matrix = multilabel_confusion_matrix(y_test, y_predicted)
+            matrix_dfs = [
+                pd.DataFrame(
+                    matrix,
+                    columns=["Predicted False", "Predicted True"],
+                    index=["Actual False", "Actual True"],
+                )
+                for matrix in confusion_matrix
+            ]
+
+            # Print separately so class name gets printed cleanly first
+            for i in range(len(y_test.columns)):
+                print(y_test.columns[i])
+                print(matrix_dfs[i])
+                print("\n")
+
         elif model_type.lower() == "classification":
             pscore = round(precision_score(y_test, y_predicted), 3)
             rscore = round(recall_score(y_test, y_predicted), 3)
             accuracy = round(accuracy_score(y_test, y_predicted), 3)
-            roc_auc = round(roc_auc_score(y_test, y_predicted), 3)
+            f1 = round(f1_score(y_test, y_predicted), 3)
 
-            print(f"Final Model Precision: {pscore}")
-            print(f"Final Model Recall: {rscore}")
-            print(f"Final Model Accuracy: {accuracy}")
-            print(f"Final Model ROC AUC: {roc_auc}")
+            print(f"Precision: {pscore}")
+            print(f"Recall: {rscore}")
+            print(f"Accuracy: {accuracy}")
+            print(f"F1 Score: {f1}")
+            print("\n")
 
             crosstab = pd.crosstab(
                 y_test,
