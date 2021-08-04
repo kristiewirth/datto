@@ -1,0 +1,19 @@
+%%capture
+!pip install jupytext
+import re
+filename = "FILENAME"
+file_text = open("{}.py".format(filename)).read()
+file_length = len(file_text.split('\n'))
+texts = []
+i = 1
+for text in file_text.split('\n\n#'):
+    if i == 1:
+        texts.append('\n# In[{}]: \n'.format(str(i)) + text + '\n')
+        i += 1        
+    elif text != '':
+        texts.append('\n# In[{}]: \n#'.format(str(i)) + text + '\n')
+        i += 1
+with open("{}_notebook.py".format(filename), "w") as fh:
+    fh.write(''.join(texts))
+!jupytext --to notebook {filename}_notebook.py
+!rm {filename}_notebook.py

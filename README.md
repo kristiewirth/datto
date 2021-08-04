@@ -27,6 +27,12 @@ Some examples of what you can do:
 
 For detailed examples of how you can use it, check out [this Juypter notebook](datto_examples.ipynb).
 
+# Other Templates
+
+Check out the [templates folder](datto/tree/master/templates) for files and code snippets that automate certain tasks, but don't fit within the realm of a Python package.
+
+Recommended: Copy the file contents into a [text expander app](https://zapier.com/blog/text-expander-how-to/) for easy future use.
+
 # Contributing
 
 Create virtualenv (specify version of Python you want):
