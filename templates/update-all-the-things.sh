@@ -1,5 +1,5 @@
 '''
-Modified from original source: 
+Modified from this original source: 
 https://medium.com/@waxzce/keeping-macos-clean-this-is-my-osx-brew-update-cli-command-6c8f12dc1731
 '''
 

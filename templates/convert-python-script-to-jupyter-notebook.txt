@@ -1,3 +1,5 @@
+# To be executed within a Jupyter notebook
+
 %%capture
 !pip install jupytext
 import re
