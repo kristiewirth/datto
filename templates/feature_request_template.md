@@ -1,5 +1,5 @@
 ---
-PROJECT: Feature request
+name: Feature request
 about: Suggest a new feature
 title: "[FR]"
 labels: enhancement
