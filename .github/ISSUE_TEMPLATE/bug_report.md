@@ -1,5 +1,5 @@
 ---
-PROJECT: Bug report
+datto: Bug report
 about: Report errors with the project
 title: "[BUG]"
 labels: bug
