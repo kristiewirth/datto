@@ -632,6 +632,7 @@ class ModelResults:
     def coefficients_individual_predictions(
         self,
         trained_model,
+        original_df,
         X_train,
         X_test,
         id_col,
@@ -645,12 +646,15 @@ class ModelResults:
 
         Parameters
         --------
-        trained_model: sklearn model (already fitted)
+        trained_model: sklearn model
+        original_df: pd.DataFrame
+            Used for getting ids since they aren't typically in training data
         X_train: pd.DataFrame
         X_test: pd.DataFrame
         id_col: str
         num_samples: int
         model_type: str
+            'classification' or 'regression'
         class_names: str
         path: str
 
@@ -692,7 +696,7 @@ class ModelResults:
                 top_labels=10,
             )
 
-            user_id = X_test.iloc[user_idx][id_col]
+            user_id = original_df.iloc[user_idx][id_col]
             print(f"\nUser: {user_id}")
 
             if model_type.lower() == "classification":

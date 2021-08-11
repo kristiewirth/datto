@@ -143,6 +143,7 @@ def test_coefficients_individual_predictions_classification():
     features_list = mr.coefficients_individual_predictions(
         trained_model,
         X_train,
+        X_train,
         X_test,
         id_col,
         num_samples,
@@ -160,6 +161,7 @@ def test_coefficients_individual_predictions_regression():
     model_type = "regression"
     features_list = mr.coefficients_individual_predictions(
         trained_model,
+        X_train,
         X_train,
         X_test,
         id_col,
