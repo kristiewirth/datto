@@ -1,9 +1,9 @@
 import os
+import random
 import re
 import string
 from math import ceil
 from operator import itemgetter
-from random import randrange
 
 import graphviz
 import lime
@@ -631,12 +631,13 @@ class ModelResults:
 
     def coefficients_individual_predictions(
         self,
-        trained_model,
-        original_df,
+        model,
+        df,
         X_train,
         X_test,
         id_col,
-        num_samples,
+        num_id_examples,
+        num_feature_examples,
         model_type,
         class_names=["False", "True"],
         path="../images/",
@@ -646,13 +647,14 @@ class ModelResults:
 
         Parameters
         --------
-        trained_model: sklearn model
-        original_df: pd.DataFrame
+        model: sklearn model
+        df: pd.DataFrame
             Used for getting ids since they aren't typically in training data
         X_train: pd.DataFrame
         X_test: pd.DataFrame
         id_col: str
-        num_samples: int
+        num_id_examples: int
+        num_feature_examples: int
         model_type: str
             'classification' or 'regression'
         class_names: str
@@ -662,14 +664,15 @@ class ModelResults:
         --------
         features: list
         """
+
         if not os.path.exists(path):
             os.makedirs(path)
 
         def model_preds_adjusted(data):
             if model_type.lower() == "classification":
-                predictions = np.array(trained_model.predict_proba(data))
+                predictions = np.array(model.predict_proba(data))
             else:
-                predictions = np.array(trained_model.predict(data))
+                predictions = np.array(model.predict(data))
             return predictions
 
         if model_type.lower() == "classification":
@@ -687,33 +690,38 @@ class ModelResults:
                 mode="regression",
             )
 
-        for _ in range(num_samples):
-            user_idx = randrange(X_test.shape[0])
+        for _ in range(num_id_examples):
+            row_idx = random.sample(list(X_test.index), 1)[0]
             exp = explainer.explain_instance(
-                np.array(X_test.iloc[user_idx]),
+                np.array(X_test.loc[row_idx]),
                 model_preds_adjusted,
-                num_features=50,
-                top_labels=10,
+                # Include all features
+                num_features=len(X_train.columns),
+                # Include all classes
+                top_labels=len(class_names),
             )
-
-            user_id = original_df.iloc[user_idx][id_col]
-            print(f"\nUser: {user_id}")
 
             if model_type.lower() == "classification":
                 prediction = class_names[
-                    trained_model.predict_proba(
-                        pd.DataFrame(X_test.iloc[user_idx]).T
-                    ).argmax()
+                    model.predict_proba(pd.DataFrame(X_test.loc[row_idx]).T).argmax()
                 ]
             else:
                 prediction = round(
-                    trained_model.predict(pd.DataFrame(X_test.iloc[user_idx]).T)[0], 7
+                    model.predict(pd.DataFrame(X_test.loc[row_idx]).T)[0], 7
                 )
 
-            print('We predicted "{}" for this user because...\n'.format(prediction))
-            features_list = []
-            for feature in exp.as_list():
-                features_list.append({user_id: exp.as_list()})
+            unique_id = df.loc[row_idx][id_col]
+            print(f"\nID: {unique_id}")
+            print(f"Prediction: {prediction}\n\n")
+
+            exp_list_all = exp.as_list()
+
+            raw_features = [x[0] for x in exp_list_all]
+            raw_values = [x[1] for x in exp_list_all]
+
+            cleaned_features = []
+
+            for feature in exp_list_all:
                 try:
                     feature_name = re.findall("<.*<|>.*>", feature[0])[0]
                 except Exception:
@@ -725,23 +733,86 @@ class ModelResults:
                     .replace(">", "")
                     .strip()
                 )
-                comparison_val = float(
-                    feature[0].split(" <")[-1].split(" >")[-1].split("=")[-1].strip()
+                cleaned_features.append(cleaned_feature_name)
+
+            all_feature_types = X_test.dtypes
+            top_feature_types = [
+                all_feature_types[feature] for feature in cleaned_features
+            ]
+
+            top_features_with_types = [
+                [raw_feature, cleaned_feature, feature_type, raw_value]
+                for raw_feature, cleaned_feature, feature_type, raw_value in zip(
+                    raw_features, cleaned_features, top_feature_types, raw_values
                 )
-                actual_feature_val = X_test.iloc[user_idx][cleaned_feature_name]
-                last_operator = feature[0].split(" ")[-2]
+            ]
 
-                if "<" in last_operator and actual_feature_val <= comparison_val:
-                    print(" * This is true: " + feature[0])
+            i = 0
+            for (
+                raw_feature,
+                cleaned_feature,
+                feature_type,
+                raw_value,
+            ) in top_features_with_types:
+                if i > num_feature_examples:
+                    break
+
+                actual_feature_val = X_test.loc[row_idx][cleaned_feature]
+
+                # Things that decrease the likelihood of this class are less interesting
+                if raw_value < 0:
+                    pass
+                # Note: uint8 is a bool
+                # False bools aren't super interesting
+                elif feature_type == "uint8" and actual_feature_val == 0:
+                    pass
+                # Phrase true bools slightly differently
+                elif feature_type == "uint8":
+                    print(f"For this id, {cleaned_feature} was true.")
+
+                    print(
+                        f"When {cleaned_feature} is true, this increases the likelihood of prediction: {prediction}."
+                    )
+
+                    print("\n--------\n")
+                    i += 1
                 else:
-                    print(" * This is false: " + feature[0])
-            exp.as_pyplot_figure()
+                    print(f"For this id, {cleaned_feature} was {actual_feature_val}.\n")
+
+                    print(
+                        f"When {raw_feature}, this increases the likelihood of prediction: {prediction}."
+                    )
+
+                    print("\n--------\n")
+                    i += 1
+
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+            fig = plt.figure()
+            # Up the image quality to avoid pixelated graphs
+            plt.rc("savefig", dpi=300)
+            # Limit to top features that can fit cleanly on graph
+            exp_list_graph = exp.as_list()[:20]
+            vals = [x[1] for x in exp_list_graph]
+            # Some labels are really long, shortening them a bit
+            names = [x[0][:40] for x in exp_list_graph]
+            vals.reverse()
+            names.reverse()
+            colors = ["green" if x > 0 else "red" for x in vals]
+            pos = np.arange(len(exp_list_graph)) + 0.5
+            plt.barh(pos, vals, align="center", color=colors)
+            plt.yticks(pos, names)
+            title = f"id: {unique_id} - Prediction: {prediction}"
+            plt.title(title)
             plt.tight_layout()
-            plt.savefig(f"{path}lime_graph_user_{user_id}.png")
+            # Need bbox to make sure title isn't cut off
+            plt.savefig(
+                f"../images/lime_graph_id_{unique_id}.png",
+                bbox_inches="tight",
+                facecolor="white",
+            )
 
-            print("\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-
-        return features_list
+        return exp_list_all
 
     def get_tree_diagram(self, model, X_train, path="../images/"):
         """

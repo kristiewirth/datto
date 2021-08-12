@@ -137,7 +137,8 @@ def test_coefficients_individual_predictions_classification():
     model = LogisticRegression()
     trained_model = model.fit(X_train, y_train)
     id_col = "id"
-    num_samples = 3
+    num_id_examples = 3
+    num_feature_examples = 5
     model_type = "classification"
     class_names = ["False", "True"]
     features_list = mr.coefficients_individual_predictions(
@@ -146,7 +147,8 @@ def test_coefficients_individual_predictions_classification():
         X_train,
         X_test,
         id_col,
-        num_samples,
+        num_id_examples,
+        num_feature_examples,
         model_type,
         class_names,
     )
@@ -157,7 +159,8 @@ def test_coefficients_individual_predictions_regression():
     model = ElasticNet()
     trained_model = model.fit(X_train, y_train)
     id_col = "id"
-    num_samples = 3
+    num_id_examples = 3
+    num_feature_examples = 5
     model_type = "regression"
     features_list = mr.coefficients_individual_predictions(
         trained_model,
@@ -165,7 +168,8 @@ def test_coefficients_individual_predictions_regression():
         X_train,
         X_test,
         id_col,
-        num_samples,
+        num_id_examples,
+        num_feature_examples,
         model_type,
     )
     assert isinstance(features_list, list)
