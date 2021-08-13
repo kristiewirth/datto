@@ -2,6 +2,7 @@ import os
 import random
 import re
 import string
+import warnings
 from math import ceil
 from operator import itemgetter
 
@@ -37,6 +38,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import export_graphviz
 
 from datto.CleanDataframe import CleanDataframe
+
+# Hide precision/recall/f1 warnings for model scorings
+warnings.filterwarnings("always")
 
 
 class ModelResults:
