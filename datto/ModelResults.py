@@ -502,6 +502,8 @@ class ModelResults:
                 colnames=["Predicted"],
             )
             print(crosstab)
+            print("\n")
+
             sum_crosstab = crosstab.to_numpy().sum()
             print(
                 pd.crosstab(
