@@ -252,25 +252,22 @@ class Eda:
 
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(numerical_vals):
-            # Filter out outliers for cleaner plot
-            Q1 = df[col].quantile(0.25)
-            Q3 = df[col].quantile(0.75)
-            IQR = Q3 - Q1
-            filter = (numerical_vals[col] >= Q1 - 1.5 * IQR) & (
-                numerical_vals[col] <= Q3 + 1.5 * IQR
-            )
-            filtered_df = numerical_vals.loc[filter]
+            # Filter out some extreme outliers for cleaner plot
+            filtered_df = df[
+                (df[col] <= df[col].quantile(0.99))
+                & (df[col] >= df[col].quantile(0.01))
+            ]
 
             fig = plt.figure(figsize=(7, 7))
             ax = fig.add_subplot(111)
             ax.set_title(col)
 
             if group_by_var:
-                sns.violinplot(x=group_by_var, y=col, data=df.loc[filter], ax=ax)
+                sns.violinplot(x=group_by_var, y=col, data=filtered_df, ax=ax)
             else:
                 sns.violinplot(
                     x=col,
-                    data=df.loc[filter],
+                    data=filtered_df,
                     ax=ax,
                 )
 
