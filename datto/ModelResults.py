@@ -275,6 +275,7 @@ class ModelResults:
         model_type,
         filename="shap_graph",
         path="../images/",
+        multiclass=False,
     ):
         """
         Displays graph of feature importances.
@@ -296,25 +297,44 @@ class ModelResults:
         model_type: str
             'classification' or 'regression'
         filename: str
+        multiclass: bool
         """
         if not os.path.exists(path):
             os.makedirs(path)
 
-        if model_type.lower() == "classification":
+        if multiclass:
+            f = lambda x: model.predict_proba(x)
+        elif model_type.lower() == "classification":
             f = lambda x: model.predict_proba(x)[:, 1]
         else:
             f = lambda x: model.predict(x)
         med = X_train.median().values.reshape((1, X_train.shape[1]))
         explainer = shap.KernelExplainer(f, med)
+
         # Runs too slow if X_test is huge, take a representative sample
-        if X_test.shape[0] > 1000:
-            X_test_sample = X_test.sample(1000)
+        # Multiclass loads ultra slow, take an even smaller sample
+        if multiclass:
+            max_rows = 300
+        else:
+            max_rows = 1000
+
+        if X_test.shape[0] > max_rows:
+            X_test_sample = X_test.sample(max_rows)
         else:
             X_test_sample = X_test
+
         shap_values = explainer.shap_values(X_test_sample)
-        shap.summary_plot(shap_values, X_test_sample)
-        plt.tight_layout()
-        plt.savefig(f"{path}{filename}.png")
+
+        if multiclass:
+            for class_num in range(len(y_test.columns)):
+                class_name = y_test.columns[class_num]
+                print(f"SHAP Summary Plot for Class: {class_name}")
+                shap.summary_plot(shap_values[class_num], X_test_sample)
+                plt.tight_layout()
+                plt.savefig(f"{path}{class_name}_{filename}.png")
+        else:
+            shap.summary_plot(shap_values, X_test_sample)
+            plt.tight_layout()
 
         return shap_values
 
