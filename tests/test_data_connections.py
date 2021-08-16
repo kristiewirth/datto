@@ -5,17 +5,24 @@ from hypothesis.extra.pandas import column, data_frames
 from datto.DataConnections import S3Connections, SQLConnections
 
 s3 = S3Connections()
-is_travis = 'TRAVIS' in os.environ
+is_travis = "TRAVIS" in os.environ
 
 
-@given(data_frames(columns=[column(dtype=str), column(dtype=int),]))
+@given(
+    data_frames(
+        columns=[
+            column(dtype=str),
+            column(dtype=int),
+        ]
+    )
+)
 @settings(deadline=None)
 def test_save_to_s3(object_to_save):
     if not is_travis:
         s3.save_to_s3(
             "zapier-data-science-storage/kristie/testing/",
             object_to_save,
-            "testing-001"
+            "testing-001",
         )
 
 
