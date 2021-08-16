@@ -352,10 +352,10 @@ class Eda:
 
                 if group_by_var:
                     sns.countplot(
-                        x=adjust_vals[group_by_var],
-                        hue=adjust_vals[col],
-                        order=adjust_vals[group_by_var].value_counts().index,
-                        hue_order=adjust_vals[col].value_counts().index,
+                        x=adjust_vals[col],
+                        hue=adjust_vals[group_by_var],
+                        order=adjust_vals[col].value_counts().index,
+                        hue_order=adjust_vals[group_by_var].value_counts().index,
                     )
                     plt.tight_layout()
                     plt.savefig(f"{path}bargraph_{col}_by_{group_by_var}.png")
