@@ -268,7 +268,13 @@ class ModelResults:
         )
 
     def coefficients_graph(
-        self, X_train, X_test, model, model_type, filename, path="../images/"
+        self,
+        X_train,
+        X_test,
+        model,
+        model_type,
+        filename="shap_graph",
+        path="../images/",
     ):
         """
         Displays graph of feature importances.
