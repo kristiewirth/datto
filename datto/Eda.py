@@ -227,13 +227,16 @@ class Eda:
 
         return dup_rows
 
-    def violin_plots_by_col(self, df, path="../images/"):
+    def violin_plots_by_col(self, df, path="../images/", group_by_var=None):
         """
         Makes a violin plot for each numerical column.
 
         Parameters
         --------
         df: DataFrame
+        path: str
+        group_by_var: str
+            Variable to group violin plots by
         """
 
         numerical_vals, _ = self.separate_cols_by_type(df)
@@ -249,35 +252,52 @@ class Eda:
 
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(numerical_vals):
+            # Filter out outliers for cleaner plot
+            Q1 = df[col].quantile(0.25)
+            Q3 = df[col].quantile(0.75)
+            IQR = Q3 - Q1
+            filter = (numerical_vals[col] >= Q1 - 1.5 * IQR) & (
+                numerical_vals[col] <= Q3 + 1.5 * IQR
+            )
+            filtered_df = numerical_vals.loc[filter]
+
             fig = plt.figure(figsize=(7, 7))
             ax = fig.add_subplot(111)
             ax.set_title(col)
 
-            sns.violinplot(
-                x=numerical_vals[col],
-                ax=ax,
-            )
+            if group_by_var:
+                sns.violinplot(x=group_by_var, y=col, data=df.loc[filter], ax=ax)
+            else:
+                sns.violinplot(
+                    x=col,
+                    data=df.loc[filter],
+                    ax=ax,
+                )
 
-            text = "75th Percentile: {}\nMedian: {}\n25th Percentile: {}".format(
-                round(np.percentile(numerical_vals[col], 75), 2),
-                round(np.median(numerical_vals[col]), 2),
-                round(np.percentile(numerical_vals[col], 25), 2),
-            )
+                text = "75th Percentile: {}\nMedian: {}\n25th Percentile: {}".format(
+                    round(np.percentile(numerical_vals[col], 75), 2),
+                    round(np.median(numerical_vals[col]), 2),
+                    round(np.percentile(numerical_vals[col], 25), 2),
+                )
 
-            # Place a text box in upper left in axes coords
-            props = dict(boxstyle="round", facecolor="white", alpha=0.5)
-            ax.text(
-                0.05,
-                0.95,
-                text,
-                transform=ax.transAxes,
-                fontsize=14,
-                verticalalignment="top",
-                bbox=props,
-            )
+                # Place a text box in upper left in axes coords
+                props = dict(boxstyle="round", facecolor="white", alpha=0.5)
+                ax.text(
+                    0.05,
+                    0.95,
+                    text,
+                    transform=ax.transAxes,
+                    fontsize=14,
+                    verticalalignment="top",
+                    bbox=props,
+                )
+
             plt.tight_layout()
 
-            plt.savefig(f"{path}violinplot_{col}.png")
+            if group_by_var:
+                plt.savefig(f"{path}violinplot_{col}_by_{group_by_var}.png")
+            else:
+                plt.savefig(f"{path}violinplot_{col}.png")
 
     def bar_graphs_by_col(self, df, path="../images/"):
         """
