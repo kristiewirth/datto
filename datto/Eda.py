@@ -299,13 +299,16 @@ class Eda:
             else:
                 plt.savefig(f"{path}violinplot_{col}.png")
 
-    def bar_graphs_by_col(self, df, path="../images/"):
+    def bar_graphs_by_col(self, df, path="../images/", group_by_var=None):
         """
         Makes a bar graph for each categorical column.
 
         Parameters
         --------
         df: DataFrame
+        path: str
+        group_by_var: str
+            Variable to group bar graphs by
         """
         _, categorical_vals = self.separate_cols_by_type(df)
 
@@ -317,44 +320,53 @@ class Eda:
 
         iter_bar = progressbar.ProgressBar()
         for col in iter_bar(categorical_vals):
+            if col == group_by_var:
+                continue
+
+            num_unique_vals = len(df[col].unique())
+
             try:
-                if len(df[col].unique()) == 1:
+                if num_unique_vals == 1:
                     continue
 
                 # More values than this doesn't display well, just show the top values
-                if len(df[col].unique()) > 45:
-                    adjust_vals = df[
-                        df[col].isin([x[0] for x in Counter(df[col]).most_common(45)])
-                    ][col]
+                if group_by_var:
+                    # Group bys are hard to read unless this is smaller
+                    num_groups = len(df[group_by_var].unique())
+                    most_vals_allowed = round(45 / num_groups)
                 else:
-                    adjust_vals = df[col]
+                    most_vals_allowed = 45
+
+                if num_unique_vals > most_vals_allowed:
+                    adjust_vals = df[
+                        df[col].isin(
+                            [
+                                x[0]
+                                for x in Counter(df[col]).most_common(most_vals_allowed)
+                            ]
+                        )
+                    ]
+                else:
+                    adjust_vals = df.copy()
 
                 fig = plt.figure(figsize=(7, 7))
                 ax = fig.add_subplot(111)
                 ax.set_title(col)
 
-                counts_df = adjust_vals.value_counts().reset_index()
-                counts_df.sort_values(by=col, ascending=False, inplace=True)
-
-                if adjust_vals.dtypes == bool:
-                    # For some reason seaborn flips these incorrectly for boolean variables
-                    sns.barplot(
-                        x=counts_df["index"],
-                        y=counts_df[col],
-                        ax=ax,
+                if group_by_var:
+                    sns.countplot(
+                        x=adjust_vals[group_by_var],
+                        hue=adjust_vals[col],
+                        order=adjust_vals[group_by_var].value_counts().index,
+                        hue_order=adjust_vals[col].value_counts().index,
                     )
-
+                    plt.tight_layout()
+                    plt.savefig(f"{path}bargraph_{col}_by_{group_by_var}.png")
                 else:
-                    sns.barplot(
-                        x=counts_df[col],
-                        y=counts_df["index"],
-                        ax=ax,
+                    sns.countplot(
+                        y=adjust_vals[col], order=adjust_vals[col].value_counts().index
                     )
-
-                ax.set_xlabel("Count")
-                ax.set_ylabel("Values")
-
-                plt.tight_layout()
-                plt.savefig(f"{path}bargraph_{col}.png")
+                    plt.tight_layout()
+                    plt.savefig(f"{path}bargraph_{col}.png")
             except Exception:
                 continue
