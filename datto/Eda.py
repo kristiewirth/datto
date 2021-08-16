@@ -258,7 +258,7 @@ class Eda:
                 & (df[col] >= df[col].quantile(0.01))
             ]
 
-            fig = plt.figure(figsize=(7, 7))
+            fig = plt.figure(figsize=(9, 9))
             ax = fig.add_subplot(111)
             ax.set_title(col)
 
@@ -330,9 +330,9 @@ class Eda:
                 if group_by_var:
                     # Group bys are hard to read unless this is smaller
                     num_groups = len(df[group_by_var].unique())
-                    most_vals_allowed = round(45 / num_groups)
+                    most_vals_allowed = round(50 / num_groups)
                 else:
-                    most_vals_allowed = 45
+                    most_vals_allowed = 50
 
                 if num_unique_vals > most_vals_allowed:
                     adjust_vals = df[
@@ -346,22 +346,65 @@ class Eda:
                 else:
                     adjust_vals = df.copy()
 
-                fig = plt.figure(figsize=(7, 7))
+                fig = plt.figure(figsize=(9, 9))
                 ax = fig.add_subplot(111)
                 ax.set_title(col)
 
                 if group_by_var:
-                    sns.countplot(
-                        x=adjust_vals[col],
-                        hue=adjust_vals[group_by_var],
-                        order=adjust_vals[col].value_counts().index,
-                        hue_order=adjust_vals[group_by_var].value_counts().index,
+                    # Change to proportions by group instead of straight counts (misleading by sample size)
+                    grouped_df = (
+                        adjust_vals.groupby([group_by_var, col]).count().iloc[:, 1]
+                        / adjust_vals.groupby(group_by_var).count().iloc[:, 1]
+                    )
+                    grouped_df = grouped_df.reset_index()
+                    grouped_df.columns = [group_by_var, col, "proportion"]
+                    grouped_df.sort_values(
+                        by="proportion", ascending=True, inplace=True
+                    )
+
+                    pivot_df = pd.pivot_table(
+                        grouped_df,
+                        values="proportion",
+                        index=col,
+                        columns=group_by_var,
+                    ).reset_index()
+
+                    # Sort pivot table by most common cols
+                    sorter = list(
+                        adjust_vals.groupby([col])
+                        .count()
+                        .iloc[:, 1]
+                        .sort_values(ascending=True)
+                        .index
+                    )
+                    sorterIndex = dict(zip(sorter, range(len(sorter))))
+                    pivot_df["rank"] = pivot_df[col].map(sorterIndex)
+                    pivot_df.sort_values(by="rank", ascending=True, inplace=True)
+                    pivot_df.drop("rank", axis=1, inplace=True)
+
+                    pivot_df.plot(
+                        x=col,
+                        kind="barh",
+                        ylabel=f"proportion_{col}_within_{group_by_var}",
+                        ax=ax,
                     )
                     plt.tight_layout()
-                    plt.savefig(f"{path}bargraph_{col}_by_{group_by_var}.png")
+                    plt.savefig(
+                        f"{path}bargraph_proportion_{col}_within_{group_by_var}.png"
+                    )
                 else:
-                    sns.countplot(
-                        y=adjust_vals[col], order=adjust_vals[col].value_counts().index
+                    grouped_df = (
+                        adjust_vals.groupby([col]).count().iloc[:, 1]
+                        / adjust_vals.shape[0]
+                    )
+                    grouped_df = grouped_df.reset_index()
+                    grouped_df.columns = [col, "proportion"]
+                    grouped_df.sort_values(
+                        by="proportion", ascending=True, inplace=True
+                    )
+
+                    grouped_df.plot(
+                        x=col, kind="barh", legend=None, ylabel="proportion", ax=ax
                     )
                     plt.tight_layout()
                     plt.savefig(f"{path}bargraph_{col}.png")
