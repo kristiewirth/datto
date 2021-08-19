@@ -23,3 +23,4 @@ titanic.csv
 datto/*.png
 dist/*
 datto.egg-info/*
+*.txt
