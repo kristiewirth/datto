@@ -520,6 +520,7 @@ class ModelResults:
                 for i in range(len(y_test.columns)):
                     print(y_test.columns[i], file=f)
                     print(matrix_dfs[i], file=f)
+                    print("\n", file=f)
 
         elif model_type.lower() == "classification":
             pscore = round(precision_score(y_test, y_predicted), 3)
