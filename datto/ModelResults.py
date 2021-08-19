@@ -1,3 +1,4 @@
+import datetime
 import os
 import random
 import re
@@ -475,6 +476,10 @@ class ModelResults:
             Fit model
         y_predicted: array
         """
+        cleaned_date = (
+            datetime.datetime.today().isoformat(" ", "seconds").replace(" ", "-")
+        )
+
         # Predict actual scores
         y_predicted = trained_model.predict(X_test)
 
@@ -484,34 +489,37 @@ class ModelResults:
             ascore = round(accuracy_score(y_test, y_predicted), 3)
             f1score = round(f1_score(y_test, y_predicted, average="weighted"), 3)
 
-            print(f"Precision Weighted: {pscore}")
-            print(f"Recall Weighted: {rscore}")
-            print(f"Accuracy: {ascore}")
-            print(f"F1 Score Weighted: {f1score}")
-            print("\n")
+            with open(f"model_scoring_{cleaned_date}.txt", "w") as f:
+                print(f"Precision Weighted: {pscore}", file=f)
+                print(f"Recall Weighted: {rscore}", file=f)
+                print(f"Accuracy: {ascore}", file=f)
+                print(f"F1 Score Weighted: {f1score}", file=f)
+                print("\n", file=f)
 
-            # Precision / recall / f1-score for each predicted class
-            print(
-                classification_report(y_test, y_predicted, target_names=y_test.columns)
-            )
-            print("\n")
-
-            # Counts of predicted vs actuals + true vs false
-            confusion_matrix = multilabel_confusion_matrix(y_test, y_predicted)
-            matrix_dfs = [
-                pd.DataFrame(
-                    matrix,
-                    columns=["Predicted False", "Predicted True"],
-                    index=["Actual False", "Actual True"],
+                # Precision / recall / f1-score for each predicted class
+                print(
+                    classification_report(
+                        y_test, y_predicted, target_names=y_test.columns
+                    ),
+                    file=f,
                 )
-                for matrix in confusion_matrix
-            ]
+                print("\n", file=f)
 
-            # Print separately so class name gets printed cleanly first
-            for i in range(len(y_test.columns)):
-                print(y_test.columns[i])
-                print(matrix_dfs[i])
-                print("\n")
+                # Counts of predicted vs actuals + true vs false
+                confusion_matrix = multilabel_confusion_matrix(y_test, y_predicted)
+                matrix_dfs = [
+                    pd.DataFrame(
+                        matrix,
+                        columns=["Predicted False", "Predicted True"],
+                        index=["Actual False", "Actual True"],
+                    )
+                    for matrix in confusion_matrix
+                ]
+
+                # Print separately so class name gets printed cleanly first
+                for i in range(len(y_test.columns)):
+                    print(y_test.columns[i], file=f)
+                    print(matrix_dfs[i], file=f)
 
         elif model_type.lower() == "classification":
             pscore = round(precision_score(y_test, y_predicted), 3)
@@ -519,40 +527,48 @@ class ModelResults:
             accuracy = round(accuracy_score(y_test, y_predicted), 3)
             f1 = round(f1_score(y_test, y_predicted), 3)
 
-            print(f"Precision: {pscore}")
-            print(f"Recall: {rscore}")
-            print(f"Accuracy: {accuracy}")
-            print(f"F1 Score: {f1}")
-            print("\n")
+            with open(f"model_scoring_{cleaned_date}.txt", "w") as f:
+                print(f"Precision: {pscore}", file=f)
+                print(f"Recall: {rscore}", file=f)
+                print(f"Accuracy: {accuracy}", file=f)
+                print(f"F1 Score: {f1}", file=f)
+                print("\n", file=f)
 
-            crosstab = pd.crosstab(
-                y_test,
-                y_predicted,
-                rownames=["Actual"],
-                colnames=["Predicted"],
-            )
-            print(crosstab)
-            print("\n")
-
-            sum_crosstab = crosstab.to_numpy().sum()
-            print(
-                pd.crosstab(
-                    y_test,
+                crosstab = pd.crosstab(
+                    np.array(y_test),
                     y_predicted,
                     rownames=["Actual"],
                     colnames=["Predicted"],
-                ).apply(lambda r: round(r / sum_crosstab, 3))
-            )
-        else:
-            mse = mean_squared_error(y_test, y_predicted)
-            mae = median_absolute_error(y_test, y_predicted)
-            r2 = round(r2_score(y_test, y_predicted), 3)
+                )
+                print(crosstab, file=f)
+                print("\n", file=f)
 
-            print(
-                f"Mean Negative Root Mean Squared Errror: {round((mse ** 5) * -1, 3)}"
-            )
-            print(f"Mean Negative Median Absolute Error: {round((mae * -1), 3)}")
-            print(f"Mean R2: {r2}")
+                sum_crosstab = crosstab.to_numpy().sum()
+                print(
+                    pd.crosstab(
+                        np.array(y_test),
+                        y_predicted,
+                        rownames=["Actual"],
+                        colnames=["Predicted"],
+                    ).apply(lambda r: round(r / sum_crosstab, 3)),
+                    file=f,
+                )
+        else:
+
+            with open(f"model_scoring_{cleaned_date}.txt", "w") as f:
+                mse = mean_squared_error(y_test, y_predicted)
+                mae = median_absolute_error(y_test, y_predicted)
+                r2 = round(r2_score(y_test, y_predicted), 3)
+
+                print(
+                    f"Mean Negative Root Mean Squared Errror: {round((mse ** 5) * -1, 3)}",
+                    file=f,
+                )
+                print(
+                    f"Mean Negative Median Absolute Error: {round((mae * -1), 3)}",
+                    file=f,
+                )
+                print(f"Mean R2: {r2}", file=f)
 
         return trained_model, y_predicted
 
