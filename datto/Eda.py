@@ -38,6 +38,8 @@ class Eda:
                 col
                 for col in df.select_dtypes(include=["object", "bool"]).columns
                 if "_id" not in str(col)
+                and str(col) != "date"
+                and "timestamp" not in str(col)
             ]
         ]
 
