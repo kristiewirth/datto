@@ -37,6 +37,7 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from sklearn.tree import export_graphviz
+from tabulate import tabulate
 
 from datto.CleanDataframe import CleanDataframe
 
@@ -497,9 +498,25 @@ class ModelResults:
                 print("\n", file=f)
 
                 # Precision / recall / f1-score for each predicted class
+                report_df = (
+                    pd.DataFrame(
+                        classification_report(
+                            y_test,
+                            y_predicted,
+                            target_names=y_test.columns,
+                            output_dict=True,
+                        )
+                    )
+                    .transpose()
+                    .drop(["micro avg", "macro avg", "weighted avg", "samples avg"])
+                    .drop("support", axis=1)
+                )
                 print(
-                    classification_report(
-                        y_test, y_predicted, target_names=y_test.columns
+                    tabulate(
+                        report_df,
+                        headers="keys",
+                        tablefmt="pipe",
+                        numalign="left",
                     ),
                     file=f,
                 )
@@ -519,7 +536,15 @@ class ModelResults:
                 # Print separately so class name gets printed cleanly first
                 for i in range(len(y_test.columns)):
                     print(y_test.columns[i], file=f)
-                    print(matrix_dfs[i], file=f)
+                    print(
+                        tabulate(
+                            matrix_dfs[i],
+                            headers="keys",
+                            tablefmt="pipe",
+                            numalign="left",
+                        ),
+                        file=f,
+                    )
                     print("\n", file=f)
 
         elif model_type.lower() == "classification":
@@ -538,20 +563,36 @@ class ModelResults:
                 crosstab = pd.crosstab(
                     np.array(y_test),
                     y_predicted,
-                    rownames=["Actual"],
-                    colnames=["Predicted"],
                 )
-                print(crosstab, file=f)
+                class_values = crosstab.columns
+                crosstab.columns = [f"Predicted {val}" for val in class_values]
+                crosstab.index = [f"Actual {val}" for val in class_values]
+                print(
+                    tabulate(
+                        crosstab,
+                        headers="keys",
+                        tablefmt="pipe",
+                        numalign="left",
+                    ),
+                    file=f,
+                )
                 print("\n", file=f)
 
                 sum_crosstab = crosstab.to_numpy().sum()
+                prop_crosstab = pd.crosstab(
+                    np.array(y_test),
+                    y_predicted,
+                ).apply(lambda r: round(r / sum_crosstab, 3))
+                class_values = prop_crosstab.columns
+                prop_crosstab.columns = [f"Predicted {val}" for val in class_values]
+                prop_crosstab.index = [f"Actual {val}" for val in class_values]
                 print(
-                    pd.crosstab(
-                        np.array(y_test),
-                        y_predicted,
-                        rownames=["Actual"],
-                        colnames=["Predicted"],
-                    ).apply(lambda r: round(r / sum_crosstab, 3)),
+                    tabulate(
+                        prop_crosstab,
+                        headers="keys",
+                        tablefmt="pipe",
+                        numalign="left",
+                    ),
                     file=f,
                 )
         else:
