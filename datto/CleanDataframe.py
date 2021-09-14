@@ -60,7 +60,11 @@ class CleanDataframe:
 
         cleaned_text = text
         for this_pii_item in regex_dict:
-            cleaned_text = re.sub(regex_dict[this_pii_item], "", cleaned_text,)
+            cleaned_text = re.sub(
+                regex_dict[this_pii_item],
+                "",
+                cleaned_text,
+            )
 
         return cleaned_text
 
@@ -329,7 +333,7 @@ class CleanDataframe:
         Returns
         --------
         X_train: pd.DataFrame
-        X_test: pd.DataFrame        
+        X_test: pd.DataFrame
 
         """
         numerical_vals = X_train.select_dtypes(exclude=["object", "bool"])
