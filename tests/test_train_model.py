@@ -17,7 +17,10 @@ X_train = pd.DataFrame(
     ],
     columns=["id", "webpage", "count"],
 )
-y_train = pd.DataFrame([[1], [0], [0], [0], [1], [0], [0], [1]], columns=["converted"],)
+y_train = pd.DataFrame(
+    [[1], [0], [0], [0], [1], [0], [0], [1]],
+    columns=["converted"],
+)
 
 
 def test_train_test_split_by_ids():
@@ -36,7 +39,10 @@ def test_model_testing_classification():
     tie_breaker_scoring_method = "precision"
 
     best_params = tm.model_testing(
-        X_train, y_train, model_type, tie_breaker_scoring_method,
+        X_train,
+        y_train,
+        model_type,
+        tie_breaker_scoring_method,
     )
 
     assert isinstance(best_params, dict)
@@ -47,7 +53,10 @@ def test_model_testing_regression():
     tie_breaker_scoring_method = "r2"
 
     best_params = tm.model_testing(
-        X_train, y_train, model_type, tie_breaker_scoring_method,
+        X_train,
+        y_train,
+        model_type,
+        tie_breaker_scoring_method,
     )
 
     assert isinstance(best_params, dict)
@@ -55,7 +64,16 @@ def test_model_testing_regression():
 
 def test_model_testing_multiclass():
     y_train = pd.DataFrame(
-        [[1, 1], [1, 0], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1],],
+        [
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+        ],
         columns=["var1", "var2"],
     )
 
