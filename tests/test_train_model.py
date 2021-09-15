@@ -67,3 +67,24 @@ def test_model_testing_multiclass():
     )
 
     assert isinstance(best_params, dict)
+
+
+def test_run_feature_selection():
+    is_multiclass = True
+    k = 2
+
+    y_train = pd.DataFrame(
+        [
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+        ],
+        columns=["var1", "var2"],
+    )
+    cols_to_keep = tm.run_feature_selection(X_train, y_train, k, is_multiclass)
+    assert len(cols_to_keep) == k

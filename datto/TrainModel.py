@@ -1,8 +1,10 @@
 import csv
 import datetime
 import random
+from operator import itemgetter
 
 import lightgbm as lgb
+import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.ensemble import (
@@ -13,6 +15,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
+from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier, MLPRegressor
@@ -330,3 +333,43 @@ class TrainModel:
                     csvwriter.writerow(row)
 
         return g.best_params_
+
+    def run_feature_selection(self, X_train, y_train, k, is_multiclass):
+        """
+        Run SelectKBest feature selection for given datasets.
+        Implements a custom method of feature selection for multiclass targets.
+
+        Parameters
+        --------
+        X_train: DataFrame
+        y_train: DataFrame
+        k: int
+        is_multiclass: bool
+
+        Returns
+        --------
+        cols_to_keep: list
+
+        """
+        if is_multiclass:
+            all_feature_scores = []
+            for label in y_train.columns:
+                # Select from all first, limit to k after means
+                selector = SelectKBest(chi2, k="all")
+                selector.fit(X_train, y_train[label])
+                all_feature_scores.append(list(selector.scores_))
+            # Get mean feature scoring across all target classes
+            mean_feature_scores = np.mean(all_feature_scores, axis=0)
+            # Remove nulls
+            no_nulls_scores = np.nan_to_num(mean_feature_scores)
+            # Sort descending values & keep top k
+            selected_feature_idxs = np.argsort(no_nulls_scores)[::-1][:k]
+            cols_to_keep = list(itemgetter(*selected_feature_idxs)(X_train.columns))
+        else:
+            selector = SelectKBest(k=k)
+            selector.fit(X_train, y_train)
+            cols_to_keep = list(
+                X_train.columns[np.where(selector.get_support() == True)].values
+            )
+
+        return cols_to_keep
