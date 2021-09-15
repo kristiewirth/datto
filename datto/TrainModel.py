@@ -16,8 +16,15 @@ from sklearn.ensemble import (
     RandomForestRegressor,
 )
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.linear_model import ElasticNet, LogisticRegression
+from sklearn.linear_model import (
+    ElasticNet,
+    LogisticRegression,
+    SGDClassifier,
+    SGDRegressor,
+)
 from sklearn.model_selection import GridSearchCV
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -373,3 +380,67 @@ class TrainModel:
             )
 
         return cols_to_keep
+
+    def train_in_chunks(
+        self, X_train, y_train, model_type, is_multiclass, chunk_sizes=500000
+    ):
+        """
+        For large datasets, train model in managable chunk sizes
+
+        Parameters
+        --------
+        X_train: DataFrame
+        y_train: DataFrame
+        model_type: str
+            'classification' or 'regression'
+        is_multiclass: bool
+        chunk_sizes: int
+
+        Returns
+        --------
+        model: sklearn model
+        """
+        # Set default num_chunks to number needed to get manageable chunk sizes
+        # Used this number after testing time needed to train various sizes
+        num_chunks = round(y_train.shape[0] / chunk_sizes)
+        # Make sure num_chunks isn't below 1
+        if num_chunks < 1:
+            num_chunks = 1
+
+        step = round(y_train.shape[0] / num_chunks)
+        idx_start = 0
+        idx_end = step
+
+        if is_multiclass:
+            # Need this custom model to do partial_fit with multiclass data
+            model = MultiOutputClassifier(MultinomialNB())
+        elif model_type == "classification":
+            model = SGDClassifier()
+        else:
+            model = SGDRegressor()
+
+        while idx_start < y_train.shape[0]:
+            if is_multiclass:
+                model.partial_fit(
+                    X_train.iloc[idx_start:idx_end],
+                    y_train.iloc[idx_start:idx_end],
+                    classes=[
+                        np.array(np.unique(y_train[col])) for col in y_train.columns
+                    ],
+                )
+            elif model_type == "classification":
+                model = model.partial_fit(
+                    X_train.iloc[idx_start:idx_end],
+                    y_train.iloc[idx_start:idx_end],
+                    classes=np.array(np.unique(y_train)),
+                )
+            else:
+                model = model.partial_fit(
+                    X_train.iloc[idx_start:idx_end],
+                    y_train.iloc[idx_start:idx_end],
+                )
+
+            idx_start += step
+            idx_end += step
+
+        return model

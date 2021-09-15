@@ -1,5 +1,5 @@
+import numpy as np
 import pandas as pd
-
 from datto.TrainModel import TrainModel
 
 tm = TrainModel()
@@ -62,6 +62,24 @@ def test_model_testing_regression():
     assert isinstance(best_params, dict)
 
 
+
+
+def test_train_in_chunks_classification():
+    model_type = "classification"
+    is_multiclass = False
+    chunk_sizes = 2
+    model = tm.train_in_chunks(X_train, y_train, model_type, is_multiclass, chunk_sizes)
+    assert isinstance(model.predict(X_train), np.ndarray)
+
+
+def test_train_in_chunks_regression():
+    model_type = "regression"
+    is_multiclass = False
+    chunk_sizes = 2
+    model = tm.train_in_chunks(X_train, y_train, model_type, is_multiclass, chunk_sizes)
+    assert isinstance(model.predict(X_train), np.ndarray)
+
+
 def test_model_testing_multiclass():
     y_train = pd.DataFrame(
         [
@@ -106,3 +124,25 @@ def test_run_feature_selection():
     )
     cols_to_keep = tm.run_feature_selection(X_train, y_train, k, is_multiclass)
     assert len(cols_to_keep) == k
+
+
+def test_train_in_chunks_multiclass():
+    model_type = "classification"
+    is_multiclass = True
+    chunk_sizes = 2
+
+    y_train = pd.DataFrame(
+        [
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+            [1, 1],
+        ],
+        columns=["var1", "var2"],
+    )
+    model = tm.train_in_chunks(X_train, y_train, model_type, is_multiclass, chunk_sizes)
+    assert isinstance(model.predict(X_train), np.ndarray)
