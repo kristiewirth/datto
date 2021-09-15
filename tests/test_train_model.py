@@ -62,6 +62,11 @@ def test_model_testing_regression():
     assert isinstance(best_params, dict)
 
 
+def test_run_feature_selection():
+    is_multiclass = False
+    k = 2
+    cols_to_keep = tm.run_feature_selection(X_train, y_train, k, is_multiclass)
+    assert len(cols_to_keep) == k
 
 
 def test_train_in_chunks_classification():
@@ -105,7 +110,7 @@ def test_model_testing_multiclass():
     assert isinstance(best_params, dict)
 
 
-def test_run_feature_selection():
+def test_run_feature_selection_multiclass():
     is_multiclass = True
     k = 2
 
