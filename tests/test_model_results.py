@@ -24,14 +24,14 @@ X_train = pd.DataFrame(
 y_train = np.array([1, 1, 1, 0, 1, 0, 0, 1])
 X_test = pd.DataFrame(
     [
-        [1434, 56456, 1],
-        [323, 768, 0],
-        [5435, 564746456, 0],
-        [544, 55567, 21],
-        [57978, 58, 2],
-        [437, 336, 1],
-        [544565, 858, 4],
-        [456547, 56456, 10],
+        [234, 35656, 1],
+        [7878, 435345, 0],
+        [3454, 345, 0],
+        [78758, 345, 21],
+        [234234, 5477, 2],
+        [654757, 356536, 1],
+        [345, 457457, 4],
+        [234, 345, 10],
     ],
     columns=["id", "webpage", "count"],
 )
@@ -254,3 +254,34 @@ def test_get_tree_diagram():
     mr.get_tree_diagram(model, X_train, path)
 
     assert os.path.exists(f"{path}decision-tree.png")
+
+
+def test_coefficients_graph_multiclass():
+    model = DecisionTreeClassifier()
+
+    y_train = pd.DataFrame(
+        [
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [1, 1],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [1, 1],
+        ],
+        columns=["var1", "var2"],
+    )
+
+    model.fit(X_train, y_train)
+    shap_values = mr.coefficients_graph(
+        X_train,
+        X_test,
+        model,
+        "classification",
+        "multiclass_test",
+        multiclass=True,
+        y_test=y_train,
+    )
+
+    assert isinstance(shap_values, np.ndarray)

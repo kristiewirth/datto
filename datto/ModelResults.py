@@ -278,6 +278,7 @@ class ModelResults:
         filename="shap_graph",
         path="../images/",
         multiclass=False,
+        y_test=None,
     ):
         """
         Displays graph of feature importances.
@@ -300,45 +301,54 @@ class ModelResults:
             'classification' or 'regression'
         filename: str
         multiclass: bool
+        y_test: pd.DataFrame
+            Only needed for multiclass models
         """
         if not os.path.exists(path):
             os.makedirs(path)
 
+        med = X_train.median().values.reshape((1, X_train.shape[1]))
+
+        # Runs too slow if X_test is huge, take a representative sample
+        if X_test.shape[0] > 1000:
+            X_test_sample = X_test.sample(1000)
+        else:
+            X_test_sample = X_test
+
         if multiclass:
-            f = lambda x: model.predict_proba(x)
+            lst_all_shap_values = []
+
+            for class_num in range(len(y_test.columns)):
+                f = lambda x: model.predict_proba(x)[class_num][:, 1]
+
+                explainer = shap.KernelExplainer(f, med)
+                shap_values = explainer.shap_values(X_test_sample)
+                lst_all_shap_values.append(shap_values)
+
+                class_name = y_test.columns[class_num]
+                print(f"SHAP Summary Plot for Class: {class_name}")
+
+                shap.summary_plot(shap_values, X_test_sample)
+                plt.tight_layout()
+                plt.savefig(f"{path}{class_name}_{filename}.png")
+                
+            return np.array(lst_all_shap_values)
+
         elif model_type.lower() == "classification":
             f = lambda x: model.predict_proba(x)[:, 1]
         else:
             f = lambda x: model.predict(x)
-        med = X_train.median().values.reshape((1, X_train.shape[1]))
+
         explainer = shap.KernelExplainer(f, med)
-
-        # Runs too slow if X_test is huge, take a representative sample
-        # Multiclass loads ultra slow, take an even smaller sample
-        if multiclass:
-            max_rows = 300
-        else:
-            max_rows = 1000
-
-        if X_test.shape[0] > max_rows:
-            X_test_sample = X_test.sample(max_rows)
-        else:
-            X_test_sample = X_test
-
         shap_values = explainer.shap_values(X_test_sample)
 
-        if multiclass:
-            for class_num in range(len(y_test.columns)):
-                class_name = y_test.columns[class_num]
-                print(f"SHAP Summary Plot for Class: {class_name}")
-                shap.summary_plot(shap_values[class_num], X_test_sample)
-                plt.tight_layout()
-                plt.savefig(f"{path}{class_name}_{filename}.png")
-        else:
-            shap.summary_plot(shap_values, X_test_sample)
-            plt.tight_layout()
+        shap.summary_plot(shap_values, X_test_sample)
+        plt.tight_layout()
+        plt.savefig(f"{path}_{filename}.png")
 
         return shap_values
+
+
 
     def most_common_words_by_group(
         self,
