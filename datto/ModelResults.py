@@ -155,14 +155,8 @@ class ModelResults:
             return "Too few examples to categorize."
 
         if not num_topics:
-
-            # In case 1, add 1 to get at least 2
-            # The rest are based on eyeballing numbers
-            min_topics = ceil(X.shape[0] * 0.01) + 1
-            max_topics = ceil(X.shape[0] * 0.2)
-            step = ceil((max_topics - min_topics) / 5)
-
-            topic_nums = list(np.arange(min_topics, max_topics, step))
+            # Test out several topic numbers
+            topic_nums = list(np.arange(5, 50, 5))
 
             texts = X[text_column_name].apply(ct.lematize)
 
