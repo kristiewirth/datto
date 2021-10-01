@@ -26,6 +26,7 @@ progressbar = "^2.5"
 numpy = "^1.21.0"
 pandas = "^1.2.5"
 tabulate = "^0.8.9"
+nltk = "^3.6.3"
 
 [tool.poetry.dev-dependencies]
 pycodestyle = "^2.6.0"
