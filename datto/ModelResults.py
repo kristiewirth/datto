@@ -105,11 +105,36 @@ class ModelResults:
         )
 
         all_stop_words = (
+            # Combine stopwords from all the packages
             set(ENGLISH_STOP_WORDS)
-            | set(["-PRON-"])
+            | set(stopwords.words("english"))
+            | nlp.Defaults.stop_words
             | set(string.punctuation)
-            | set([" "])
-            | chosen_stopwords
+            | set(string.ascii_lowercase)
+            | set(
+                ["-PRON-",
+                    " ",
+                    "i.e",
+                    "e.g.",
+                    "-",
+                    "--",
+                    "---",
+                    "----",
+                    "..",
+                    "...",
+                    "....",
+                    "w/",
+                    "^^",
+                    "^^^",
+                    "^^^^",
+                    "’",
+                    "~~",
+                    "~~~",
+                    "~~~~",
+                    "and/or",
+                ]
+            )
+            | set(chosen_stopwords)
         )
 
         ct = CleanDataframe()
