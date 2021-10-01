@@ -4,6 +4,7 @@ import random
 import re
 import string
 import warnings
+from html import unescape
 from math import ceil
 from operator import itemgetter
 
@@ -14,9 +15,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import shap
+import spacy
 import statsmodels.api as sm
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel, nmf
+from nltk.corpus import stopwords
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import (
     ENGLISH_STOP_WORDS,
@@ -37,12 +40,19 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from sklearn.tree import export_graphviz
+from spacy.cli import download
 from tabulate import tabulate
 
 from datto.CleanDataframe import CleanDataframe
 
 # Hide precision/recall/f1 warnings for model scorings
 warnings.filterwarnings("always")
+
+try:
+    nlp = spacy.load("en")
+except Exception:
+    download("en")
+    nlp = spacy.load("en")
 
 
 class ModelResults:
@@ -207,6 +217,8 @@ class ModelResults:
         top_topics = pd.DataFrame(
             np.argmax(component_loadings, axis=1), columns=["top_topic_num"]
         )
+        top_topics["second_topic"] = (-component_loadings).argsort(axis=1)[:, 1]
+        top_topics["third_topic"] = (-component_loadings).argsort(axis=1)[:, 2]
 
         top_topic_loading = pd.DataFrame(
             np.max(component_loadings, axis=1), columns=["top_topic_loading"]
@@ -229,12 +241,26 @@ class ModelResults:
         for topic, comp in enumerate(model.components_):
             word_idx = np.argsort(comp)[::-1][:num_examples]
             topic_words[topic] = [vocab[i] for i in word_idx]
-            # Append examples that have one of the top keywords in topic
-            sample_texts_lst.append(
-                [
+            examples_lst = [
+                x
+                for x in list(
+                    combined_df[combined_df["top_topic_num"] == topic][
+                        text_column_name
+                    ].values
+                )
+                if topic_words[topic][0] in x
+                or topic_words[topic][1] in x
+                or topic_words[topic][2] in x
+                or topic_words[topic][3] in x
+                or topic_words[topic][4] in x
+            ]
+
+            # If not enough examples, check for second topic loading
+            if len(examples_lst) < num_examples:
+                extra_examples_lst_2 = [
                     x
                     for x in list(
-                        combined_df[combined_df["top_topic_num"] == topic][
+                        combined_df[combined_df["second_topic"] == topic][
                             text_column_name
                         ].values
                     )
@@ -243,8 +269,28 @@ class ModelResults:
                     or topic_words[topic][2] in x
                     or topic_words[topic][3] in x
                     or topic_words[topic][4] in x
-                ][:num_examples]
-            )
+                ]
+                examples_lst.extend(extra_examples_lst_2)
+
+            # If not enough examples still, check for third topic loading
+            if len(examples_lst) < num_examples:
+                extra_examples_lst_3 = [
+                    x
+                    for x in list(
+                        combined_df[combined_df["third_topic"] == topic][
+                            text_column_name
+                        ].values
+                    )
+                    if topic_words[topic][0] in x
+                    or topic_words[topic][1] in x
+                    or topic_words[topic][2] in x
+                    or topic_words[topic][3] in x
+                    or topic_words[topic][4] in x
+                ]
+                examples_lst.extend(extra_examples_lst_3)
+
+            # Append examples that have one of the top keywords in topic
+            sample_texts_lst.append(examples_lst[:num_examples])
 
         topic_words_df = pd.DataFrame(
             columns=[
@@ -291,7 +337,7 @@ class ModelResults:
             left_on="top_topic_num",
             right_on="topic_num",
             how="left",
-        ).drop("top_topic_num", axis=1)
+        )[[text_column_name, "topic_num", "top_words_and_phrases"]]
 
         return (
             concated_topics,
@@ -361,7 +407,7 @@ class ModelResults:
                 shap.summary_plot(shap_values, X_test_sample)
                 plt.tight_layout()
                 plt.savefig(f"{path}{class_name}_{filename}.png")
-                
+
             return np.array(lst_all_shap_values)
 
         elif model_type.lower() == "classification":
@@ -377,8 +423,6 @@ class ModelResults:
         plt.savefig(f"{path}_{filename}.png")
 
         return shap_values
-
-
 
     def most_common_words_by_group(
         self,
