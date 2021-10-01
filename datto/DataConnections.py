@@ -8,7 +8,10 @@ import s3fs
 
 class S3Connections:
     def save_to_s3(
-        self, directory_path, object_to_save, object_name,
+        self,
+        directory_path,
+        object_to_save,
+        object_name,
     ):
         """
         Pickle and save an object to s3. Creates the folder specified if it does not yet exist.
@@ -81,11 +84,11 @@ class SQLConnections:
         conn: cursor from database connection
 
         """
-        self.SQLDBNAME = dbname if dbname else os.environ.get("SQLDBNAME")
-        self.SQLHOST = host if host else os.environ.get("SQLHOST")
-        self.SQLPORT = port if port else os.environ.get("SQLPORT")
-        self.SQLUSER = user if user else os.environ.get("SQLUSER")
-        self.SQLPASSWORD = password if password else os.environ.get("SQLPASSWORD")
+        self.SQLDBNAME = dbname if dbname else os.environ.get("RS_DBNAME")
+        self.SQLHOST = host if host else os.environ.get("RS_HOST")
+        self.SQLPORT = port if port else os.environ.get("RS_PORT")
+        self.SQLUSER = user if user else os.environ.get("RS_USER")
+        self.SQLPASSWORD = password if password else os.environ.get("RS_PASSWORD")
 
         self.CONN = psycopg2.connect(
             dbname=self.SQLDBNAME,
