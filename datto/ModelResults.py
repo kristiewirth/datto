@@ -93,6 +93,17 @@ class ModelResults:
         X = X[X[text_column_name] != "N/A"]
         X = X[X[text_column_name] != "na"]
 
+        # Remove HTML & unicode characters
+        X[text_column_name] = X[text_column_name].apply(
+            lambda x: unescape(x)
+            .encode("ascii", errors="ignore")
+            .decode("ascii")
+            .replace("    ", " ")
+            .replace("   ", " ")
+            .replace("  ", " ")
+            .strip()
+        )
+
         all_stop_words = (
             set(ENGLISH_STOP_WORDS)
             | set(["-PRON-"])
