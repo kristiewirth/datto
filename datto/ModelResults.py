@@ -47,10 +47,10 @@ from datto.CleanDataframe import CleanDataframe
 warnings.filterwarnings("always")
 
 try:
-    nlp = spacy.load("en")
+    nlp = spacy.load("en_core_web_sm")
 except Exception:
-    download("en")
-    nlp = spacy.load("en")
+    download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
 
 
 class ModelResults:
