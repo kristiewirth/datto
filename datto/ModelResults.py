@@ -5,8 +5,6 @@ import re
 import string
 import warnings
 from html import unescape
-from math import ceil
-from operator import itemgetter
 
 import graphviz
 import lime
@@ -56,12 +54,39 @@ except Exception:
 
 
 class ModelResults:
+    def jaccard_similarity(self, topic_1, topic_2):
+        """
+        Derives the Jaccard similarity of two topics
+
+        Jaccard similarity:
+        - A statistic used for comparing the similarity and diversity of sample sets
+        - J(A,B) = (A ∩ B)/(A ∪ B)
+        - Goal is low Jaccard scores for coverage of the diverse elements
+
+        Parameters
+        --------
+        topic_1: list
+        topic_2: list
+
+
+        Returns
+        --------
+        score: float
+
+        """
+
+        intersection = set(topic_1).intersection(set(topic_2))
+        union = set(topic_1).union(set(topic_2))
+        score = float(len(intersection)) / float(len(union))
+
+        return score
+
     def most_similar_texts(
         self,
         X,
         num_examples,
         text_column_name,
-        num_topics=None,
+        chosen_num_topics=None,
         chosen_stopwords=set(),
         min_df=3,
         max_df=0.1,
@@ -76,7 +101,7 @@ class ModelResults:
         X: DataFrame
         num_examples: int
         text_column_name: str
-        num_topics: int
+        chosen_num_topics: int
             Optional - if none algorithm will determine best number
         min_df: float
             Minimum number/proportion of docs that need to have the words
@@ -122,7 +147,8 @@ class ModelResults:
             | set(string.punctuation)
             | set(string.ascii_lowercase)
             | set(
-                ["-PRON-",
+                [
+                    "-PRON-",
                     " ",
                     "i.e",
                     "e.g.",
@@ -161,12 +187,14 @@ class ModelResults:
         vocab = vectorizer.get_feature_names()
         vector_df = pd.DataFrame(vectors, columns=vocab, index=X.index)
 
-        if X.shape[0] < 20:
+        if X.shape[0] <= 75:
             return "Too few examples to categorize."
 
-        if not num_topics:
+        if not chosen_num_topics:
+            # Inspired by: https://bit.ly/3CqH2Zw
+
             # Test out several topic numbers
-            topic_nums = list(np.arange(5, 50, 5))
+            topic_nums = list(np.arange(5, 75 + 1, 5))
 
             texts = X[text_column_name].apply(ct.lematize)
 
@@ -179,36 +207,62 @@ class ModelResults:
             # Create the bag-of-words format (list of (token_id, token_count))
             corpus = [dictionary.doc2bow(text) for text in texts]
 
-            coherence_scores = []
+            NMF_models = {}
+            NMF_topics = {}
 
-            for num in topic_nums:
-                model = nmf.Nmf(
+            for i in topic_nums:
+                NMF_models[i] = nmf.Nmf(
                     corpus=corpus,
-                    num_topics=num,
                     id2word=dictionary,
+                    num_topics=i,
                     chunksize=2000,
-                    passes=5,
-                    kappa=0.1,
-                    minimum_probability=0.01,
-                    w_max_iter=300,
-                    w_stop_condition=0.0001,
-                    h_max_iter=100,
-                    h_stop_condition=0.001,
-                    eval_every=10,
-                    normalize=True,
+                    passes=20,
                     random_state=42,
                 )
 
-                cm = CoherenceModel(
-                    model=model, texts=texts, dictionary=dictionary, coherence="u_mass"
+                shown_topics = NMF_models[i].show_topics(
+                    num_topics=i, num_words=15, formatted=False
                 )
+                NMF_topics[i] = [
+                    [word[0] for word in topic[1]] for topic in shown_topics
+                ]
 
-                coherence_scores.append(round(cm.get_coherence(), 5))
+            NMF_stability = {}
+            for i in range(0, len(topic_nums) - 1):
+                jaccard_sims = []
+                for _, topic1 in enumerate(NMF_topics[topic_nums[i]]):
+                    sims = []
+                    for _, topic2 in enumerate(NMF_topics[topic_nums[i + 1]]):
+                        sims.append(self.jaccard_similarity(topic1, topic2))
 
-            scores = list(zip(topic_nums, coherence_scores))
-            chosen_num_topics = sorted(scores, key=itemgetter(1), reverse=True)[0][0]
-        else:
-            chosen_num_topics = num_topics
+                    jaccard_sims.append(sims)
+
+                NMF_stability[topic_nums[i]] = jaccard_sims
+
+            mean_stabilities = [
+                np.array(NMF_stability[i]).mean() for i in topic_nums[:-1]
+            ]
+
+            coherences = [
+                CoherenceModel(
+                    model=NMF_models[i],
+                    texts=texts,
+                    dictionary=dictionary,
+                    coherence="c_v",
+                ).get_coherence()
+                for i in topic_nums[:-1]
+            ]
+
+            coh_sta_diffs = [
+                coherences[i] - mean_stabilities[i]
+                for i in range(len(topic_nums[:-1]))[:-1]
+            ]
+            coh_sta_max = max(coh_sta_diffs)
+            coh_sta_max_idxs = [
+                i for i, j in enumerate(coh_sta_diffs) if j == coh_sta_max
+            ]
+            ideal_topic_num_index = coh_sta_max_idxs[0]
+            chosen_num_topics = topic_nums[ideal_topic_num_index]
 
         model = NMF(n_components=chosen_num_topics, random_state=42)
         model.fit(vectors)
