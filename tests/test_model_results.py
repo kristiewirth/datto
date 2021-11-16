@@ -69,16 +69,18 @@ X_text = pd.DataFrame(
 
 
 def test_most_similar_texts():
-    num_topics = 4
+    chosen_num_topics = 4
     num_examples = 5
     text_column_name = "text"
     chosen_stopwords = set(["the"])
 
+    larger_data = pd.concat([X_text, X_text, X_text, X_text], axis=0)
+
     top_words_df, _, _ = mr.most_similar_texts(
-        X_text,
+        larger_data,
         num_examples,
         text_column_name,
-        num_topics,
+        chosen_num_topics,
         chosen_stopwords,
         min_df=3,
         max_df=0.4,
@@ -86,7 +88,30 @@ def test_most_similar_texts():
         max_ngrams=3,
     )
 
-    assert top_words_df.shape[0] == num_topics
+    assert top_words_df.shape[0] == chosen_num_topics
+
+
+def test_most_similar_texts_no_topic_num():
+    chosen_num_topics = None
+    num_examples = 5
+    text_column_name = "text"
+    chosen_stopwords = set(["the"])
+
+    larger_data = pd.concat([X_text, X_text, X_text, X_text], axis=0)
+
+    top_words_df, _, _ = mr.most_similar_texts(
+        larger_data,
+        num_examples,
+        text_column_name,
+        chosen_num_topics,
+        chosen_stopwords,
+        min_df=3,
+        max_df=0.4,
+        min_ngrams=1,
+        max_ngrams=3,
+    )
+
+    assert top_words_df.shape[0] <= larger_data.shape[0]
 
 
 def test_most_common_words_by_group():
