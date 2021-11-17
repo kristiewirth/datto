@@ -187,14 +187,15 @@ class ModelResults:
         vocab = vectorizer.get_feature_names()
         vector_df = pd.DataFrame(vectors, columns=vocab, index=X.index)
 
-        if X.shape[0] <= 75:
-            return "Too few examples to categorize."
-
         if not chosen_num_topics:
             # Inspired by: https://bit.ly/3CqH2Zw
 
-            # Test out several topic numbers
-            topic_nums = list(np.arange(5, 75 + 1, 5))
+            if X.shape[0] <= 5:
+                return "Too few examples to categorize."
+            elif X.shape[0] <= 75:
+                topic_nums = list(np.arange(5, X.shape[0], 5))
+            else:
+                topic_nums = list(np.arange(5, 75 + 1, 5))
 
             texts = X[text_column_name].apply(ct.lematize)
 
