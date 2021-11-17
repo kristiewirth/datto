@@ -163,7 +163,7 @@ class TrainModel:
         model_type,
         tie_breaker_scoring_method,
         save_to_csv=True,
-        file_name="model_results",
+        file_name="gridsearching_results",
         multiclass=False,
     ):
         """
@@ -316,11 +316,12 @@ class TrainModel:
                     d[k] = v
                 lst_dict.append(d)
 
-            dateTimeObj = datetime.datetime.now()
-            timestampStr = dateTimeObj.strftime("%m-%d-%Y (%H:%M:%S.%f)")
+            cleaned_date = (
+                datetime.datetime.today().isoformat(" ", "seconds").replace(" ", "-")
+            )
 
             temp_df = pd.DataFrame(lst_dict)
-            temp_df["timestamp"] = timestampStr
+            temp_df["timestamp"] = cleaned_date
 
             try:
                 previous_df = pd.read_csv(f"{file_name}.csv")
