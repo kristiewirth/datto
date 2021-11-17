@@ -393,6 +393,8 @@ class ModelResults:
             how="left",
         )[[text_column_name, "topic_num", "top_words_and_phrases"]]
 
+        concated_topics.sort_values(by="num_in_category", ascending=False, inplace=True)
+
         return (
             concated_topics,
             original_with_keywords,
