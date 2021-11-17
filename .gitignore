@@ -15,7 +15,6 @@ __pycache__/
 .vscode/
 .hypothesis/
 catboost_info/
-model_results.csv
 datto_examples_zapier.ipynb
 Golden path to machine learning external.ipynb
 titanic.csv
@@ -24,3 +23,5 @@ datto/*.png
 dist/*
 datto.egg-info/*
 *.txt
+final_model_*.csv
+gridsearching_results.csv
