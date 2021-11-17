@@ -1,3 +1,4 @@
+import csv
 import datetime
 import os
 import random
@@ -18,6 +19,7 @@ import statsmodels.api as sm
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel, nmf
 from nltk.corpus import stopwords
+from sklearn import set_config
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import (
     ENGLISH_STOP_WORDS,
@@ -598,7 +600,13 @@ class ModelResults:
         return overall_counts_df
 
     def score_final_model(
-        self, model_type, X_test, y_test, trained_model, multiclass=False
+        self,
+        model_type,
+        X_test,
+        y_test,
+        trained_model,
+        multiclass=False,
+        csv_file_name="final_model_results",
     ):
         """
         Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.
@@ -611,6 +619,7 @@ class ModelResults:
         y_test: DataFrame
         trained_model: sklearn model
         multiclass: bool
+        csv_file_name: str
 
         Returns
         --------
@@ -618,6 +627,8 @@ class ModelResults:
             Fit model
         y_predicted: array
         """
+        set_config(print_changed_only=True)
+
         cleaned_date = (
             datetime.datetime.today().isoformat(" ", "seconds").replace(" ", "-")
         )
@@ -626,16 +637,32 @@ class ModelResults:
         y_predicted = trained_model.predict(X_test)
 
         if multiclass:
-            pscore = round(precision_score(y_test, y_predicted, average="weighted"), 3)
-            rscore = round(recall_score(y_test, y_predicted, average="weighted"), 3)
-            ascore = round(accuracy_score(y_test, y_predicted), 3)
-            f1score = round(f1_score(y_test, y_predicted, average="weighted"), 3)
+            pscore = round(precision_score(y_test, y_predicted, average="weighted"), 7)
+            rscore = round(recall_score(y_test, y_predicted, average="weighted"), 7)
+            ascore = round(accuracy_score(y_test, y_predicted), 7)
+            f1score = round(f1_score(y_test, y_predicted, average="weighted"), 7)
 
-            with open(f"model_scoring_{cleaned_date}.txt", "w") as f:
-                print(f"Precision Weighted: {pscore}", file=f)
-                print(f"Recall Weighted: {rscore}", file=f)
-                print(f"Accuracy: {ascore}", file=f)
-                print(f"F1 Score Weighted: {f1score}", file=f)
+            temp_df = pd.DataFrame(
+                [
+                    [
+                        trained_model,
+                        pscore,
+                        rscore,
+                        ascore,
+                        f1score,
+                    ]
+                ],
+                columns=[
+                    "model",
+                    "precision",
+                    "recall",
+                    "accuracy",
+                    "f1",
+                ],
+            )
+
+            with open(f"model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
+                print(f"Model: {trained_model}", file=f)
                 print("\n", file=f)
 
                 # Precision / recall / f1-score for each predicted class
@@ -689,16 +716,32 @@ class ModelResults:
                     print("\n", file=f)
 
         elif model_type.lower() == "classification":
-            pscore = round(precision_score(y_test, y_predicted), 3)
-            rscore = round(recall_score(y_test, y_predicted), 3)
-            accuracy = round(accuracy_score(y_test, y_predicted), 3)
-            f1 = round(f1_score(y_test, y_predicted), 3)
+            pscore = round(precision_score(y_test, y_predicted), 7)
+            rscore = round(recall_score(y_test, y_predicted), 7)
+            ascore = round(accuracy_score(y_test, y_predicted), 7)
+            f1score = round(f1_score(y_test, y_predicted), 7)
 
-            with open(f"model_scoring_{cleaned_date}.txt", "w") as f:
-                print(f"Precision: {pscore}", file=f)
-                print(f"Recall: {rscore}", file=f)
-                print(f"Accuracy: {accuracy}", file=f)
-                print(f"F1 Score: {f1}", file=f)
+            temp_df = pd.DataFrame(
+                [
+                    [
+                        trained_model,
+                        pscore,
+                        rscore,
+                        ascore,
+                        f1score,
+                    ]
+                ],
+                columns=[
+                    "model",
+                    "precision",
+                    "recall",
+                    "accuracy",
+                    "f1",
+                ],
+            )
+
+            with open(f"model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
+                print(f"Model: {trained_model}", file=f)
                 print("\n", file=f)
 
                 crosstab = pd.crosstab(
@@ -737,21 +780,49 @@ class ModelResults:
                     file=f,
                 )
         else:
+            mse = mean_squared_error(y_test, y_predicted)
+            mae = median_absolute_error(y_test, y_predicted)
+            r2 = round(r2_score(y_test, y_predicted), 7)
 
-            with open(f"model_scoring_{cleaned_date}.txt", "w") as f:
-                mse = mean_squared_error(y_test, y_predicted)
-                mae = median_absolute_error(y_test, y_predicted)
-                r2 = round(r2_score(y_test, y_predicted), 3)
+            temp_df = pd.DataFrame(
+                [
+                    [
+                        trained_model,
+                        round((mse ** 5) * -1, 7),
+                        round((mae * -1), 7),
+                        r2,
+                    ]
+                ],
+                columns=["model", "negative_rmse", "negative_mae", "r2"],
+            )
 
+        temp_df["timestamp"] = cleaned_date
+
+        try:
+            previous_df = pd.read_csv(f"{csv_file_name}.csv")
+
+            if temp_df.shape[1] != previous_df.shape[1]:
                 print(
-                    f"Mean Negative Root Mean Squared Errror: {round((mse ** 5) * -1, 3)}",
-                    file=f,
+                    f"""Unable to save csv because columns do not match. 
+                The existing model results csv has these columns: {previous_df.columns}. 
+                The new model results csv has these columns: {temp_df.columns}."""
                 )
-                print(
-                    f"Mean Negative Median Absolute Error: {round((mae * -1), 3)}",
-                    file=f,
-                )
-                print(f"Mean R2: {r2}", file=f)
+                return trained_model, y_predicted
+
+            final_model_results_df = pd.concat([previous_df, temp_df], axis=0)
+            final_model_results_df.reset_index(inplace=True, drop=True)
+        except Exception:
+            final_model_results_df = temp_df
+
+        final_model_results_df = final_model_results_df.reindex(
+            sorted(final_model_results_df.columns), axis=1
+        )
+
+        with open(f"{csv_file_name}.csv", "w") as csvfile:
+            csvwriter = csv.writer(csvfile, delimiter=",")
+            csvwriter.writerow(final_model_results_df.columns)
+            for _, row in final_model_results_df.iterrows():
+                csvwriter.writerow(row)
 
         return trained_model, y_predicted
 

@@ -121,10 +121,14 @@ def test_most_common_words_by_group():
 
 
 def test_score_final_model_classification():
-    model = LogisticRegression()
+    model = LogisticRegression(C=0.5, l1_ratio=0.4)
     trained_model = model.fit(X_train, y_train)
     _, y_predicted = mr.score_final_model(
-        "classification", X_test, y_test, trained_model
+        "classification",
+        X_test,
+        y_test,
+        trained_model,
+        csv_file_name="final_model_classification_test",
     )
 
     assert len(y_predicted) == y_test.shape[0]
@@ -133,7 +137,13 @@ def test_score_final_model_classification():
 def test_score_final_model_regression():
     model = ElasticNet()
     trained_model = model.fit(X_train, y_train)
-    _, y_predicted = mr.score_final_model("regression", X_test, y_test, trained_model)
+    _, y_predicted = mr.score_final_model(
+        "regression",
+        X_test,
+        y_test,
+        trained_model,
+        csv_file_name="final_model_regression_test",
+    )
 
     assert len(y_predicted) == y_test.shape[0]
 
@@ -230,7 +240,12 @@ def test_score_final_model_multiclass():
     model = DecisionTreeClassifier()
     trained_model = model.fit(X_train, y_train)
     _, y_predicted = mr.score_final_model(
-        "classification", X_test, y_test, trained_model, multiclass=True
+        "classification",
+        X_test,
+        y_test,
+        trained_model,
+        multiclass=True,
+        csv_file_name="final_model_multiclass_test",
     )
 
     assert len(y_predicted) == y_test.shape[0]
