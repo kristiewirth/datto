@@ -86,10 +86,10 @@ class ModelResults:
     def most_similar_texts(
         self,
         X,
-        num_examples,
         text_column_name,
         chosen_num_topics=None,
         chosen_stopwords=set(),
+        num_examples=15,
         min_df=3,
         max_df=0.1,
         min_ngrams=1,
