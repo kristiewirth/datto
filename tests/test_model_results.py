@@ -78,10 +78,10 @@ def test_most_similar_texts():
 
     top_words_df, _, _ = mr.most_similar_texts(
         larger_data,
-        num_examples,
         text_column_name,
         chosen_num_topics,
         chosen_stopwords,
+        num_examples=num_examples,
         min_df=3,
         max_df=0.4,
         min_ngrams=1,
@@ -101,10 +101,10 @@ def test_most_similar_texts_no_topic_num():
 
     top_words_df, _, _ = mr.most_similar_texts(
         larger_data,
-        num_examples,
         text_column_name,
         chosen_num_topics,
         chosen_stopwords,
+        num_examples=num_examples,
         min_df=3,
         max_df=0.4,
         min_ngrams=1,
