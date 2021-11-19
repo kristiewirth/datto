@@ -605,8 +605,8 @@ class ModelResults:
         X_test,
         y_test,
         trained_model,
-        multiclass=False,
         csv_file_name="final_model_results",
+        multiclass=False,
     ):
         """
         Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.

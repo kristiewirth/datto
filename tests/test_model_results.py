@@ -70,7 +70,7 @@ X_text = pd.DataFrame(
 
 def test_most_similar_texts():
     chosen_num_topics = 4
-    num_examples = 5
+    chosen_num_examples = 5
     text_column_name = "text"
     chosen_stopwords = set(["the"])
 
@@ -81,7 +81,7 @@ def test_most_similar_texts():
         text_column_name,
         chosen_num_topics,
         chosen_stopwords,
-        num_examples=num_examples,
+        num_examples=chosen_num_examples,
         min_df=3,
         max_df=0.4,
         min_ngrams=1,
@@ -93,7 +93,7 @@ def test_most_similar_texts():
 
 def test_most_similar_texts_no_topic_num():
     chosen_num_topics = None
-    num_examples = 5
+    chosen_num_examples = 5
     text_column_name = "text"
     chosen_stopwords = set(["the"])
 
@@ -104,7 +104,7 @@ def test_most_similar_texts_no_topic_num():
         text_column_name,
         chosen_num_topics,
         chosen_stopwords,
-        num_examples=num_examples,
+        num_examples=chosen_num_examples,
         min_df=3,
         max_df=0.4,
         min_ngrams=1,
@@ -187,6 +187,7 @@ def test_coefficients_individual_predictions_classification():
         model_type,
         class_names,
     )
+
     assert isinstance(features_list, list)
 
 
@@ -244,8 +245,8 @@ def test_score_final_model_multiclass():
         X_test,
         y_test,
         trained_model,
-        multiclass=True,
         csv_file_name="final_model_multiclass_test",
+        multiclass=True,
     )
 
     assert len(y_predicted) == y_test.shape[0]
