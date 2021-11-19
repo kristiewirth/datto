@@ -25,3 +25,4 @@ datto.egg-info/*
 *.txt
 final_model_*.csv
 gridsearching_results.csv
+model_results.csv
