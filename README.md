@@ -23,7 +23,7 @@ Some examples of what you can do:
 - Find the most common phrases by a category
 - Classify free text responses into any number of meaningful groups (e.g. find survey themes)
 - Make a simple Python logger with default options
-- Take some data and test a bunch of machine learning models on it
+- Take some data and test various machine learning models on it
 
 For detailed examples of how you can use it, check out [this Juypter notebook](datto_examples.ipynb).
 
