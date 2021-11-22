@@ -47,14 +47,18 @@ nc = NotebookConnections()
 def test_save_as_script():
     # Remove previous file if it exists to properly test function
     try:
-        os.system("rm /Users/kristiewirth/Documents/work/datto/start_notebook.py")
+        os.system(
+            "rm /Users/kristiewirth/Documents/work/datto/files_to_ignore/start_notebook.py"
+        )
     except Exception:
         pass
 
-    nc.save_as_script("/Users/kristiewirth/Documents/work/datto/start_notebook.ipynb")
+    nc.save_as_script(
+        "/Users/kristiewirth/Documents/work/datto/files_to_ignore/start_notebook.ipynb"
+    )
 
     saved_script = open(
-        "/Users/kristiewirth/Documents/work/datto/start_notebook.py"
+        "/Users/kristiewirth/Documents/work/datto/files_to_ignore/start_notebook.py"
     ).read()
 
     assert saved_script is not None
@@ -63,14 +67,18 @@ def test_save_as_script():
 def test_save_as_notebook():
     # Remove previous file if it exists to properly test function
     try:
-        os.system("rm /Users/kristiewirth/Documents/work/datto/start_script.ipynb")
+        os.system(
+            "rm /Users/kristiewirth/Documents/work/datto/files_to_ignore/start_script.ipynb"
+        )
     except Exception:
         pass
 
-    nc.save_as_notebook("/Users/kristiewirth/Documents/work/datto/start_script.py")
+    nc.save_as_notebook(
+        "/Users/kristiewirth/Documents/work/datto/files_to_ignore/start_script.py"
+    )
 
     saved_notebook = open(
-        "/Users/kristiewirth/Documents/work/datto/start_script.ipynb"
+        "/Users/kristiewirth/Documents/work/datto/files_to_ignore/start_script.ipynb"
     ).read()
 
     assert saved_notebook is not None
