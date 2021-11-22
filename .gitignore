@@ -26,3 +26,7 @@ datto.egg-info/*
 final_model_*.csv
 gridsearching_results.csv
 model_results.csv
+start_script.py
+start_notebook.ipynb
+start_script.ipynb
+start_notebook.py
