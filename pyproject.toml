@@ -11,7 +11,6 @@ s3fs = "^2021.11.0"
 spacy = "^3.2.0"
 psycopg2-binary = "^2.9.2"
 python-json-logger = "^2.0.2"
-sklearn = "^0.0"
 xgboost = "^1.5.0"
 gensim = "^4.1.2"
 hypothesis = "^6.24.5"
@@ -32,6 +31,7 @@ nbconvert = "^6.3.0"
 black = "^21.11b1"
 isort = "^5.10.1"
 jupytext = "^1.13.1"
+scikit-learn = "^1.0.1"
 
 
 [tool.poetry.dev-dependencies]
