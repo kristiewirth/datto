@@ -56,7 +56,7 @@ except Exception:
 
 
 class ModelResults:
-    def jaccard_similarity(self, topic_1, topic_2):
+    def _jaccard_similarity(self, topic_1, topic_2):
         """
         Derives the Jaccard similarity of two topics
 
@@ -74,7 +74,6 @@ class ModelResults:
         Returns
         --------
         score: float
-
         """
 
         intersection = set(topic_1).intersection(set(topic_2))
@@ -213,6 +212,7 @@ class ModelResults:
             NMF_models = {}
             NMF_topics = {}
 
+            # Iterate through possible topic numbers and make models for each
             for i in topic_nums:
                 NMF_models[i] = nmf.Nmf(
                     corpus=corpus,
@@ -230,13 +230,15 @@ class ModelResults:
                     [word[0] for word in topic[1]] for topic in shown_topics
                 ]
 
+            # Measure Jaccard similarity between topics
+            # Verify that these scores are low, i.e. topics are distinct
             NMF_stability = {}
             for i in range(0, len(topic_nums) - 1):
                 jaccard_sims = []
                 for _, topic1 in enumerate(NMF_topics[topic_nums[i]]):
                     sims = []
                     for _, topic2 in enumerate(NMF_topics[topic_nums[i + 1]]):
-                        sims.append(self.jaccard_similarity(topic1, topic2))
+                        sims.append(self._jaccard_similarity(topic1, topic2))
 
                     jaccard_sims.append(sims)
 
@@ -246,6 +248,8 @@ class ModelResults:
                 np.array(NMF_stability[i]).mean() for i in topic_nums[:-1]
             ]
 
+            # Measure coherence scores
+            # Verify these are high, i.e. important words in topics appear consistently together in the texts
             coherences = [
                 CoherenceModel(
                     model=NMF_models[i],
@@ -312,7 +316,7 @@ class ModelResults:
                 or topic_words[topic][4] in x
             ]
 
-            # If not enough examples, check for second topic loading
+            # If not enough examples, check for second, third, etc. topic loading
             if len(examples_lst) < num_examples:
                 extra_examples_lst_2 = [
                     x
