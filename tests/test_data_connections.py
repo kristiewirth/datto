@@ -1,8 +1,8 @@
 import os
+
+from datto.DataConnections import NotebookConnections, S3Connections, SQLConnections
 from hypothesis import given, settings
 from hypothesis.extra.pandas import column, data_frames
-
-from datto.DataConnections import S3Connections, SQLConnections
 
 s3 = S3Connections()
 is_travis = "TRAVIS" in os.environ
@@ -39,3 +39,38 @@ def test_run_sql_redshift():
         sql = SQLConnections()
         df = sql.run_sql_redshift("""SELECT conv_id FROM hs_convs LIMIT 1""")
         assert ~df.empty
+
+
+nc = NotebookConnections()
+
+
+def test_save_as_script():
+    # Remove previous file if it exists to properly test function
+    try:
+        os.system("rm /Users/kristiewirth/Documents/work/datto/start_notebook.py")
+    except Exception:
+        pass
+
+    nc.save_as_script("/Users/kristiewirth/Documents/work/datto/start_notebook.ipynb")
+
+    saved_script = open(
+        "/Users/kristiewirth/Documents/work/datto/start_notebook.py"
+    ).read()
+
+    assert saved_script is not None
+
+
+def test_save_as_notebook():
+    # Remove previous file if it exists to properly test function
+    try:
+        os.system("rm /Users/kristiewirth/Documents/work/datto/start_script.ipynb")
+    except Exception:
+        pass
+
+    nc.save_as_notebook("/Users/kristiewirth/Documents/work/datto/start_script.py")
+
+    saved_notebook = open(
+        "/Users/kristiewirth/Documents/work/datto/start_script.ipynb"
+    ).read()
+
+    assert saved_notebook is not None
