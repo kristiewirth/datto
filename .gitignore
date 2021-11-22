@@ -30,3 +30,4 @@ start_script.py
 start_notebook.ipynb
 start_script.ipynb
 start_notebook.py
+files_to_ignore/*

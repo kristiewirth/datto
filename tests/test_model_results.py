@@ -128,7 +128,7 @@ def test_score_final_model_classification():
         X_test,
         y_test,
         trained_model,
-        csv_file_name="final_model_classification_test",
+        csv_file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/final_model_classification_test",
     )
 
     assert len(y_predicted) == y_test.shape[0]
@@ -142,7 +142,7 @@ def test_score_final_model_regression():
         X_test,
         y_test,
         trained_model,
-        csv_file_name="final_model_regression_test",
+        csv_file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/final_model_regression_test",
     )
 
     assert len(y_predicted) == y_test.shape[0]
@@ -245,7 +245,7 @@ def test_score_final_model_multiclass():
         X_test,
         y_test,
         trained_model,
-        csv_file_name="final_model_multiclass_test",
+        csv_file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/final_model_multiclass_test",
         multiclass=True,
     )
 

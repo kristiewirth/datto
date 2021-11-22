@@ -43,6 +43,7 @@ def test_model_testing_classification():
         y_train,
         model_type,
         tie_breaker_scoring_method,
+        file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/gridsearching_results",
     )
 
     assert isinstance(best_params, dict)
@@ -57,6 +58,7 @@ def test_model_testing_regression():
         y_train,
         model_type,
         tie_breaker_scoring_method,
+        file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/gridsearching_results",
     )
 
     assert isinstance(best_params, dict)
@@ -104,7 +106,12 @@ def test_model_testing_multiclass():
     tie_breaker_scoring_method = "precision_weighted"
 
     best_params = tm.model_testing(
-        X_train, y_train, model_type, tie_breaker_scoring_method, multiclass=True
+        X_train,
+        y_train,
+        model_type,
+        tie_breaker_scoring_method,
+        multiclass=True,
+        file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/gridsearching_results",
     )
 
     assert isinstance(best_params, dict)
