@@ -665,7 +665,7 @@ class ModelResults:
                 ],
             )
 
-            with open(f"model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
+            with open(f"{'/'.join(csv_file_name.split('/')[:-1])}/model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
                 print(f"Model: {trained_model}", file=f)
                 print("\n", file=f)
 
@@ -744,7 +744,7 @@ class ModelResults:
                 ],
             )
 
-            with open(f"model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
+            with open(f"{'/'.join(csv_file_name.split('/')[:-1])}/model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
                 print(f"Model: {trained_model}", file=f)
                 print("\n", file=f)
 
