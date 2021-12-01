@@ -7,4 +7,4 @@ test:
 	pytest -v -p no:warnings
 
 publish:
-	make docs; poetry build; poetry publish
+	git pull -r; git push; make docs; poetry build; poetry publish
