@@ -29,9 +29,7 @@ For detailed examples of how you can use it, check out [this Juypter notebook](d
 
 # Other Templates
 
-Check out the [templates folder](templates) for files and code snippets that automate certain tasks, but don't fit within the realm of a Python package.
-
-Recommended: You can easily reuse some of these by copying the file contents into a [text expander app](https://zapier.com/blog/text-expander-how-to/).
+Check out the [templates folder](templates) for files that automate certain tasks, but don't fit within the realm of a Python package.
 
 # Contributing
 
