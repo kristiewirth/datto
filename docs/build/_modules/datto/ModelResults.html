@@ -116,6 +116,7 @@
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
 <span class="kn">from</span> <span class="nn">datto.CleanDataframe</span> <span class="kn">import</span> <span class="n">CleanDataframe</span>
+<span class="kn">from</span> <span class="nn">datto.utils</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="c1"># Hide precision/recall/f1 warnings for model scorings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">)</span>
@@ -160,6 +161,12 @@
         <span class="n">text_column_name</span><span class="p">,</span>
         <span class="n">chosen_num_topics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">chosen_stopwords</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span>
+        <span class="n">exclude_numbers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_times</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_months</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_weekdays</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_greetings_goodbyes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_adverbs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">num_examples</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
         <span class="n">min_df</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
         <span class="n">max_df</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
@@ -176,6 +183,20 @@
 <span class="sd">        text_column_name: str</span>
 <span class="sd">        chosen_num_topics: int</span>
 <span class="sd">            Optional - if none algorithm will determine best number</span>
+<span class="sd">        chosen_stopwords: set</span>
+<span class="sd">            Option to add in your own unique stopwords</span>
+<span class="sd">        exclude_numbers: bool</span>
+<span class="sd">            Adding numbers 0-10000 (with &amp; without commas) as additional stopwords</span>
+<span class="sd">        exclude_times: bool</span>
+<span class="sd">            Adding times as additional stopwords (e.g. `8:00`)</span>
+<span class="sd">        exclude_months: bool</span>
+<span class="sd">            Adding month names as additional stopwords</span>
+<span class="sd">        exclude_weekdays: bool</span>
+<span class="sd">            Adding weekday names as additional stopwords</span>
+<span class="sd">        exclude_greetings_goodbyes: bool</span>
+<span class="sd">            Adding common greetings &amp; goodbyes as additional stopwords (e.g. `hello`)</span>
+<span class="sd">        exclude_adverbs: bool</span>
+<span class="sd">            Adding common adverbs as additional stopwords (e.g. `especially`)</span>
 <span class="sd">        min_df: float</span>
 <span class="sd">            Minimum number/proportion of docs that need to have the words</span>
 <span class="sd">        max_df: float</span>
@@ -196,10 +217,6 @@
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span><span class="p">]</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;NA&quot;</span><span class="p">]</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span><span class="p">]</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;N/A&quot;</span><span class="p">]</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;na&quot;</span><span class="p">]</span>
 
         <span class="c1"># Remove HTML &amp; unicode characters</span>
         <span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
@@ -211,6 +228,20 @@
             <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
             <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="p">)</span>
+
+        <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">chosen_stopwords</span>
+        <span class="k">if</span> <span class="n">exclude_numbers</span><span class="p">:</span>
+            <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">with_stopword_params</span> <span class="o">|</span> <span class="n">numbers</span>
+        <span class="k">if</span> <span class="n">exclude_times</span><span class="p">:</span>
+            <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">with_stopword_params</span> <span class="o">|</span> <span class="n">times</span>
+        <span class="k">if</span> <span class="n">exclude_months</span><span class="p">:</span>
+            <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">with_stopword_params</span> <span class="o">|</span> <span class="n">months</span>
+        <span class="k">if</span> <span class="n">exclude_weekdays</span><span class="p">:</span>
+            <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">with_stopword_params</span> <span class="o">|</span> <span class="n">weekdays</span>
+        <span class="k">if</span> <span class="n">exclude_greetings_goodbyes</span><span class="p">:</span>
+            <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">with_stopword_params</span> <span class="o">|</span> <span class="n">greetings_goodbyes</span>
+        <span class="k">if</span> <span class="n">exclude_adverbs</span><span class="p">:</span>
+            <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">with_stopword_params</span> <span class="o">|</span> <span class="n">adverbs</span>
 
         <span class="n">all_stop_words</span> <span class="o">=</span> <span class="p">(</span>
             <span class="c1"># Combine stopwords from all the packages</span>
@@ -243,7 +274,7 @@
                     <span class="s2">&quot;and/or&quot;</span><span class="p">,</span>
                 <span class="p">]</span>
             <span class="p">)</span>
-            <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">chosen_stopwords</span><span class="p">)</span>
+            <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">with_stopword_params</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="n">ct</span> <span class="o">=</span> <span class="n">CleanDataframe</span><span class="p">()</span>
