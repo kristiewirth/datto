@@ -86,6 +86,12 @@ def test_most_similar_texts():
         max_df=0.4,
         min_ngrams=1,
         max_ngrams=3,
+        exclude_numbers=True,
+        exclude_times=True,
+        exclude_months=True,
+        exclude_weekdays=True,
+        exclude_greetings_goodbyes=True,
+        exclude_adverbs=True,
     )
 
     assert top_words_df.shape[0] == chosen_num_topics

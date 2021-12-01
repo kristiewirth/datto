@@ -44,6 +44,7 @@ from spacy.cli import download
 from tabulate import tabulate
 
 from datto.CleanDataframe import CleanDataframe
+from datto.utils import *
 
 # Hide precision/recall/f1 warnings for model scorings
 warnings.filterwarnings("always")
@@ -88,6 +89,12 @@ class ModelResults:
         text_column_name,
         chosen_num_topics=None,
         chosen_stopwords=set(),
+        exclude_numbers=False,
+        exclude_times=False,
+        exclude_months=False,
+        exclude_weekdays=False,
+        exclude_greetings_goodbyes=False,
+        exclude_adverbs=False,
         num_examples=15,
         min_df=3,
         max_df=0.1,
@@ -104,6 +111,20 @@ class ModelResults:
         text_column_name: str
         chosen_num_topics: int
             Optional - if none algorithm will determine best number
+        chosen_stopwords: set
+            Option to add in your own unique stopwords
+        exclude_numbers: bool
+            Adding numbers 0-10000 (with & without commas) as additional stopwords
+        exclude_times: bool
+            Adding times as additional stopwords (e.g. `8:00`)
+        exclude_months: bool
+            Adding month names as additional stopwords
+        exclude_weekdays: bool
+            Adding weekday names as additional stopwords
+        exclude_greetings_goodbyes: bool
+            Adding common greetings & goodbyes as additional stopwords (e.g. `hello`)
+        exclude_adverbs: bool
+            Adding common adverbs as additional stopwords (e.g. `especially`)
         min_df: float
             Minimum number/proportion of docs that need to have the words
         max_df: float
@@ -124,10 +145,6 @@ class ModelResults:
         X = X[~X[text_column_name].isna()]
         X = X[X[text_column_name] != ""]
         X = X[X[text_column_name] != " "]
-        X = X[X[text_column_name] != "NA"]
-        X = X[X[text_column_name] != "n/a"]
-        X = X[X[text_column_name] != "N/A"]
-        X = X[X[text_column_name] != "na"]
 
         # Remove HTML & unicode characters
         X[text_column_name] = X[text_column_name].apply(
@@ -139,6 +156,20 @@ class ModelResults:
             .replace("  ", " ")
             .strip()
         )
+
+        with_stopword_params = chosen_stopwords
+        if exclude_numbers:
+            with_stopword_params = with_stopword_params | numbers
+        if exclude_times:
+            with_stopword_params = with_stopword_params | times
+        if exclude_months:
+            with_stopword_params = with_stopword_params | months
+        if exclude_weekdays:
+            with_stopword_params = with_stopword_params | weekdays
+        if exclude_greetings_goodbyes:
+            with_stopword_params = with_stopword_params | greetings_goodbyes
+        if exclude_adverbs:
+            with_stopword_params = with_stopword_params | adverbs
 
         all_stop_words = (
             # Combine stopwords from all the packages
@@ -171,7 +202,7 @@ class ModelResults:
                     "and/or",
                 ]
             )
-            | set(chosen_stopwords)
+            | set(with_stopword_params)
         )
 
         ct = CleanDataframe()
