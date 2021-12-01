@@ -115,7 +115,7 @@ class ModelResults:
 
         Returns
         --------
-        concated_topics: DataFrame
+        all_topics: DataFrame
             Top n words/phrases per topic
         original_with_keywords: DataFrame
             Original text with topic number assigned to each
@@ -378,7 +378,7 @@ class ModelResults:
             "example{}".format(num) for num in range(len(topic_words_explode.columns))
         ]
 
-        concated_topics = pd.concat(
+        all_topics = pd.concat(
             [
                 topic_words_df[
                     ["topic_num", "num_in_category", "top_words_and_phrases"]
@@ -389,21 +389,21 @@ class ModelResults:
         )
 
         print("Topics created with top words & example texts:")
-        print(concated_topics)
+        print(all_topics)
 
         original_plus_topics = combined_df[list(X.columns) + ["index", "top_topic_num"]]
         original_with_keywords = pd.merge(
             original_plus_topics,
-            concated_topics[["topic_num", "top_words_and_phrases"]],
+            all_topics[["topic_num", "top_words_and_phrases"]],
             left_on="top_topic_num",
             right_on="topic_num",
             how="left",
         )[[text_column_name, "topic_num", "top_words_and_phrases"]]
 
-        concated_topics.sort_values(by="num_in_category", ascending=False, inplace=True)
+        all_topics.sort_values(by="num_in_category", ascending=False, inplace=True)
 
         return (
-            concated_topics,
+            all_topics,
             original_with_keywords,
             model,
         )
@@ -665,7 +665,10 @@ class ModelResults:
                 ],
             )
 
-            with open(f"{'/'.join(csv_file_name.split('/')[:-1])}/model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
+            with open(
+                f"{'/'.join(csv_file_name.split('/')[:-1])}/model_scoring_crosstabs_{cleaned_date}.txt",
+                "w",
+            ) as f:
                 print(f"Model: {trained_model}", file=f)
                 print("\n", file=f)
 
@@ -744,7 +747,10 @@ class ModelResults:
                 ],
             )
 
-            with open(f"{'/'.join(csv_file_name.split('/')[:-1])}/model_scoring_crosstabs_{cleaned_date}.txt", "w") as f:
+            with open(
+                f"{'/'.join(csv_file_name.split('/')[:-1])}/model_scoring_crosstabs_{cleaned_date}.txt",
+                "w",
+            ) as f:
                 print(f"Model: {trained_model}", file=f)
                 print("\n", file=f)
 
