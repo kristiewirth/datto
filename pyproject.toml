@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datto"
-version = "0.7.7"
+version = "0.7.8"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
@@ -32,6 +32,7 @@ black = "^21.11b1"
 isort = "^5.10.1"
 jupytext = "^1.13.1"
 scikit-learn = "^1.0.1"
+jupyter-contrib-nbextensions = "^0.5.1"
 
 
 [tool.poetry.dev-dependencies]
