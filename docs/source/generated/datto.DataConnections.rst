@@ -17,6 +17,7 @@
 
    .. autosummary::
    
+      NotebookConnections
       S3Connections
       SQLConnections
    

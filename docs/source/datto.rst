@@ -1,21 +1,10 @@
 datto package
 =============
 
-Subpackages
------------
+datto.CleanDataframe module
+----------------------------
 
-.. toctree::
-   :maxdepth: 4
-
-   datto.data
-
-Submodules
-----------
-
-datto.CleanText module
-----------------------
-
-.. automodule:: datto.CleanText
+.. automodule:: datto.CleanDataframe
    :members:
    :undoc-members:
    :show-inheritance:
@@ -72,14 +61,6 @@ datto.TrainModel module
 -----------------------
 
 .. automodule:: datto.TrainModel
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: datto
    :members:
    :undoc-members:
    :show-inheritance:

@@ -10,7 +10,7 @@ datto documentation
 .. autosummary::
    :toctree: generated
 
-   datto.CleanText
+   datto.CleanDataframe
    datto.DataConnections
    datto.Eda
    datto.Experiments

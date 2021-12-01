@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>datto.DataConnections &mdash; datto  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> datto
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.CleanDataframe.html">datto.CleanDataframe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.DataConnections.html">datto.DataConnections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Eda.html">datto.Eda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Experiments.html">datto.Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.FrontEnd.html">datto.FrontEnd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.ModelResults.html">datto.ModelResults</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.SetupMethods.html">datto.SetupMethods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.TrainModel.html">datto.TrainModel</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">datto</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>datto.DataConnections</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for datto.DataConnections</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">import</span> <span class="nn">s3fs</span>
+
+
+<div class="viewcode-block" id="S3Connections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections">[docs]</a><span class="k">class</span> <span class="nc">S3Connections</span><span class="p">:</span>
+<div class="viewcode-block" id="S3Connections.save_to_s3"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections.save_to_s3">[docs]</a>    <span class="k">def</span> <span class="nf">save_to_s3</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">directory_path</span><span class="p">,</span>
+        <span class="n">object_to_save</span><span class="p">,</span>
+        <span class="n">object_name</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pickle and save an object to s3. Creates the folder specified if it does not yet exist.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        directory_path: str</span>
+<span class="sd">            Starts with bucket name, slash any subdirectories</span>
+<span class="sd">        object_to_save: any object with a type that can be pickled</span>
+<span class="sd">        object_name: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span><span class="n">anon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">filepath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">s3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">object_to_save</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># If error, try creating folder</span>
+            <span class="n">s3</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory_path</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">s3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">object_to_save</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="S3Connections.load_from_s3"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections.load_from_s3">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a pickled object from s3.</span>
+<span class="sd">        Note: The pickle module is not secure. Only unpickle data you trust/saved yourself.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        directory_path: str</span>
+<span class="sd">            Starts with bucket name, slash any subdirectories</span>
+<span class="sd">        object_name: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        saved_object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span><span class="n">anon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">filepath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+
+        <span class="n">saved_object</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">saved_object</span></div></div>
+
+
+<div class="viewcode-block" id="SQLConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SQLConnections">[docs]</a><span class="k">class</span> <span class="nc">SQLConnections</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pandas doesn&#39;t integrate with Redshift directly. Instead use psycopg2 to connect.</span>
+<span class="sd">        Pulls credentials from environment automatically if set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        dbname: str</span>
+<span class="sd">        host: str</span>
+<span class="sd">        port: str</span>
+<span class="sd">        user: str</span>
+<span class="sd">        password: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        conn: cursor from database connection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLDBNAME</span> <span class="o">=</span> <span class="n">dbname</span> <span class="k">if</span> <span class="n">dbname</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RS_DBNAME&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLHOST</span> <span class="o">=</span> <span class="n">host</span> <span class="k">if</span> <span class="n">host</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RS_HOST&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLPORT</span> <span class="o">=</span> <span class="n">port</span> <span class="k">if</span> <span class="n">port</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RS_PORT&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLUSER</span> <span class="o">=</span> <span class="n">user</span> <span class="k">if</span> <span class="n">user</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RS_USER&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SQLPASSWORD</span> <span class="o">=</span> <span class="n">password</span> <span class="k">if</span> <span class="n">password</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RS_PASSWORD&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">CONN</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLDBNAME</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLHOST</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLPORT</span><span class="p">,</span>
+            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLUSER</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SQLPASSWORD</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SQLConnections.run_sql_redshift"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SQLConnections.run_sql_redshift">[docs]</a>    <span class="k">def</span> <span class="nf">run_sql_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pandas doesn&#39;t integrate with Redshift directly.</span>
+<span class="sd">        Instead use psycopg2 to connect and transform results into a DataFrame manually.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        conn: cursor from database connection</span>
+<span class="sd">        query: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Need to commit insert queries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CONN</span><span class="o">.</span><span class="n">set_session</span><span class="p">(</span><span class="n">autocommit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONN</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="c1"># Execute query</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+            <span class="c1"># Add exceptions for queries that insert data only and don&#39;t return dataframes</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Pull out column names from cursor</span>
+                <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">desc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
+
+                <span class="c1"># Fetch the entire query back</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Transfer data to pandas dataframe</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">colnames</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">df</span>
+
+        <span class="c1"># For queries that don&#39;t return data/write only queries</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="NotebookConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.NotebookConnections">[docs]</a><span class="k">class</span> <span class="nc">NotebookConnections</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_remove_unused_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_version</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Takes the content of a Jupyter notebook and removes code unneeded to produce final results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        original_version: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        filtered_file: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filtered_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># Remove all the Jupyter notebook cell syntax</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;# In\[[0-9 ]*]:|# #&quot;</span><span class="p">,</span> <span class="n">original_version</span><span class="p">):</span>
+            <span class="n">cleaned_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="c1"># If a cell contains multiple lines, but doesn&#39;t have any lines other than</span>
+            <span class="c1"># code like comments or print statements</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">x</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cleaned_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
+                        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;#&quot;</span>
+                        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()[:</span><span class="mi">6</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;print(&quot;</span>
+                        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;for &quot;</span>
+                        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;try:&quot;</span>
+                        <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()[:</span><span class="mi">6</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;except&quot;</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="o">==</span> <span class="mi">0</span>
+            <span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Line skipped: </span><span class="si">{</span><span class="n">cleaned_line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Always include certain cells, such as those defining funcs</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="s2">&quot;def(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;inplace=True&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;inplace = True&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span> <span class="ow">and</span> <span class="s2">&quot;(&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cleaned_line</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">filtered_file</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Skip lines with common methods that aren&#39;t called with ``=`` assignment</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="n">cleaned_line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+                <span class="ow">or</span> <span class="s2">&quot;!pip install&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="n">cleaned_line</span> <span class="o">==</span> <span class="s2">&quot;#!/usr/bin/env python&quot;</span>
+                <span class="ow">or</span> <span class="n">cleaned_line</span> <span class="o">==</span> <span class="s2">&quot;# coding: utf-8&quot;</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="n">cleaned_line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;#&quot;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="s2">&quot;.head(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.shape&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;print(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;display(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.apply&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.describe(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.hist(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.bar(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.plot(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.box(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.area(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.scatter(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.kde(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.loc&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.iloc&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.max(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.min(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.sum(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.median(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;.info&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;len(&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="s2">&quot;sns.&quot;</span> <span class="ow">in</span> <span class="n">cleaned_line</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cleaned_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="s2">&quot;(&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cleaned_line</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="n">cleaned_line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;[&quot;</span> <span class="ow">and</span> <span class="n">cleaned_line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Line skipped: </span><span class="si">{</span><span class="n">cleaned_line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">filtered_file</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filtered_file</span>
+
+<div class="viewcode-block" id="NotebookConnections.save_as_script"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.NotebookConnections.save_as_script">[docs]</a>    <span class="k">def</span> <span class="nf">save_as_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens a Jupyter notebook file, cleans it, and saves as a Python script.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        file_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;jupyter nbconvert --to script </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">script_file_path</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.ipynb&quot;</span><span class="p">,</span> <span class="s2">&quot;.py&quot;</span><span class="p">)</span>
+
+        <span class="n">original_version</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">script_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="n">filtered_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_unused_lines</span><span class="p">(</span><span class="n">original_version</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">script_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filtered_version</span><span class="p">)</span>
+
+        <span class="c1"># Before saving as script, format and sort imports</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;python -m black </span><span class="si">{</span><span class="n">script_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;python -m isort </span><span class="si">{</span><span class="n">script_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created Python script: </span><span class="si">{</span><span class="n">script_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NotebookConnections.save_as_notebook"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.NotebookConnections.save_as_notebook">[docs]</a>    <span class="k">def</span> <span class="nf">save_as_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens a Python script and saves as a Jupyter notebook.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        file_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Add cell definition for each new line group</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">file_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">#&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"># In[</span><span class="si">{}</span><span class="s2">]: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">text</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"># In[</span><span class="si">{}</span><span class="s2">]: </span><span class="se">\n</span><span class="s2">#&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">temp_notebook_script</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">,</span> <span class="s2">&quot;_notebook.py&quot;</span><span class="p">)</span>
+
+        <span class="c1"># First clean the text, then make a temp second script file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_notebook_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">texts</span><span class="p">))</span>
+
+        <span class="c1"># Convert temp cleaned script to notebook</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;jupytext --to notebook </span><span class="si">{</span><span class="n">temp_notebook_script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">starting_notebook_name</span> <span class="o">=</span> <span class="n">temp_notebook_script</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">,</span> <span class="s2">&quot;.ipynb&quot;</span><span class="p">)</span>
+        <span class="n">updated_notebook_name</span> <span class="o">=</span> <span class="n">starting_notebook_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_notebook&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Clean up generated notebook name</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mv </span><span class="si">{</span><span class="n">starting_notebook_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">updated_notebook_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Remove temp intermediate script</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm </span><span class="si">{</span><span class="n">temp_notebook_script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created Jupyter notebook: </span><span class="si">{</span><span class="n">updated_notebook_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Kristie Wirth.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

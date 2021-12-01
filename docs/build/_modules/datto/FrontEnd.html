@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>datto.FrontEnd &mdash; datto  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> datto
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.CleanDataframe.html">datto.CleanDataframe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.DataConnections.html">datto.DataConnections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Eda.html">datto.Eda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.Experiments.html">datto.Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.FrontEnd.html">datto.FrontEnd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.ModelResults.html">datto.ModelResults</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.SetupMethods.html">datto.SetupMethods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generated/datto.TrainModel.html">datto.TrainModel</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">datto</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>datto.FrontEnd</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for datto.FrontEnd</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+
+
+<div class="viewcode-block" id="FrontEnd"><a class="viewcode-back" href="../../generated/datto.FrontEnd.html#datto.FrontEnd.FrontEnd">[docs]</a><span class="k">class</span> <span class="nc">FrontEnd</span><span class="p">:</span>
+<div class="viewcode-block" id="FrontEnd.dropdown_from_dataframe"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.dropdown_from_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dropdown_from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">chosen_col</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create text to use for rendering an HTML dropdown from a DataFrame.</span>
+
+<span class="sd">        Render by using {{ df|safe }} in your HTML file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        name: str</span>
+<span class="sd">            Name you&#39;d like for the dropdown</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">        chosen_col: str</span>
+<span class="sd">            Which column&#39;s values will populate the dropdown</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        html_choices: str</span>
+<span class="sd">            String you can use to render HTML</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">html_choices</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;select id=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; width: 400px;&gt;&lt;option value=&quot;---&quot;&gt;---&lt;/option&gt;&quot;&quot;&quot;</span>
+
+        <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">chosen_col</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">chosen_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="n">html_choices</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;option value=&quot;</span><span class="si">{</span><span class="n">option</span><span class="si">}</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">option</span><span class="si">}</span><span class="s2">&lt;/option&gt;&quot;&quot;&quot;</span>
+        <span class="n">html_choices</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;&lt;/select&gt;&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">html_choices</span></div>
+
+<div class="viewcode-block" id="FrontEnd.dataframe_to_html"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.dataframe_to_html">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write an entire dataframe to an HTML file with nice formatting.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">        title: str (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        html: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;html&gt;</span>
+<span class="s2">        &lt;body&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+
+        <span class="n">min_col_widths</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="mi">150</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">}</span>
+
+        <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;h2&gt; </span><span class="si">%s</span><span class="s2"> &lt;/h2&gt;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">title</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span>
+            <span class="n">col_space</span><span class="o">=</span><span class="n">min_col_widths</span><span class="p">,</span>
+            <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;wide&quot;</span><span class="p">,</span>
+            <span class="n">max_rows</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="n">escape</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;/body&gt;</span>
+<span class="s2">        &lt;/html&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">html</span></div>
+
+<div class="viewcode-block" id="FrontEnd.fig_to_html"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.fig_to_html">[docs]</a>    <span class="k">def</span> <span class="nf">fig_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create HTML file from a matplotlib fig with workarounds for using inside a Flask app.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        --------</span>
+<span class="sd">        fig: matplotlib figure</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        html: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
+
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">tmpfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;img src=&#39;data:image/png;base64,</span><span class="si">{}</span><span class="s2">&#39;&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">html</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Kristie Wirth.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

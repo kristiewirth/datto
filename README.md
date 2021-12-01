@@ -59,7 +59,11 @@ To add any new dependencies you need to Poetry, run:
 poetry add PACKAGE_NAME
 ```
 
-Run tests:
+If adding/deleting a module, you'll need to update these files:
+
+* `datto/__init__.py`
+* `docs/source/index.rst`
+* `docs/source/datto.rst`
 
 Run the following to make sure all tests pass:
 
@@ -67,6 +71,10 @@ Run the following to make sure all tests pass:
 make test
 ```
 
-Submitting a change:
+Run the following to update all the docs:
+
+```bash
+make docs
+```
 
 Create a PR with your desired change(s), and request review from the code owner!
