@@ -35,10 +35,10 @@ Recommended: You can easily reuse some of these by copying the file contents int
 
 # Contributing
 
-Create virtualenv (specify version of Python you want):
+Create virtualenv:
 
 ```bash
-pyenv virtualenv 3.6 datto
+pyenv virtualenv datto
 ```
 
 Activate virtualenv:
