@@ -114,7 +114,7 @@ class ModelResults:
         chosen_stopwords: set
             Option to add in your own unique stopwords
         exclude_numbers: bool
-            Adding numbers 0-10000 (with & without commas) as additional stopwords
+            Adding numbers 0-3000 (with & without commas) as additional stopwords
         exclude_times: bool
             Adding times as additional stopwords (e.g. `8:00`)
         exclude_months: bool
