@@ -1,6 +1,12 @@
 import os
 
-from datto.DataConnections import NotebookConnections, S3Connections, SQLConnections
+import pandas as pd
+from datto.DataConnections import (
+    NotebookConnections,
+    S3Connections,
+    SlackConnections,
+    SQLConnections,
+)
 from hypothesis import given, settings
 from hypothesis.extra.pandas import column, data_frames
 
@@ -82,3 +88,35 @@ def test_save_as_notebook():
     ).read()
 
     assert saved_notebook is not None
+
+
+slack_dc = SlackConnections()
+
+
+def test_get_messages():
+    messages_df = slack_dc.get_messages(
+        ["C028W5V2A"],
+        messages_limit=1000,
+    )
+
+    assert ~messages_df.empty
+
+
+def test_get_messages_wrong_channel():
+    messages_df = slack_dc.get_messages(
+        ["12342342"],
+        messages_limit=1000,
+    )
+
+    assert messages_df is not pd.DataFrame
+
+
+def test_get_messages_wrong_token():
+    slack_wrong = SlackConnections(slack_api_token="not_valid_token")
+
+    messages_df = slack_wrong.get_messages(
+        ["C028W5V2A"],
+        messages_limit=10,
+    )
+
+    assert messages_df is not pd.DataFrame

@@ -1,10 +1,13 @@
 import os
 import pickle
 import re
+import time
 
+import numpy as np
 import pandas as pd
 import psycopg2
 import s3fs
+from slack_sdk import WebClient
 
 
 class S3Connections:
@@ -296,3 +299,130 @@ class NotebookConnections:
         os.system(f"rm {temp_notebook_script}")
 
         print(f"Created Jupyter notebook: {updated_notebook_name}")
+
+
+class SlackConnections:
+    def __init__(self, slack_api_token=None):
+        if not slack_api_token:
+            slack_api_token = os.environ.get("SLACK_API_TOKEN")
+
+        if not slack_api_token:
+            return """
+            No API key found. Follow these instructions to create one: https://slack.dev/python-slackclient/basic_usage.html.
+            Then, either include as an argument or add as an environmental variable.
+            """
+
+        try:
+            client = WebClient(token=slack_api_token)
+        except Exception:
+            return """
+            Invalid API key or permissions.
+            """
+
+        self.client = client
+
+    def _get_messages(
+        self, time_filter, channel, remove_bot_messages, excluded_user_ids
+    ):
+        if remove_bot_messages:
+            bot_filter = None
+        else:
+            bot_filter = "Include bots"
+
+        response = self.client.conversations_history(
+            channel=channel,
+            scope="channels:history",
+            latest=time_filter,
+        )
+
+        dict_data = response.data
+
+        messages_list = [
+            re.sub(
+                # Remove channel names
+                " -[A-Za-z0-9]*",
+                " ",
+                re.sub(
+                    # Remove subteams
+                    "!subteam\^[A-Za-z0-9]*",
+                    " ",
+                    re.sub(
+                        # Removes channel numbers, links, emojis, usernames
+                        "#[a-zA-Z-_]*|@[a-zA-Z]*|([a-zA-Z0-9_\.-]+)@([1-9a-zA-Z\.-]+)\.([a-zA-Z\.]{2,6})|<#[A-Z0-9 ]*\||:[a-zA-Z0-9-_]*:|<@[A-Z0-9]*>|(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})",
+                        " ",
+                        str(x["text"]).replace("|", " | "),
+                    ),
+                ),
+            )
+            .replace("\n", " ")
+            .replace("<", " ")
+            .replace(">", " ")
+            .replace("|", " ")
+            .encode("ascii", "ignore")
+            .decode()
+            .strip()
+            for x in dict_data["messages"]
+            if x.get("client_msg_id") is not bot_filter
+            and x.get("user") not in excluded_user_ids
+        ]
+
+        try:
+            time_filter = min([x["ts"] for x in dict_data["messages"]])
+        except Exception:
+            return messages_list, time_filter
+
+        return messages_list, time_filter
+
+    def get_messages(
+        self,
+        channels,
+        remove_bot_messages=True,
+        excluded_user_ids=[],
+        messages_limit=np.inf,
+    ):
+        if not isinstance(channels, list):
+            channels = [channels]
+
+        all_messages = []
+
+        for channel in channels:
+            try:
+                # First get latest messages and min timestamp
+                messages_list, time_filter = self._get_messages(
+                    "", channel, remove_bot_messages, excluded_user_ids
+                )
+            except Exception:
+                return f"""
+                Invalid API call. Make sure you have the right channel id, that your token includes the `channels:history` scope,
+                and the bot has been added to the {channel} channel (by posting `@{{YOUR_BOTS_NAME}}` in the channel).
+                """
+
+            all_messages.extend(messages_list)
+
+            # Then iterate until no more messages
+            while channels:
+                try:
+                    messages_list, time_filter = self._get_messages(
+                        time_filter, channel, remove_bot_messages, excluded_user_ids
+                    )
+                except Exception:
+                    # Pausing for rate limits per minute
+                    time.sleep(65)
+                    messages_list, time_filter = self._get_messages(
+                        time_filter, channel, remove_bot_messages, excluded_user_ids
+                    )
+                # Break when there aren't any more messages to fetch
+                if messages_list == []:
+                    break
+
+                all_messages.extend(messages_list)
+
+                if len(all_messages) >= messages_limit:
+                    df = pd.DataFrame(all_messages, columns=["messages"])
+                    df.drop_duplicates(inplace=True)
+                    return df.head(messages_limit)
+
+        df = pd.DataFrame(all_messages, columns=["messages"])
+        df.drop_duplicates(inplace=True)
+
+        return df
