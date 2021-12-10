@@ -216,7 +216,7 @@ class ModelResults:
         vectors = vectorizer.fit_transform(X[text_column_name]).todense()
 
         # Adding words/phrases used in text data frequencies back into the dataset (so we can see feature importances later)
-        vocab = vectorizer.get_feature_names()
+        vocab = list(vectorizer.get_feature_names_out())
         vector_df = pd.DataFrame(vectors, columns=vocab, index=X.index)
 
         if not chosen_num_topics:
@@ -567,7 +567,7 @@ class ModelResults:
             max_df=0.4,
         )
         vectors = cv.fit_transform(X[text_col_name]).todense()
-        words = cv.get_feature_names()
+        words = list(cv.get_feature_names_out())
         vectors_df = pd.DataFrame(vectors, columns=words)
 
         group_plus_vectors = pd.concat([vectors_df, X.reset_index(drop=False)], axis=1)
