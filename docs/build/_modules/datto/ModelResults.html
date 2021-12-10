@@ -186,7 +186,7 @@
 <span class="sd">        chosen_stopwords: set</span>
 <span class="sd">            Option to add in your own unique stopwords</span>
 <span class="sd">        exclude_numbers: bool</span>
-<span class="sd">            Adding numbers 0-10000 (with &amp; without commas) as additional stopwords</span>
+<span class="sd">            Adding numbers 0-3000 (with &amp; without commas) as additional stopwords</span>
 <span class="sd">        exclude_times: bool</span>
 <span class="sd">            Adding times as additional stopwords (e.g. `8:00`)</span>
 <span class="sd">        exclude_months: bool</span>
@@ -288,7 +288,7 @@
         <span class="n">vectors</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">text_column_name</span><span class="p">])</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
 
         <span class="c1"># Adding words/phrases used in text data frequencies back into the dataset (so we can see feature importances later)</span>
-        <span class="n">vocab</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
+        <span class="n">vocab</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
         <span class="n">vector_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">vocab</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">chosen_num_topics</span><span class="p">:</span>
@@ -639,7 +639,7 @@
             <span class="n">max_df</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">vectors</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">text_col_name</span><span class="p">])</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
-        <span class="n">words</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
         <span class="n">vectors_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">words</span><span class="p">)</span>
 
         <span class="n">group_plus_vectors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">vectors_df</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

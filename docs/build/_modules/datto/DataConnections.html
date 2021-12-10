@@ -73,10 +73,13 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">psycopg2</span>
 <span class="kn">import</span> <span class="nn">s3fs</span>
+<span class="kn">from</span> <span class="nn">slack_sdk</span> <span class="kn">import</span> <span class="n">WebClient</span>
 
 
 <div class="viewcode-block" id="S3Connections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections">[docs]</a><span class="k">class</span> <span class="nc">S3Connections</span><span class="p">:</span>
@@ -368,6 +371,133 @@
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm </span><span class="si">{</span><span class="n">temp_notebook_script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created Jupyter notebook: </span><span class="si">{</span><span class="n">updated_notebook_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SlackConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SlackConnections">[docs]</a><span class="k">class</span> <span class="nc">SlackConnections</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slack_api_token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">slack_api_token</span><span class="p">:</span>
+            <span class="n">slack_api_token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SLACK_API_TOKEN&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">slack_api_token</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            No API key found. Follow these instructions to create one: https://slack.dev/python-slackclient/basic_usage.html.</span>
+<span class="s2">            Then, either include as an argument or add as an environmental variable.</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">WebClient</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">slack_api_token</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Invalid API key or permissions.</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">client</span>
+
+    <span class="k">def</span> <span class="nf">_get_messages</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">time_filter</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">remove_bot_messages</span><span class="p">,</span> <span class="n">excluded_user_ids</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">remove_bot_messages</span><span class="p">:</span>
+            <span class="n">bot_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bot_filter</span> <span class="o">=</span> <span class="s2">&quot;Include bots&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">conversations_history</span><span class="p">(</span>
+            <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
+            <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;channels:history&quot;</span><span class="p">,</span>
+            <span class="n">latest</span><span class="o">=</span><span class="n">time_filter</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">dict_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">messages_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+                <span class="c1"># Remove channel names</span>
+                <span class="s2">&quot; -[A-Za-z0-9]*&quot;</span><span class="p">,</span>
+                <span class="s2">&quot; &quot;</span><span class="p">,</span>
+                <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+                    <span class="c1"># Remove subteams</span>
+                    <span class="s2">&quot;!subteam\^[A-Za-z0-9]*&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot; &quot;</span><span class="p">,</span>
+                    <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+                        <span class="c1"># Removes channel numbers, links, emojis, usernames</span>
+                        <span class="s2">&quot;#[a-zA-Z-_]*|@[a-zA-Z]*|([a-zA-Z0-9_\.-]+)@([1-9a-zA-Z\.-]+)\.([a-zA-Z\.]{2,6})|&lt;#[A-Z0-9 ]*\||:[a-zA-Z0-9-_]*:|&lt;@[A-Z0-9]*&gt;|(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot; &quot;</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dict_data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;client_msg_id&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">bot_filter</span>
+            <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluded_user_ids</span>
+        <span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">time_filter</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;ts&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dict_data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]])</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">messages_list</span><span class="p">,</span> <span class="n">time_filter</span>
+
+        <span class="k">return</span> <span class="n">messages_list</span><span class="p">,</span> <span class="n">time_filter</span>
+
+<div class="viewcode-block" id="SlackConnections.get_messages"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SlackConnections.get_messages">[docs]</a>    <span class="k">def</span> <span class="nf">get_messages</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">channels</span><span class="p">,</span>
+        <span class="n">remove_bot_messages</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">excluded_user_ids</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">messages_limit</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="n">channels</span><span class="p">]</span>
+
+        <span class="n">all_messages</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">channels</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># First get latest messages and min timestamp</span>
+                <span class="n">messages_list</span><span class="p">,</span> <span class="n">time_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_messages</span><span class="p">(</span>
+                    <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">remove_bot_messages</span><span class="p">,</span> <span class="n">excluded_user_ids</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Invalid API call. Make sure you have the right channel id, that your token includes the `channels:history` scope,</span>
+<span class="s2">                and the bot has been added to the </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> channel (by posting `@</span><span class="se">{{</span><span class="s2">YOUR_BOTS_NAME</span><span class="se">}}</span><span class="s2">` in the channel).</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+            <span class="n">all_messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">messages_list</span><span class="p">)</span>
+
+            <span class="c1"># Then iterate until no more messages</span>
+            <span class="k">while</span> <span class="n">channels</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">messages_list</span><span class="p">,</span> <span class="n">time_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_messages</span><span class="p">(</span>
+                        <span class="n">time_filter</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">remove_bot_messages</span><span class="p">,</span> <span class="n">excluded_user_ids</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="c1"># Pausing for rate limits per minute</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">65</span><span class="p">)</span>
+                    <span class="n">messages_list</span><span class="p">,</span> <span class="n">time_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_messages</span><span class="p">(</span>
+                        <span class="n">time_filter</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">remove_bot_messages</span><span class="p">,</span> <span class="n">excluded_user_ids</span>
+                    <span class="p">)</span>
+                <span class="c1"># Break when there aren&#39;t any more messages to fetch</span>
+                <span class="k">if</span> <span class="n">messages_list</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="k">break</span>
+
+                <span class="n">all_messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">messages_list</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_messages</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">messages_limit</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_messages</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">])</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">messages_limit</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_messages</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">])</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div></div>
 </pre></div>
 
            </div>

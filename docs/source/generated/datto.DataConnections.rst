@@ -20,6 +20,7 @@
       NotebookConnections
       S3Connections
       SQLConnections
+      SlackConnections
    
    
 

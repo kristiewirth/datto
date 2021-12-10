@@ -424,6 +424,17 @@ Instead use psycopg2 to connect and transform results into a DataFrame manually.
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="datto.DataConnections.SlackConnections">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datto.DataConnections.</span></span><span class="sig-name descname"><span class="pre">SlackConnections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slack_api_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#SlackConnections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datto.DataConnections.SlackConnections" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datto.DataConnections.SlackConnections.get_messages">
+<span class="sig-name descname"><span class="pre">get_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bot_messages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_user_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#SlackConnections.get_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datto.DataConnections.SlackConnections.get_messages" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-datto.Eda">
 <span id="datto-eda-module"></span><h2>datto.Eda module<a class="headerlink" href="#module-datto.Eda" title="Permalink to this headline"></a></h2>
@@ -821,7 +832,7 @@ I.e. customer #15 will always be in the treatment condition.</p>
 <li><p><strong>text_column_name</strong> (<em>str</em>) – </p></li>
 <li><p><strong>chosen_num_topics</strong> (<em>int</em>) – Optional - if none algorithm will determine best number</p></li>
 <li><p><strong>chosen_stopwords</strong> (<em>set</em>) – Option to add in your own unique stopwords</p></li>
-<li><p><strong>exclude_numbers</strong> (<em>bool</em>) – Adding numbers 0-10000 (with &amp; without commas) as additional stopwords</p></li>
+<li><p><strong>exclude_numbers</strong> (<em>bool</em>) – Adding numbers 0-3000 (with &amp; without commas) as additional stopwords</p></li>
 <li><p><strong>exclude_times</strong> (<em>bool</em>) – Adding times as additional stopwords (e.g. <cite>8:00</cite>)</p></li>
 <li><p><strong>exclude_months</strong> (<em>bool</em>) – Adding month names as additional stopwords</p></li>
 <li><p><strong>exclude_weekdays</strong> (<em>bool</em>) – Adding weekday names as additional stopwords</p></li>
