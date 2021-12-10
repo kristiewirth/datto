@@ -5,7 +5,7 @@ import matplotlib
 
 
 class FrontEnd:
-    def dropdown_from_dataframe(self, name, df, chosen_col):
+    def dropdown_from_dataframe(self, name, df, chosen_col, width="200"):
         """
         Create text to use for rendering an HTML dropdown from a DataFrame.
 
@@ -18,6 +18,8 @@ class FrontEnd:
         df: DataFrame
         chosen_col: str
             Which column's values will populate the dropdown
+        width: str
+            Width in pixels for the generated dropdown
 
         Returns
         --------
@@ -25,7 +27,7 @@ class FrontEnd:
             String you can use to render HTML
 
         """
-        html_choices = f"""<select id="{name}" name="{name}" width: 400px;><option value="---">---</option>"""
+        html_choices = f"""<select id="{name}" name="{name}" width: {width}px;><option value="---">---</option>"""
 
         df.sort_values(by=chosen_col, inplace=True, ascending=True)
 
@@ -94,4 +96,3 @@ class FrontEnd:
         html = "<img src='data:image/png;base64,{}'>".format(encoded)
 
         return html
-
