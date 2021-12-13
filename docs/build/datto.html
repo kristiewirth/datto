@@ -642,7 +642,7 @@ I.e. customer #15 will always be in the treatment condition.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="datto.FrontEnd.FrontEnd.dropdown_from_dataframe">
-<span class="sig-name descname"><span class="pre">dropdown_from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chosen_col</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/FrontEnd.html#FrontEnd.dropdown_from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datto.FrontEnd.FrontEnd.dropdown_from_dataframe" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dropdown_from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chosen_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/FrontEnd.html#FrontEnd.dropdown_from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datto.FrontEnd.FrontEnd.dropdown_from_dataframe" title="Permalink to this definition"></a></dt>
 <dd><p>Create text to use for rendering an HTML dropdown from a DataFrame.</p>
 <p>Render by using {{ df|safe }} in your HTML file.</p>
 <dl class="field-list simple">
@@ -651,6 +651,8 @@ I.e. customer #15 will always be in the treatment condition.</p>
 <li><p><strong>name</strong> (<em>str</em>) – Name you’d like for the dropdown</p></li>
 <li><p><strong>df</strong> (<em>DataFrame</em>) – </p></li>
 <li><p><strong>chosen_col</strong> (<em>str</em>) – Which column’s values will populate the dropdown</p></li>
+<li><p><strong>width</strong> (<em>str</em>) – Width in pixels for the generated dropdown</p></li>
+<li><p><strong>class_name</strong> (<em>str</em>) – Name for class; used in order to create custom CSS</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

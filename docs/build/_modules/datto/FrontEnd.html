@@ -77,7 +77,9 @@
 
 
 <div class="viewcode-block" id="FrontEnd"><a class="viewcode-back" href="../../generated/datto.FrontEnd.html#datto.FrontEnd.FrontEnd">[docs]</a><span class="k">class</span> <span class="nc">FrontEnd</span><span class="p">:</span>
-<div class="viewcode-block" id="FrontEnd.dropdown_from_dataframe"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.dropdown_from_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dropdown_from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">chosen_col</span><span class="p">):</span>
+<div class="viewcode-block" id="FrontEnd.dropdown_from_dataframe"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.dropdown_from_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dropdown_from_dataframe</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">chosen_col</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create text to use for rendering an HTML dropdown from a DataFrame.</span>
 
@@ -90,6 +92,10 @@
 <span class="sd">        df: DataFrame</span>
 <span class="sd">        chosen_col: str</span>
 <span class="sd">            Which column&#39;s values will populate the dropdown</span>
+<span class="sd">        width: str</span>
+<span class="sd">            Width in pixels for the generated dropdown</span>
+<span class="sd">        class_name: str</span>
+<span class="sd">            Name for class; used in order to create custom CSS</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        --------</span>
@@ -97,7 +103,14 @@
 <span class="sd">            String you can use to render HTML</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">html_choices</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;select id=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; width: 400px;&gt;&lt;option value=&quot;---&quot;&gt;---&lt;/option&gt;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">class_name</span> <span class="ow">and</span> <span class="n">width</span><span class="p">:</span>
+            <span class="n">html_choices</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;select id=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; class=&quot;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&quot; style=&quot;width: </span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">px;&quot;;&gt;&lt;option value=&quot;---&quot;&gt;---&lt;/option&gt;&quot;&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">class_name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">width</span><span class="p">:</span>
+            <span class="n">html_choices</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;select id=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; class=&quot;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&quot;;&gt;&lt;option value=&quot;---&quot;&gt;---&lt;/option&gt;&quot;&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">width</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="s2">&quot;200&quot;</span>
+            <span class="n">html_choices</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;select id=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; style=&quot;width: </span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">px;&quot;;&gt;&lt;option value=&quot;---&quot;&gt;---&lt;/option&gt;&quot;&quot;&quot;</span>
 
         <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">chosen_col</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -166,7 +179,6 @@
         <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;img src=&#39;data:image/png;base64,</span><span class="si">{}</span><span class="s2">&#39;&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">html</span></div></div>
-
 </pre></div>
 
            </div>
