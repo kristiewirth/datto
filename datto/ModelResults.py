@@ -703,6 +703,27 @@ class ModelResults:
                 print(f"Model: {trained_model}", file=f)
                 print("\n", file=f)
 
+                print("Overall scores:", file=f)
+                print("\n", file=f)
+                print(
+                    tabulate(
+                        temp_df[
+                            [
+                                "precision",
+                                "recall",
+                                "accuracy",
+                                "f1",
+                            ]
+                        ],
+                        headers="keys",
+                        tablefmt="pipe",
+                        numalign="left",
+                        showindex=False,
+                    ),
+                    file=f,
+                )
+                print("\n", file=f)
+
                 # Precision / recall / f1-score for each predicted class
                 report_df = (
                     pd.DataFrame(
@@ -783,6 +804,27 @@ class ModelResults:
                 "w",
             ) as f:
                 print(f"Model: {trained_model}", file=f)
+                print("\n", file=f)
+
+                print("Overall scores:", file=f)
+                print("\n", file=f)
+                print(
+                    tabulate(
+                        temp_df[
+                            [
+                                "precision",
+                                "recall",
+                                "accuracy",
+                                "f1",
+                            ]
+                        ],
+                        headers="keys",
+                        tablefmt="pipe",
+                        numalign="left",
+                        showindex=False,
+                    ),
+                    file=f,
+                )
                 print("\n", file=f)
 
                 crosstab = pd.crosstab(
