@@ -11,10 +11,16 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+import subprocess
 import sys
+
 import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath("../.."))
+
+if os.environ.get("READTHEDOCS") == "True":
+    # Install m2r for example
+    subprocess.check_output(["pip", "install", "m2r"])
 
 
 # -- Project information -----------------------------------------------------
