@@ -9,10 +9,6 @@ import psycopg2
 import s3fs
 from slack_sdk import WebClient
 
-"""
-Connect with various data sources
-"""
-
 
 class S3Connections:
     """
