@@ -16,6 +16,10 @@ except Exception:
 
 
 class CleanDataframe:
+    """
+    Methods for cleaning data
+    """
+
     def remove_names(self, text):
         """
         Parameters

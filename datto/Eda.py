@@ -9,6 +9,10 @@ import seaborn as sns
 
 
 class Eda:
+    """
+    Methods for exploratory data analysis (EDA)
+    """
+
     def separate_cols_by_type(self, df):
         """
         Split the DataFrame into two groups by type

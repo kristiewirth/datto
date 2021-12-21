@@ -4,6 +4,10 @@ import numpy as np
 
 
 class Experiments:
+    """
+    Methods to assist with designing & running experiments
+    """
+
     def assign_condition_by_id(
         self, user_id, conditions, proportions_by_conditions, random_state
     ):

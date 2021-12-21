@@ -32,6 +32,10 @@ from xgboost import XGBClassifier, XGBRegressor
 
 
 class TrainModel:
+    """
+    Methods for selecting & training models
+    """
+
     def __init__(self):
         self.classifier_param_list = [
             {

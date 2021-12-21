@@ -5,6 +5,10 @@ import matplotlib
 
 
 class FrontEnd:
+    """
+    Methods for automatically generating HTML
+    """
+
     def dropdown_from_dataframe(
         self, name, df, chosen_col, width=None, class_name=None
     ):

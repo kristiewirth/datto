@@ -57,6 +57,10 @@ except Exception:
 
 
 class ModelResults:
+    """
+    Methods for evaluating model performance & exploring output
+    """
+
     def _jaccard_similarity(self, topic_1, topic_2):
         """
         Derives the Jaccard similarity of two topics
