@@ -405,6 +405,8 @@
                     <span class="c1"># Group bys are hard to read unless this is smaller</span>
                     <span class="n">num_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group_by_var</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
                     <span class="n">most_vals_allowed</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">50</span> <span class="o">/</span> <span class="n">num_groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">most_vals_allowed</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">most_vals_allowed</span> <span class="o">=</span> <span class="mi">5</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">most_vals_allowed</span> <span class="o">=</span> <span class="mi">50</span>
 
@@ -426,18 +428,19 @@
 
                 <span class="k">if</span> <span class="n">group_by_var</span><span class="p">:</span>
                     <span class="c1"># Change to proportions by group instead of straight counts (misleading by sample size)</span>
-                    <span class="n">grouped_df</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">adjust_vals</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">group_by_var</span><span class="p">,</span> <span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
-                        <span class="o">/</span> <span class="n">adjust_vals</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_by_var</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">group_by_var</span><span class="p">,</span> <span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                    <span class="n">grouped_df_pcts</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
                     <span class="p">)</span>
-                    <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-                    <span class="n">grouped_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">group_by_var</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="s2">&quot;proportion&quot;</span><span class="p">]</span>
-                    <span class="n">grouped_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+
+                    <span class="n">grouped_df_pcts</span> <span class="o">=</span> <span class="n">grouped_df_pcts</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+                    <span class="n">grouped_df_pcts</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">group_by_var</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="s2">&quot;proportion&quot;</span><span class="p">]</span>
+                    <span class="n">grouped_df_pcts</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
                         <span class="n">by</span><span class="o">=</span><span class="s2">&quot;proportion&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
                     <span class="p">)</span>
 
                     <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-                        <span class="n">grouped_df</span><span class="p">,</span>
+                        <span class="n">grouped_df_pcts</span><span class="p">,</span>
                         <span class="n">values</span><span class="o">=</span><span class="s2">&quot;proportion&quot;</span><span class="p">,</span>
                         <span class="n">index</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
                         <span class="n">columns</span><span class="o">=</span><span class="n">group_by_var</span><span class="p">,</span>
