@@ -1779,6 +1779,18 @@ python-versions = "*"
 requests = "*"
 
 [[package]]
+name = "slack-sdk"
+version = "3.13.0"
+description = "The Slack API Platform SDK for Python"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+
+[package.extras]
+optional = ["aiodns (>1.0)", "aiohttp (>=3.7.3,<4)", "boto3 (<=2)", "SQLAlchemy (>=1,<2)", "websockets (>=10,<11)", "websocket-client (>=1,<2)"]
+testing = ["pytest (>=6.2.5,<7)", "pytest-asyncio (<1)", "Flask-Sockets (>=0.2,<1)", "Flask (>=1,<2)", "Werkzeug (<2)", "pytest-cov (>=2,<3)", "codecov (>=2,<3)", "flake8 (>=4,<5)", "black (==21.12b0)", "psutil (>=5,<6)", "databases (>=0.3)", "boto3 (<=2)", "moto (<2)"]
+
+[[package]]
 name = "slicer"
 version = "0.0.7"
 description = "A small package for big slicing."
@@ -2323,7 +2335,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.1,<3.11"
-content-hash = "5293b9b336215d3414978c0b28971f2222afa97ad6e38c6b956a256a37683cb3"
+content-hash = "439ca6509032f6af5894e015ec9cdfd0f2eaf04241d4743a69e713c08b0eb388"
 
 [metadata.files]
 aiobotocore = [
@@ -3883,6 +3895,10 @@ six = [
 slack-client = [
     {file = "slack_client-0.3.0-py3-none-any.whl", hash = "sha256:444001d8b2c31acb72c229ddfa1a90f544e88ef64325fd10bf8eac2c2ec92a8e"},
     {file = "slack_client-0.3.0.tar.gz", hash = "sha256:b379311f4881867b1ae1f44e1de2d29808755e72753aea6d843927a0ebffc4a3"},
+]
+slack-sdk = [
+    {file = "slack_sdk-3.13.0-py2.py3-none-any.whl", hash = "sha256:54f2a5f7419f1ab932af9e3200f7f2f93db96e0f0eb8ad7d3b4214aa9f124641"},
+    {file = "slack_sdk-3.13.0.tar.gz", hash = "sha256:aae6ce057e286a5e7fe7a9f256e85b886eee556def8e04b82b08f699e64d7f67"},
 ]
 slicer = [
     {file = "slicer-0.0.7-py3-none-any.whl", hash = "sha256:0b94faa5251c0f23782c03f7b7eedda91d80144059645f452c4bc80fab875976"},

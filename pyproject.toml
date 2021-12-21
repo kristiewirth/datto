@@ -35,6 +35,7 @@ scikit-learn = "^1.0.1"
 jupyter-contrib-nbextensions = "^0.5.1"
 slack-client = "^0.3.0"
 pytest = "^6.2.5"
+slack-sdk = "^3.13.0"
 
 
 [tool.poetry.dev-dependencies]
