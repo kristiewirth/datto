@@ -5,7 +5,7 @@ import numpy as np
 
 class Experiments:
     """
-    Methods to assist with designing & running experiments
+    Design & run experiments
     """
 
     def assign_condition_by_id(

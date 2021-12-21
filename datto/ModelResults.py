@@ -58,7 +58,7 @@ except Exception:
 
 class ModelResults:
     """
-    Methods for evaluating model performance & exploring output
+    Evaluate model performance & explore output
     """
 
     def _jaccard_similarity(self, topic_1, topic_2):

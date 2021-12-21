@@ -10,7 +10,7 @@ import seaborn as sns
 
 class Eda:
     """
-    Methods for exploratory data analysis (EDA)
+    Exploratory data analysis (EDA)
     """
 
     def separate_cols_by_type(self, df):
@@ -337,6 +337,8 @@ class Eda:
                     # Group bys are hard to read unless this is smaller
                     num_groups = len(df[group_by_var].unique())
                     most_vals_allowed = round(50 / num_groups)
+                    if most_vals_allowed < 5:
+                        most_vals_allowed = 5
                 else:
                     most_vals_allowed = 50
 
@@ -358,18 +360,19 @@ class Eda:
 
                 if group_by_var:
                     # Change to proportions by group instead of straight counts (misleading by sample size)
-                    grouped_df = (
-                        adjust_vals.groupby([group_by_var, col]).count().iloc[:, 1]
-                        / adjust_vals.groupby(group_by_var).count().iloc[:, 1]
+                    grouped_df = df.groupby([group_by_var, col]).count()
+                    grouped_df_pcts = grouped_df.groupby(level=0).apply(
+                        lambda x: x / float(x.sum())
                     )
-                    grouped_df = grouped_df.reset_index()
-                    grouped_df.columns = [group_by_var, col, "proportion"]
-                    grouped_df.sort_values(
+
+                    grouped_df_pcts = grouped_df_pcts.reset_index()
+                    grouped_df_pcts.columns = [group_by_var, col, "proportion"]
+                    grouped_df_pcts.sort_values(
                         by="proportion", ascending=True, inplace=True
                     )
 
                     pivot_df = pd.pivot_table(
-                        grouped_df,
+                        grouped_df_pcts,
                         values="proportion",
                         index=col,
                         columns=group_by_var,

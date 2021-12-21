@@ -8,7 +8,7 @@ from pythonjsonlogger import jsonlogger
 
 class SetupMethods:
     """
-    Methods for setting up coding environment
+    Set up coding environment
     """
 
     def setup_logger(self):

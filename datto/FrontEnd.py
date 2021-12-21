@@ -6,7 +6,7 @@ import matplotlib
 
 class FrontEnd:
     """
-    Methods for automatically generating HTML
+    Automatically generate HTML
     """
 
     def dropdown_from_dataframe(

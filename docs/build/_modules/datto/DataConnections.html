@@ -83,6 +83,10 @@
 
 
 <div class="viewcode-block" id="S3Connections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections">[docs]</a><span class="k">class</span> <span class="nc">S3Connections</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interact with S3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="S3Connections.save_to_s3"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections.save_to_s3">[docs]</a>    <span class="k">def</span> <span class="nf">save_to_s3</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">directory_path</span><span class="p">,</span>
@@ -142,6 +146,10 @@
 
 
 <div class="viewcode-block" id="SQLConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SQLConnections">[docs]</a><span class="k">class</span> <span class="nc">SQLConnections</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Connect with a SQL database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pandas doesn&#39;t integrate with Redshift directly. Instead use psycopg2 to connect.</span>
@@ -218,6 +226,10 @@
 
 
 <div class="viewcode-block" id="NotebookConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.NotebookConnections">[docs]</a><span class="k">class</span> <span class="nc">NotebookConnections</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert between Jupyter notebooks &amp; Python scripts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">_remove_unused_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_version</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes the content of a Jupyter notebook and removes code unneeded to produce final results.</span>
@@ -374,6 +386,10 @@
 
 
 <div class="viewcode-block" id="SlackConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SlackConnections">[docs]</a><span class="k">class</span> <span class="nc">SlackConnections</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve Slack messages</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slack_api_token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">slack_api_token</span><span class="p">:</span>
             <span class="n">slack_api_token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SLACK_API_TOKEN&quot;</span><span class="p">)</span>

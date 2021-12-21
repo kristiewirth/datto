@@ -33,7 +33,7 @@ from xgboost import XGBClassifier, XGBRegressor
 
 class TrainModel:
     """
-    Methods for selecting & training models
+    Select & train models
     """
 
     def __init__(self):

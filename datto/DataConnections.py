@@ -9,8 +9,16 @@ import psycopg2
 import s3fs
 from slack_sdk import WebClient
 
+"""
+Connect with various data sources
+"""
+
 
 class S3Connections:
+    """
+    Interact with S3
+    """
+
     def save_to_s3(
         self,
         directory_path,
@@ -70,6 +78,10 @@ class S3Connections:
 
 
 class SQLConnections:
+    """
+    Connect with a SQL database
+    """
+
     def __init__(self, dbname=None, host=None, port=None, user=None, password=None):
         """
         Pandas doesn't integrate with Redshift directly. Instead use psycopg2 to connect.
@@ -146,6 +158,10 @@ class SQLConnections:
 
 
 class NotebookConnections:
+    """
+    Convert between Jupyter notebooks & Python scripts
+    """
+
     def _remove_unused_lines(self, original_version):
         """
         Takes the content of a Jupyter notebook and removes code unneeded to produce final results.
@@ -302,6 +318,10 @@ class NotebookConnections:
 
 
 class SlackConnections:
+    """
+    Retrieve Slack messages
+    """
+
     def __init__(self, slack_api_token=None):
         if not slack_api_token:
             slack_api_token = os.environ.get("SLACK_API_TOKEN")

@@ -17,7 +17,7 @@ except Exception:
 
 class CleanDataframe:
     """
-    Methods for cleaning data
+    Clean data using NLP, regex, calculations, etc.
     """
 
     def remove_names(self, text):
