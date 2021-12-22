@@ -436,7 +436,24 @@ Instead use psycopg2 to connect and transform results into a DataFrame manually.
 <dl class="py method">
 <dt class="sig sig-object py" id="datto.DataConnections.SlackConnections.get_messages">
 <span class="sig-name descname"><span class="pre">get_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bot_messages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_user_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/datto/DataConnections.html#SlackConnections.get_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datto.DataConnections.SlackConnections.get_messages" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get messages from a given Slack channel(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channels</strong> (<em>list</em>) – </p></li>
+<li><p><strong>remove_bot_messages</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>excluded_user_ids</strong> (<em>list</em>) – </p></li>
+<li><p><strong>messages_limit</strong> (<em>int</em>) – Default is to fetch all messages</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

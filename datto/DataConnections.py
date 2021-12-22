@@ -396,6 +396,23 @@ class SlackConnections:
         excluded_user_ids=[],
         messages_limit=np.inf,
     ):
+        """
+        Get messages from a given Slack channel(s)
+
+        Parameters
+        --------
+        channels: list
+        remove_bot_messages: bool
+        excluded_user_ids: list
+        messages_limit: int
+            Default is to fetch all messages
+
+        Returns
+        --------
+        df: DataFrame
+
+        """
+
         if not isinstance(channels, list):
             channels = [channels]
 
