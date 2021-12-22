@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datto"
-version = "0.8.5"
+version = "0.8.6"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
@@ -17,7 +17,7 @@ hypothesis = "^6.24.5"
 lightgbm = "^3.3.1"
 catboost = "^1.0.3"
 shap = "^0.40.0"
-Sphinx = "^4.3.0"
+sphinx = {version = "^4.3.0", optional = true}
 sphinx-rtd-theme = "^1.0.0"
 lime = "^0.2.0"
 statsmodels = "^0.13.1"
