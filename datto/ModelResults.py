@@ -180,7 +180,7 @@ class ModelResults:
         if exclude_adverbs:
             with_stopword_params = with_stopword_params | adverbs
 
-        all_stop_words = (
+        all_stop_words = list(
             # Combine stopwords from all the packages
             set(ENGLISH_STOP_WORDS)
             | set(stopwords.words("english"))
@@ -562,7 +562,7 @@ class ModelResults:
         # Remove all other unneeded columns
         X = X[[text_col_name, "group_column"]]
 
-        all_stop_words = (
+        all_stop_words = list(
             set(ENGLISH_STOP_WORDS)
             | set(["-PRON-"])
             | set(string.punctuation)
