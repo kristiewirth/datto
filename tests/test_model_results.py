@@ -6,6 +6,8 @@ from datto.ModelResults import ModelResults
 from sklearn.linear_model import ElasticNet, LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 
+os.system("mkdir -p tests/temp_files")
+
 mr = ModelResults()
 
 X_train = pd.DataFrame(
@@ -134,10 +136,12 @@ def test_score_final_model_classification():
         X_test,
         y_test,
         trained_model,
-        csv_file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/final_model_classification_test",
+        csv_file_name="tests/temp_files/final_model_classification_test",
     )
 
     assert len(y_predicted) == y_test.shape[0]
+
+    os.system("rm tests/temp_files/*")
 
 
 def test_score_final_model_regression():
@@ -148,10 +152,12 @@ def test_score_final_model_regression():
         X_test,
         y_test,
         trained_model,
-        csv_file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/final_model_regression_test",
+        csv_file_name="tests/temp_files/final_model_regression_test",
     )
 
     assert len(y_predicted) == y_test.shape[0]
+
+    os.system("rm tests/temp_files/*")
 
 
 def test_coefficients_graph_classification():
@@ -251,11 +257,13 @@ def test_score_final_model_multiclass():
         X_test,
         y_test,
         trained_model,
-        csv_file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/final_model_multiclass_test",
+        csv_file_name="tests/temp_files/final_model_multiclass_test",
         multiclass=True,
     )
 
     assert len(y_predicted) == y_test.shape[0]
+
+    os.system("rm tests/temp_files/*")
 
 
 def test_coefficients_summary_multiclass():

@@ -1,6 +1,10 @@
+import os
+
 import numpy as np
 import pandas as pd
 from datto.TrainModel import TrainModel
+
+os.system("mkdir -p tests/temp_files")
 
 tm = TrainModel()
 
@@ -43,10 +47,12 @@ def test_model_testing_classification():
         y_train,
         model_type,
         tie_breaker_scoring_method,
-        file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/gridsearching_results",
+        file_name="tests/temp_files/gridsearching_results",
     )
 
     assert isinstance(best_params, dict)
+
+    os.system("rm tests/temp_files/*")
 
 
 def test_model_testing_regression():
@@ -58,10 +64,12 @@ def test_model_testing_regression():
         y_train,
         model_type,
         tie_breaker_scoring_method,
-        file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/gridsearching_results",
+        file_name="tests/temp_files/gridsearching_results",
     )
 
     assert isinstance(best_params, dict)
+
+    os.system("rm tests/temp_files/*")
 
 
 def test_run_feature_selection():
@@ -111,10 +119,12 @@ def test_model_testing_multiclass():
         model_type,
         tie_breaker_scoring_method,
         multiclass=True,
-        file_name="/Users/kristiewirth/Documents/work/datto/files_to_ignore/gridsearching_results",
+        file_name="tests/temp_files/gridsearching_results",
     )
 
     assert isinstance(best_params, dict)
+
+    os.system("rm tests/temp_files/*")
 
 
 def test_run_feature_selection_multiclass():
