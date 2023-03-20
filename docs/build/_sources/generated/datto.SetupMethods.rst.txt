@@ -1,0 +1,24 @@
+﻿datto.SetupMethods
+==================
+
+.. currentmodule:: datto
+
+.. autoclass:: SetupMethods
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SetupMethods.__init__
+      ~SetupMethods.display_more_data
+      ~SetupMethods.setup_logger
+   
+   
+
+   
+   
+   

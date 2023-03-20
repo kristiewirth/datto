@@ -24,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> datto
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            datto
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,9 +62,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>datto.ModelResults</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">datto.ModelResults</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -83,6 +87,7 @@
 <span class="kn">import</span> <span class="nn">lime</span>
 <span class="kn">import</span> <span class="nn">lime.lime_tabular</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">nltk</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">shap</span>
@@ -90,7 +95,6 @@
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 <span class="kn">from</span> <span class="nn">gensim.corpora</span> <span class="kn">import</span> <span class="n">Dictionary</span>
 <span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">CoherenceModel</span><span class="p">,</span> <span class="n">nmf</span>
-<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">set_config</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">NMF</span>
 <span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="p">(</span>
@@ -127,14 +131,19 @@
     <span class="n">download</span><span class="p">(</span><span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">)</span>
     <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">)</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s2">&quot;english&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s2">&quot;stopwords&quot;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="ModelResults"><a class="viewcode-back" href="../../generated/datto.ModelResults.html#datto.ModelResults.ModelResults">[docs]</a><span class="k">class</span> <span class="nc">ModelResults</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate model performance &amp; explore output</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_jaccard_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic_1</span><span class="p">,</span> <span class="n">topic_2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Derives the Jaccard similarity of two topics</span>
 
 <span class="sd">        Jaccard similarity:</span>
@@ -177,7 +186,7 @@
         <span class="n">min_ngrams</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">max_ngrams</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uses NMF clustering to create n topics based on adjusted word frequencies</span>
 
 <span class="sd">        Parameters</span>
@@ -247,10 +256,10 @@
         <span class="k">if</span> <span class="n">exclude_adverbs</span><span class="p">:</span>
             <span class="n">with_stopword_params</span> <span class="o">=</span> <span class="n">with_stopword_params</span> <span class="o">|</span> <span class="n">adverbs</span>
 
-        <span class="n">all_stop_words</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">all_stop_words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="c1"># Combine stopwords from all the packages</span>
             <span class="nb">set</span><span class="p">(</span><span class="n">ENGLISH_STOP_WORDS</span><span class="p">)</span>
-            <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s2">&quot;english&quot;</span><span class="p">))</span>
+            <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">nltk</span><span class="o">.</span><span class="n">corpus</span><span class="o">.</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s2">&quot;english&quot;</span><span class="p">))</span>
             <span class="o">|</span> <span class="n">nlp</span><span class="o">.</span><span class="n">Defaults</span><span class="o">.</span><span class="n">stop_words</span>
             <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">)</span>
             <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">)</span>
@@ -526,7 +535,7 @@
         <span class="n">multiclass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">y_test</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Displays graph of feature importances.</span>
 
 <span class="sd">        * Number of horizontal axis indicates magnitude of effect on</span>
@@ -603,7 +612,7 @@
         <span class="n">num_times_min</span><span class="p">,</span>
         <span class="n">min_ngram</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the most commons phrases for defined groups.</span>
 
 <span class="sd">        Parameters</span>
@@ -629,7 +638,7 @@
         <span class="c1"># Remove all other unneeded columns</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[[</span><span class="n">text_col_name</span><span class="p">,</span> <span class="s2">&quot;group_column&quot;</span><span class="p">]]</span>
 
-        <span class="n">all_stop_words</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">all_stop_words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">set</span><span class="p">(</span><span class="n">ENGLISH_STOP_WORDS</span><span class="p">)</span>
             <span class="o">|</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;-PRON-&quot;</span><span class="p">])</span>
             <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">)</span>
@@ -719,7 +728,7 @@
         <span class="n">csv_file_name</span><span class="o">=</span><span class="s2">&quot;final_model_results&quot;</span><span class="p">,</span>
         <span class="n">multiclass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Score your model on the test dataset. Only run this once to get an idea of how your model will perform in realtime.</span>
 <span class="sd">        Run it after you have chosen your model &amp; parameters to avoid problems with overfitting.</span>
 
@@ -947,7 +956,7 @@
                 <span class="p">[</span>
                     <span class="p">[</span>
                         <span class="n">trained_model</span><span class="p">,</span>
-                        <span class="nb">round</span><span class="p">((</span><span class="n">mse</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+                        <span class="nb">round</span><span class="p">((</span><span class="n">mse</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
                         <span class="nb">round</span><span class="p">((</span><span class="n">mae</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">7</span><span class="p">),</span>
                         <span class="n">r2</span><span class="p">,</span>
                     <span class="p">]</span>
@@ -994,7 +1003,7 @@
         <span class="n">model_type</span><span class="p">,</span>
         <span class="n">multiclass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Prints average coefficient values using a regression model.</span>
 
 <span class="sd">        Parameters</span>
@@ -1020,7 +1029,6 @@
         <span class="n">X</span><span class="p">[</span><span class="s2">&quot;intercept&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_repetitions</span><span class="p">):</span>
-
             <span class="n">X_train</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
             <span class="c1"># Fix for Singular matrix error</span>
@@ -1103,7 +1111,7 @@
         <span class="n">class_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;False&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">],</span>
         <span class="n">path</span><span class="o">=</span><span class="s2">&quot;../images/&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uses LIME to inspect an individual prediction and the features that influenced that prediction.</span>
 
 <span class="sd">        Parameters</span>
@@ -1276,7 +1284,7 @@
         <span class="k">return</span> <span class="n">exp_list_all</span></div>
 
 <div class="viewcode-block" id="ModelResults.get_tree_diagram"><a class="viewcode-back" href="../../datto.html#datto.ModelResults.ModelResults.get_tree_diagram">[docs]</a>    <span class="k">def</span> <span class="nf">get_tree_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;../images/&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save a diagram of a trained DecisionTree model</span>
 
 <span class="sd">        Parameters</span>
