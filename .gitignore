@@ -5,3 +5,7 @@ __pycache__/
 .hypothesis/
 catboost_info/
 tests/temp_files/*
+dist/*
+datto_examples_zapier.ipynb
+Golden path to machine learning external.ipynb
+titanic.csv
