@@ -880,7 +880,7 @@ class ModelResults:
                 [
                     [
                         trained_model,
-                        round((mse ** 5) * -1, 7),
+                        round((mse**5) * -1, 7),
                         round((mae * -1), 7),
                         r2,
                     ]
