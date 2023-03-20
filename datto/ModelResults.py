@@ -11,6 +11,7 @@ import graphviz
 import lime
 import lime.lime_tabular
 import matplotlib.pyplot as plt
+import nltk
 import numpy as np
 import pandas as pd
 import shap
@@ -18,7 +19,6 @@ import spacy
 import statsmodels.api as sm
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel, nmf
-from nltk.corpus import stopwords
 from sklearn import set_config
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import (
@@ -54,6 +54,11 @@ try:
 except Exception:
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
+
+try:
+    nltk.corpus.stopwords.words("english")
+except Exception:
+    nltk.download("stopwords")
 
 
 class ModelResults:
