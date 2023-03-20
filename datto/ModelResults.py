@@ -183,7 +183,7 @@ class ModelResults:
         all_stop_words = list(
             # Combine stopwords from all the packages
             set(ENGLISH_STOP_WORDS)
-            | set(stopwords.words("english"))
+            | set(nltk.corpus.stopwords.words("english"))
             | nlp.Defaults.stop_words
             | set(string.punctuation)
             | set(string.ascii_lowercase)
