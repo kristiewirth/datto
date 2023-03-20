@@ -79,7 +79,7 @@
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
 
-<span class="kn">import</span> <span class="nn">lightgbm</span> <span class="k">as</span> <span class="nn">lgb</span>
+<span class="c1"># import lightgbm as lgb</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">catboost</span> <span class="kn">import</span> <span class="n">CatBoostClassifier</span><span class="p">,</span> <span class="n">CatBoostRegressor</span>
@@ -148,10 +148,10 @@
                 <span class="s2">&quot;model__n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span>
                 <span class="s2">&quot;model__learning_rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
             <span class="p">},</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">lgb</span><span class="o">.</span><span class="n">LGBMClassifier</span><span class="p">()],</span>
-                <span class="s2">&quot;model__learning_rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">],</span>
-            <span class="p">},</span>
+            <span class="c1"># {</span>
+            <span class="c1">#     &quot;model&quot;: [lgb.LGBMClassifier()],</span>
+            <span class="c1">#     &quot;model__learning_rate&quot;: [0.01, 0.001],</span>
+            <span class="c1"># },</span>
             <span class="p">{</span>
                 <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">CatBoostClassifier</span><span class="p">()],</span>
                 <span class="s2">&quot;model__learning_rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">],</span>
@@ -194,10 +194,10 @@
                 <span class="s2">&quot;model__n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span>
                 <span class="s2">&quot;model__learning_rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
             <span class="p">},</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">lgb</span><span class="o">.</span><span class="n">LGBMRegressor</span><span class="p">()],</span>
-                <span class="s2">&quot;model__learning_rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">],</span>
-            <span class="p">},</span>
+            <span class="c1"># {</span>
+            <span class="c1">#     &quot;model&quot;: [lgb.LGBMRegressor()],</span>
+            <span class="c1">#     &quot;model__learning_rate&quot;: [0.01, 0.001],</span>
+            <span class="c1"># },</span>
             <span class="p">{</span>
                 <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">CatBoostRegressor</span><span class="p">()],</span>
                 <span class="s2">&quot;model__learning_rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">],</span>

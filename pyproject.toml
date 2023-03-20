@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datto"
-version = "0.8.9"
+version = "0.9.1"
 description = "Data Tools (Dat To)"
 authors = ["kristiewirth <kristie.ann.wirth@gmail.com>"]
 
@@ -30,6 +30,7 @@ pytest = "^7.2.2"
 slack-sdk = "^3.20.2"
 s3fs = "^2023.3.0"
 scikit-learn = "1.1.3"
+shap = "^0.41.0"
 
 [tool.poetry.dev-dependencies]
 
