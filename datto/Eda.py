@@ -30,7 +30,13 @@ class Eda:
             [
                 col
                 for col in df.select_dtypes(
-                    exclude=["object", "bool", "datetime"]
+                    exclude=[
+                        "object",
+                        "bool",
+                        "datetime",
+                        "datetime64[ns]",
+                        "datetime64[ns, UTC]",
+                    ]
                 ).columns
                 # ID columns values aren't particularly important to examine
                 if "_id" not in str(col)
@@ -142,7 +148,7 @@ class Eda:
                         col: "Considering excluding because column includes only one value."
                     }
                 )
-            elif df[col].dtype == "datetime64[ns]":
+            elif df[col].dtype in ("datetime64[ns]", "datetime64[ns, UTC]"):
                 lst.append(
                     {col: "Considering excluding because column is a timestamp."}
                 )
