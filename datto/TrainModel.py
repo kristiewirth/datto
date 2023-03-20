@@ -3,7 +3,7 @@ import datetime
 import random
 from operator import itemgetter
 
-import lightgbm as lgb
+# import lightgbm as lgb
 import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
@@ -72,10 +72,10 @@ class TrainModel:
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
-            {
-                "model": [lgb.LGBMClassifier()],
-                "model__learning_rate": [0.01, 0.001],
-            },
+            # {
+            #     "model": [lgb.LGBMClassifier()],
+            #     "model__learning_rate": [0.01, 0.001],
+            # },
             {
                 "model": [CatBoostClassifier()],
                 "model__learning_rate": [0.01, 0.001],
@@ -118,10 +118,10 @@ class TrainModel:
                 "model__n_estimators": [5, 10, 15],
                 "model__learning_rate": [0.001, 0.01, 0.1],
             },
-            {
-                "model": [lgb.LGBMRegressor()],
-                "model__learning_rate": [0.01, 0.001],
-            },
+            # {
+            #     "model": [lgb.LGBMRegressor()],
+            #     "model__learning_rate": [0.01, 0.001],
+            # },
             {
                 "model": [CatBoostRegressor()],
                 "model__learning_rate": [0.01, 0.001],
