@@ -953,7 +953,6 @@ class ModelResults:
         X["intercept"] = 1
 
         for _ in range(num_repetitions):
-
             X_train, _, y_train, _ = train_test_split(X, y)
 
             # Fix for Singular matrix error
