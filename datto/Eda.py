@@ -409,7 +409,7 @@ class Eda:
                     )
                 else:
                     grouped_df = (
-                        adjust_vals.groupby([col]).count().iloc[:, 1]
+                        adjust_vals.groupby([col]).count().iloc[:, 0]
                         / adjust_vals.shape[0]
                     )
                     grouped_df = grouped_df.reset_index()
