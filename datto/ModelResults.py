@@ -11,6 +11,7 @@ import graphviz
 import lime
 import lime.lime_tabular
 import matplotlib.pyplot as plt
+import nltk
 import numpy as np
 import pandas as pd
 import shap
@@ -18,7 +19,6 @@ import spacy
 import statsmodels.api as sm
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel, nmf
-from nltk.corpus import stopwords
 from sklearn import set_config
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import (
@@ -54,6 +54,11 @@ try:
 except Exception:
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
+
+try:
+    nltk.corpus.stopwords.words("english")
+except Exception:
+    nltk.download("stopwords")
 
 
 class ModelResults:
@@ -175,10 +180,10 @@ class ModelResults:
         if exclude_adverbs:
             with_stopword_params = with_stopword_params | adverbs
 
-        all_stop_words = (
+        all_stop_words = list(
             # Combine stopwords from all the packages
             set(ENGLISH_STOP_WORDS)
-            | set(stopwords.words("english"))
+            | set(nltk.corpus.stopwords.words("english"))
             | nlp.Defaults.stop_words
             | set(string.punctuation)
             | set(string.ascii_lowercase)
@@ -557,7 +562,7 @@ class ModelResults:
         # Remove all other unneeded columns
         X = X[[text_col_name, "group_column"]]
 
-        all_stop_words = (
+        all_stop_words = list(
             set(ENGLISH_STOP_WORDS)
             | set(["-PRON-"])
             | set(string.punctuation)
@@ -875,7 +880,7 @@ class ModelResults:
                 [
                     [
                         trained_model,
-                        round((mse ** 5) * -1, 7),
+                        round((mse**5) * -1, 7),
                         round((mae * -1), 7),
                         r2,
                     ]
@@ -948,7 +953,6 @@ class ModelResults:
         X["intercept"] = 1
 
         for _ in range(num_repetitions):
-
             X_train, _, y_train, _ = train_test_split(X, y)
 
             # Fix for Singular matrix error

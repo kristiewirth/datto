@@ -5,33 +5,33 @@ from datto.DataConnections import NotebookConnections, S3Connections
 s3 = S3Connections()
 is_travis = "TRAVIS" in os.environ
 
+os.system("mkdir -p tests/temp_files")
 
 nc = NotebookConnections()
 
 
 def test_save_as_script():
-    # Remove previous file if it exists to properly test function
-    try:
-        os.system("rm files_to_ignore/start_notebook.py")
-    except Exception:
-        pass
+    # Create dummy file to test conversion
+    os.system("""echo 'print("Hello, world!")' > tests/temp_files/start_notebook.py""")
+    os.system(f"jupytext --to notebook tests/temp_files/start_notebook.py")
 
-    nc.save_as_script("files_to_ignore/start_notebook.ipynb")
+    nc.save_as_script("tests/temp_files/start_notebook.ipynb")
 
-    saved_script = open("files_to_ignore/start_notebook.py").read()
+    saved_script = open("tests/temp_files/start_notebook.py").read()
 
     assert saved_script is not None
 
+    os.system("rm tests/temp_files/*")
+
 
 def test_save_as_notebook():
-    # Remove previous file if it exists to properly test function
-    try:
-        os.system("rm files_to_ignore/start_script.ipynb")
-    except Exception:
-        pass
+    # Create dummy file to test conversion
+    os.system("""echo 'print("Hello, world!")' > tests/temp_files/start_script.py""")
 
-    nc.save_as_notebook("files_to_ignore/start_script.py")
+    nc.save_as_notebook("tests/temp_files/start_script.py")
 
-    saved_notebook = open("files_to_ignore/start_script.ipynb").read()
+    saved_notebook = open("tests/temp_files/start_script.ipynb").read()
 
     assert saved_notebook is not None
+
+    os.system("rm tests/temp_files/*")

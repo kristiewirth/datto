@@ -24,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> datto
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            datto
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,9 +62,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>datto.CleanDataframe</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">datto.CleanDataframe</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -88,12 +92,12 @@
 
 
 <div class="viewcode-block" id="CleanDataframe"><a class="viewcode-back" href="../../generated/datto.CleanDataframe.html#datto.CleanDataframe.CleanDataframe">[docs]</a><span class="k">class</span> <span class="nc">CleanDataframe</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Clean data using NLP, regex, calculations, etc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="CleanDataframe.remove_names"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.remove_names">[docs]</a>    <span class="k">def</span> <span class="nf">remove_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        --------</span>
 <span class="sd">        text: str</span>
@@ -114,7 +118,7 @@
         <span class="k">return</span> <span class="n">cleaned_text</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.remove_pii"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.remove_pii">[docs]</a>    <span class="k">def</span> <span class="nf">remove_pii</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove common patterns of personally identifiable information (PII)</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        --------</span>
@@ -144,7 +148,7 @@
         <span class="k">return</span> <span class="n">cleaned_text</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.remove_links"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.remove_links">[docs]</a>    <span class="k">def</span> <span class="nf">remove_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        --------</span>
 <span class="sd">        text: str</span>
@@ -164,7 +168,7 @@
         <span class="k">return</span> <span class="n">cleaned_text</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.lematize"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.lematize">[docs]</a>    <span class="k">def</span> <span class="nf">lematize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        --------</span>
 <span class="sd">        text: str</span>
@@ -178,7 +182,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">spacy_text</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_space</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.remove_email_greetings_signatures"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.remove_email_greetings_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">remove_email_greetings_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        In order to obtain the main text of an email only, this method removes greetings, signoffs,</span>
 <span class="sd">        and signatures by identifying sentences with less than 5% verbs to drop. Does not replace links.</span>
 
@@ -226,7 +230,7 @@
         <span class="k">return</span> <span class="n">text</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.clean_column_names"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.clean_column_names">[docs]</a>    <span class="k">def</span> <span class="nf">clean_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rename all columns to use underscores to reference columns without bracket formatting</span>
 
 <span class="sd">        Parameters</span>
@@ -244,7 +248,7 @@
         <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.remove_duplicate_columns"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.remove_duplicate_columns">[docs]</a>    <span class="k">def</span> <span class="nf">remove_duplicate_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove columns with the same name</span>
 
 <span class="sd">        Parameters</span>
@@ -260,7 +264,7 @@
         <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.fix_col_data_type"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.fix_col_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">fix_col_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">desired_dt</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change column datatype using the best method for each type.</span>
 
 <span class="sd">        Parameters</span>
@@ -286,7 +290,7 @@
         <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.compress_df"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.compress_df">[docs]</a>    <span class="k">def</span> <span class="nf">compress_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compresses each dataframe column as much as possible depending on type and values.</span>
 
 <span class="sd">        Parameters</span>
@@ -312,7 +316,7 @@
         <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.make_uuid"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.make_uuid">[docs]</a>    <span class="k">def</span> <span class="nf">make_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_num</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a UUid_num from a text string</span>
 
 <span class="sd">        Parameters</span>
@@ -337,7 +341,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.batch_pandas_operation"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.batch_pandas_operation">[docs]</a>    <span class="k">def</span> <span class="nf">batch_pandas_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">num_splits</span><span class="p">,</span> <span class="n">identifier_col</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Use a function on a Pandas DataFrame in chunks for faster processing.</span>
 
 <span class="sd">        Parameters</span>
@@ -366,7 +370,7 @@
         <span class="k">return</span> <span class="n">new_df</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.batch_merge_operation"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.batch_merge_operation">[docs]</a>    <span class="k">def</span> <span class="nf">batch_merge_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_1</span><span class="p">,</span> <span class="n">df_2</span><span class="p">,</span> <span class="n">num_splits</span><span class="p">,</span> <span class="n">identifier_col</span><span class="p">,</span> <span class="n">merge_col</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Merge two Pandas DataFrame in chunks for faster processing.</span>
 
 <span class="sd">        Parameters</span>
@@ -396,7 +400,7 @@
         <span class="k">return</span> <span class="n">new_df</span></div>
 
 <div class="viewcode-block" id="CleanDataframe.fill_nulls_using_regression_model"><a class="viewcode-back" href="../../datto.html#datto.CleanDataframe.CleanDataframe.fill_nulls_using_regression_model">[docs]</a>    <span class="k">def</span> <span class="nf">fill_nulls_using_regression_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Trains a regression model on non-null data and predicts values to fill in nulls</span>
 
 <span class="sd">        Parameters</span>

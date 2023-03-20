@@ -24,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> datto
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            datto
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,9 +62,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>datto.FrontEnd</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">datto.FrontEnd</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -77,14 +81,14 @@
 
 
 <div class="viewcode-block" id="FrontEnd"><a class="viewcode-back" href="../../generated/datto.FrontEnd.html#datto.FrontEnd.FrontEnd">[docs]</a><span class="k">class</span> <span class="nc">FrontEnd</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Automatically generate HTML</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FrontEnd.dropdown_from_dataframe"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.dropdown_from_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dropdown_from_dataframe</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">chosen_col</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create text to use for rendering an HTML dropdown from a DataFrame.</span>
 
 <span class="sd">        Render by using {{ df|safe }} in your HTML file.</span>
@@ -125,7 +129,7 @@
         <span class="k">return</span> <span class="n">html_choices</span></div>
 
 <div class="viewcode-block" id="FrontEnd.dataframe_to_html"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.dataframe_to_html">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write an entire dataframe to an HTML file with nice formatting.</span>
 
 <span class="sd">        Parameters</span>
@@ -163,7 +167,7 @@
         <span class="k">return</span> <span class="n">html</span></div>
 
 <div class="viewcode-block" id="FrontEnd.fig_to_html"><a class="viewcode-back" href="../../datto.html#datto.FrontEnd.FrontEnd.fig_to_html">[docs]</a>    <span class="k">def</span> <span class="nf">fig_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create HTML file from a matplotlib fig with workarounds for using inside a Flask app.</span>
 
 <span class="sd">        Parameters</span>

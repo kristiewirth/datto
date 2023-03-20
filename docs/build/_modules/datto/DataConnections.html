@@ -24,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> datto
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            datto
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,9 +62,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>datto.DataConnections</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">datto.DataConnections</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -83,7 +87,7 @@
 
 
 <div class="viewcode-block" id="S3Connections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections">[docs]</a><span class="k">class</span> <span class="nc">S3Connections</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interact with S3</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -93,7 +97,7 @@
         <span class="n">object_to_save</span><span class="p">,</span>
         <span class="n">object_name</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pickle and save an object to s3. Creates the folder specified if it does not yet exist.</span>
 
 <span class="sd">        Parameters</span>
@@ -122,7 +126,7 @@
                 <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">object_to_save</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="S3Connections.load_from_s3"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.S3Connections.load_from_s3">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a pickled object from s3.</span>
 <span class="sd">        Note: The pickle module is not secure. Only unpickle data you trust/saved yourself.</span>
 
@@ -146,12 +150,12 @@
 
 
 <div class="viewcode-block" id="SQLConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SQLConnections">[docs]</a><span class="k">class</span> <span class="nc">SQLConnections</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Connect with a SQL database</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pandas doesn&#39;t integrate with Redshift directly. Instead use psycopg2 to connect.</span>
 <span class="sd">        Pulls credentials from environment automatically if set.</span>
 
@@ -183,7 +187,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="SQLConnections.run_sql_redshift"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SQLConnections.run_sql_redshift">[docs]</a>    <span class="k">def</span> <span class="nf">run_sql_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pandas doesn&#39;t integrate with Redshift directly.</span>
 <span class="sd">        Instead use psycopg2 to connect and transform results into a DataFrame manually.</span>
 
@@ -226,12 +230,12 @@
 
 
 <div class="viewcode-block" id="NotebookConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.NotebookConnections">[docs]</a><span class="k">class</span> <span class="nc">NotebookConnections</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert between Jupyter notebooks &amp; Python scripts</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_remove_unused_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_version</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes the content of a Jupyter notebook and removes code unneeded to produce final results.</span>
 
 <span class="sd">        Parameters</span>
@@ -318,7 +322,7 @@
         <span class="k">return</span> <span class="n">filtered_file</span>
 
 <div class="viewcode-block" id="NotebookConnections.save_as_script"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.NotebookConnections.save_as_script">[docs]</a>    <span class="k">def</span> <span class="nf">save_as_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opens a Jupyter notebook file, cleans it, and saves as a Python script.</span>
 
 <span class="sd">        Parameters</span>
@@ -343,7 +347,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created Python script: </span><span class="si">{</span><span class="n">script_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="NotebookConnections.save_as_notebook"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.NotebookConnections.save_as_notebook">[docs]</a>    <span class="k">def</span> <span class="nf">save_as_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opens a Python script and saves as a Jupyter notebook.</span>
 
 <span class="sd">        Parameters</span>
@@ -386,7 +390,7 @@
 
 
 <div class="viewcode-block" id="SlackConnections"><a class="viewcode-back" href="../../datto.html#datto.DataConnections.SlackConnections">[docs]</a><span class="k">class</span> <span class="nc">SlackConnections</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve Slack messages</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -468,7 +472,7 @@
         <span class="n">excluded_user_ids</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">messages_limit</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get messages from a given Slack channel(s)</span>
 
 <span class="sd">        Parameters</span>

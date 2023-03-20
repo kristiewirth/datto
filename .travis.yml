@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.7.5"
+  - "3.8"
 git:
   depth: 1
   quiet: true
@@ -8,4 +8,6 @@ before_install:
   - pip install poetry
 install:
   - poetry install
+  - pip install lightgbm --install-option=--nomp
+  - ARCHFLAGS="-arch x86_64" pip install shap
 script: make test
